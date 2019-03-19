@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Book Hunt</string>
+    <string name="log_in">Log in</string>
+    <string name="sign_in">Sign in</string>
+    <string name="sign_in_google">Sign in with Google</string>
+    <string name="sign_in_facebook">Sign in with Facebook</string>
 </resources>
