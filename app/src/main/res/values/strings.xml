@@ -8,4 +8,9 @@
     <string name="fb_login_protocol_scheme">fb[com.example.andreea.bookhunt]</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="email">Email</string>
+    <string name="register">Register</string>
 </resources>
