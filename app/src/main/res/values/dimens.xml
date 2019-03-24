@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="margin_8">8dp</dimen>
+    <dimen name="margin_16">16dp</dimen>
+    <dimen name="button_height_55">55dp</dimen>
+    <dimen name="width_0">0dp</dimen>
+    <dimen name="margin_bottom_google_btn_56">56dp</dimen>
+    <dimen name="margin_guideline_17">17dp</dimen>
+    <dimen name="corner_radius">20dp</dimen>
+    <dimen name="text_size">20sp</dimen>
+</resources>

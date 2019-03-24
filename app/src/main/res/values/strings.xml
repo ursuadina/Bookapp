@@ -4,4 +4,8 @@
     <string name="sign_in">Sign in</string>
     <string name="sign_in_google">Sign in with Google</string>
     <string name="sign_in_facebook">Sign in with Facebook</string>
+    <string name="facebook_app_id">[com.example.andreea.bookhunt]</string>
+    <string name="fb_login_protocol_scheme">fb[com.example.andreea.bookhunt]</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
 </resources>
