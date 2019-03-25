@@ -48,5 +48,14 @@ public class RegisterActivity extends AppCompatActivity {
         mTextView.setText("First name:" + mEditTextFirstName.getText() +'\n' + "Last name: " + mEditTextLastName.getText() +
                 '\n' + "Password: " + mEditTextPassword.getText() + '\n' + "Email: " + mEditTextEmail.getText()
                 + '\n' + "Username: " + mEditTextUsername.getText());
+
+        String firstName = mEditTextFirstName.getText().toString();
+        String lastName = mEditTextLastName.getText().toString();
+        String username = mEditTextUsername.getText().toString();
+        String password1 = mEditTextPassword.getText().toString();
+        String password2 = mEditTextConfirmPassword.getText().toString();
+        String email = mEditTextEmail.getText().toString();
     }
+
+
 }
