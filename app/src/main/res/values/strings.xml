@@ -13,4 +13,13 @@
     <string name="confirm_password">Confirm password</string>
     <string name="email">Email</string>
     <string name="register">Register</string>
+
+    <string name="error_email_input">Please fill the input with a valid email address.</string>
+    <string name="error_name_input">Please fill the input with a valid name.</string>
+    <string name="error_password_input">The password should be longer than 7 characters.</string>
+    <string name="error_conf_password_input">The 2 passwords do not match.</string>
+    <string name="error_username_input">The username should be longer than 7 characters.</string>
+    <string name="error_password_eq_username_input">The username and password should not be the same.</string>
+    <string name="error_username_exists">This username already exists.</string>
+    <string name="error_email_exists">This email already exists.</string>
 </resources>

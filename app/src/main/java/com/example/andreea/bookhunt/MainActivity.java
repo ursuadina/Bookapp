@@ -15,6 +15,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //todo: user deja autentificat
+    }
+
     //TODO: log in
     public void btnLogInOnClick(View view) {
         Toast.makeText(MainActivity.this, "TO DO: Log in on click", Toast.LENGTH_SHORT)

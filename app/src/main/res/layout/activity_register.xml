@@ -35,21 +35,16 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_end="15dp" />
 
-    <LinearLayout
-        android:id="@+id/linearLayout3"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toStartOf="@+id/guideline4"
-        app:layout_constraintStart_toStartOf="@+id/guideline3"
-        app:layout_constraintTop_toTopOf="@+id/guideline5">
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/TextInputFirstName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            app:hintTextAppearance="@style/TextInput">
+            app:hintTextAppearance="@style/TextInput"
+            app:layout_constraintEnd_toStartOf="@+id/guideline4"
+            app:layout_constraintStart_toStartOf="@+id/guideline3"
+            app:layout_constraintTop_toTopOf="@+id/guideline5">
 
             <EditText
                 android:id="@+id/etFirstName"
@@ -68,7 +63,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            app:hintTextAppearance="@style/TextInput">
+            app:hintTextAppearance="@style/TextInput"
+            app:layout_constraintEnd_toStartOf="@+id/guideline4"
+            app:layout_constraintStart_toStartOf="@+id/guideline3"
+            app:layout_constraintTop_toBottomOf="@+id/TextInputFirstName">
 
             <EditText
                 android:id="@+id/etLastName"
@@ -81,7 +79,7 @@
                 android:textSize="@dimen/text_size"
                 android:textStyle="bold" />
         </android.support.design.widget.TextInputLayout>
-    </LinearLayout>
+
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/TextInputUsernameReg"
@@ -90,7 +88,7 @@
         app:hintTextAppearance="@style/TextInput"
         app:layout_constraintEnd_toStartOf="@+id/guideline4"
         app:layout_constraintStart_toStartOf="@+id/guideline3"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
+        app:layout_constraintTop_toBottomOf="@+id/TextInputLastName">
 
         <EditText
             android:id="@+id/etUsernameReg"
@@ -105,21 +103,14 @@
             android:textStyle="bold" />
     </android.support.design.widget.TextInputLayout>
 
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toStartOf="@+id/guideline4"
-        app:layout_constraintStart_toStartOf="@+id/guideline3"
-        app:layout_constraintTop_toBottomOf="@+id/TextInputUsernameReg">
-
         <android.support.design.widget.TextInputLayout
             android:id="@+id/TextInputPasswordReg"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:hintTextAppearance="@style/TextInput">
+            app:hintTextAppearance="@style/TextInput"
+            app:layout_constraintEnd_toStartOf="@+id/guideline4"
+            app:layout_constraintStart_toStartOf="@+id/guideline3"
+            app:layout_constraintTop_toBottomOf="@+id/TextInputUsernameReg">
 
             <EditText
                 android:id="@+id/etPasswordReg"
@@ -137,8 +128,10 @@
             android:id="@+id/TextInputConfPasswordReg"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:hintTextAppearance="@style/TextInput">
+            app:hintTextAppearance="@style/TextInput"
+            app:layout_constraintEnd_toStartOf="@+id/guideline4"
+            app:layout_constraintStart_toStartOf="@+id/guideline3"
+            app:layout_constraintTop_toBottomOf="@+id/TextInputPasswordReg">
 
             <EditText
                 android:id="@+id/etConfPasswordReg"
@@ -151,7 +144,6 @@
                 android:layout_marginBottom="10dp"
                 android:textStyle="bold" />
         </android.support.design.widget.TextInputLayout>
-    </LinearLayout>
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/TextInputEmail"
@@ -160,7 +152,7 @@
         app:hintTextAppearance="@style/TextInput"
         app:layout_constraintEnd_toStartOf="@+id/guideline4"
         app:layout_constraintStart_toStartOf="@+id/guideline3"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+        app:layout_constraintTop_toBottomOf="@+id/TextInputConfPasswordReg">
 
         <EditText
             android:id="@+id/etEmail"
