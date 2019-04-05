@@ -1,8 +1,9 @@
 package com.example.andreea.bookhunt;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
-import android.hardware.usb.UsbEndpoint;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.andreea.bookhunt.models.Register;
+import com.example.andreea.bookhunt.utils.Constants;
 import com.example.andreea.bookhunt.utils.EmailHelper;
 import com.example.andreea.bookhunt.utils.NameHelper;
 import com.example.andreea.bookhunt.utils.PasswordHelper;
@@ -39,6 +41,9 @@ public class RegisterActivity extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
 
+    private SharedPreferences mPreferences;
+    private SharedPreferences.Editor mEditor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +51,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (intent != null) {
-            Toast.makeText(RegisterActivity.this, intent.getStringExtra(MainActivity.MESSAGE),
+            Toast.makeText(RegisterActivity.this, intent.getStringExtra(Constants.MESSAGE),
                     Toast.LENGTH_SHORT).show();
         }
 
@@ -262,6 +267,15 @@ public class RegisterActivity extends AppCompatActivity {
                                     mProgressDialog.dismiss();
                                 }
                             });
+
+                            //save username and password in shared preferences so that the user will not have to login every time
+                            mPreferences = getSharedPreferences(Constants.USER_INFO, Context.MODE_PRIVATE);
+                            mEditor = mPreferences.edit();
+                            mEditor.putString(Constants.USERNAME, mRegister.getUsername());
+                            mEditor.putString(Constants.PASS, mEditTextPassword.getText().toString());
+                            mEditor.apply();
+                            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                            startActivity(intent);
                             //TODO: go to first page
                         }
                     }
