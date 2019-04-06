@@ -2,7 +2,6 @@ package com.example.andreea.bookhunt.utils;
 
 import android.text.TextUtils;
 
-import java.util.regex.Pattern;
 
 public class PasswordHelper {
     public static boolean isPassword(String password) {
@@ -25,7 +24,7 @@ public class PasswordHelper {
         }
     }
 
-    public static boolean isPassowrdEqUsername(String password, String username) {
+    public static boolean isPasswordEqUsername(String password, String username) {
         if (password.equals(username)) {
             return true;
         } else {

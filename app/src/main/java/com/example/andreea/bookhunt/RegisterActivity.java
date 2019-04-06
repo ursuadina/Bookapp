@@ -24,7 +24,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -40,9 +45,6 @@ public class RegisterActivity extends AppCompatActivity {
     private Register mRegister;
 
     private FirebaseAuth firebaseAuth;
-
-    private SharedPreferences mPreferences;
-    private SharedPreferences.Editor mEditor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,8 +155,10 @@ public class RegisterActivity extends AppCompatActivity {
                 String password1 = s.toString();
                 String username = mEditTextUsername.getText().toString();
 
-                if (PasswordHelper.isPassowrdEqUsername(password1, username)) {
+                if (PasswordHelper.isPasswordEqUsername(password1, username)) {
                     mEditTextPassword.setError(getResources().getString(R.string.error_password_eq_username_input));
+                } else if(password1.length() < 7 ) {
+                    mEditTextPassword.setError(getResources().getString(R.string.error_password_input));
                 }
             }
         });
@@ -217,7 +221,6 @@ public class RegisterActivity extends AppCompatActivity {
     private boolean isPasswordValid() {
         String password1 = mEditTextPassword.getText().toString();
         String password2 = mEditTextConfirmPassword.getText().toString();
-        String username = mEditTextUsername.getText().toString();
         if (PasswordHelper.isPasswordValid(password1)) {
             if (PasswordHelper.isConfirmationPassValid(password1, password2)) {
                 return true;
@@ -246,14 +249,34 @@ public class RegisterActivity extends AppCompatActivity {
     public void btnRegisterOnClick(View view) {
         if (!isFirstNameValid() | !isLastNameValid() | !isUsernameValid() | !isPasswordValid() | !isEmailValid()) {
             return;
+        } else {
+            String username = mEditTextUsername.getText().toString();
+            Query query1 = FirebaseDatabase.getInstance().getReference("Users").orderByChild("username")
+                    .equalTo(username);
+            query1.addListenerForSingleValueEvent(new ValueEventListener() {
+               @Override
+               public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                   mEditTextUsername.setError(getResources().getString(R.string.error_username_exists));
+                   return;
+               }
+
+               @Override
+               public void onCancelled(@NonNull DatabaseError databaseError) {
+
+               }
+           });
         }
+        final String email = mRegister.getEmail();
+        final String password = mEditTextPassword.getText().toString();
+
         mTextView.setVisibility(View.VISIBLE);
         mTextView.setText(mRegister.toString());
 
-        String email = mRegister.getEmail();
-        String password = mEditTextPassword.getText().toString();
         mProgressDialog.setMessage("Registering...");
         mProgressDialog.show();
+
+//        The user is created and I save his informations(first name, last name, etc.) also in the
+//        database.
         firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -264,23 +287,36 @@ public class RegisterActivity extends AppCompatActivity {
                                     .setValue(mRegister).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
-                                    mProgressDialog.dismiss();
+                                    firebaseAuth.signInWithEmailAndPassword(mRegister.getEmail(),
+                                            mEditTextPassword.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<AuthResult> task) {
+                                            if(task.isSuccessful()) {
+                                                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                                                startActivity(intent);
+                                                mProgressDialog.dismiss();
+                                            } else {
+                                                String errorMessage = task.getException().toString();
+                                                Toast.makeText(RegisterActivity.this, "Error " + errorMessage, Toast.LENGTH_SHORT).show();
+                                                mProgressDialog.dismiss();
+                                            }
+                                        }
+                                    });
                                 }
                             });
-
-                            //save username and password in shared preferences so that the user will not have to login every time
-                            mPreferences = getSharedPreferences(Constants.USER_INFO, Context.MODE_PRIVATE);
-                            mEditor = mPreferences.edit();
-                            mEditor.putString(Constants.USERNAME, mRegister.getUsername());
-                            mEditor.putString(Constants.PASS, mEditTextPassword.getText().toString());
-                            mEditor.apply();
-                            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                            startActivity(intent);
-                            //TODO: go to first page
+                        } else {
+                            try {
+                                throw task.getException();
+                            } catch (FirebaseAuthUserCollisionException e) {
+                                mEditTextEmail.setError(getResources().getString(R.string.error_email_exists));
+                                mProgressDialog.dismiss();
+                            } catch (Exception e) {
+                                String errorMessage = task.getException().toString();
+                                Toast.makeText(RegisterActivity.this, "Error " + errorMessage, Toast.LENGTH_SHORT).show();
+                                mProgressDialog.dismiss();
+                            }
                         }
                     }
                 });
     }
-
-
 }
