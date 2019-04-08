@@ -104,7 +104,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintStart_toStartOf="@+id/guideline2"
-        android:onClick="btnSignInGoogleOnClick"/>
+        />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline"

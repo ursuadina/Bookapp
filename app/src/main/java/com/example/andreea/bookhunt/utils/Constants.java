@@ -8,4 +8,6 @@ public class Constants {
     public static final String REMEMBER = "remember_login";
 
     public static final String MESSAGE = "message";
+
+    public static final int RC_SIGN_IN_GOOGLE = 9001;
 }
