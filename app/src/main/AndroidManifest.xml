@@ -40,6 +40,9 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths">
             </meta-data>
+            <meta-data
+                android:name="com.google.android.gms.vision.DEPENDENCIES"
+                android:value="ocr" />
         </provider>
     </application>
 
