@@ -56,7 +56,7 @@ public class LogInActivity extends AppCompatActivity{
         googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
 
         if (SharedPreferencesHelper.getStringValueForUserInfo(Constants.REMEMBER, LogInActivity.this).equals("True")) {
-            Intent intent = new Intent(LogInActivity.this, MainActivity.class);
+            Intent intent = new Intent(LogInActivity.this, IndexActivity.class);
             startActivity(intent);
             finish();
         } else {
@@ -102,7 +102,7 @@ public class LogInActivity extends AppCompatActivity{
                                         SharedPreferencesHelper.setStringValueForUserInfo(Constants.USERNAME, mEditTextUsername.getText().toString(), LogInActivity.this);
                                         SharedPreferencesHelper.setStringValueForUserInfo(Constants.PASS, mEditTextPassword.getText().toString(), LogInActivity.this);
                                     }
-                                    Intent intent = new Intent(LogInActivity.this, MainActivity.class);
+                                    Intent intent = new Intent(LogInActivity.this, IndexActivity.class);
                                     startActivity(intent);
                                     finish();
                                 } else {
@@ -167,7 +167,7 @@ public class LogInActivity extends AppCompatActivity{
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    Intent intent = new Intent(LogInActivity.this, MainActivity.class);
+                    Intent intent = new Intent(LogInActivity.this, IndexActivity.class);
                     startActivity(intent);
                     finish();
                 }
