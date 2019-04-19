@@ -44,9 +44,8 @@ public class SearchActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
-        byte[] image = (byte[]) extras.get("photo");
+        Bitmap bitmap =(Bitmap) extras.get("bitmap");
         //Bitmap imageBitmap = (Bitmap) extras.get("extras");
-        Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
         imageViewBook.setImageBitmap(bitmap);
 
         String text = imageToText();
