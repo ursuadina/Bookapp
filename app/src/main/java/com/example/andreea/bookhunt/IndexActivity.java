@@ -1,9 +1,6 @@
 package com.example.andreea.bookhunt;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -23,9 +20,7 @@ import android.view.MenuItem;
 import com.example.andreea.bookhunt.utils.Constants;
 import com.example.andreea.bookhunt.utils.SharedPreferencesHelper;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.snapshot.Index;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -35,11 +30,9 @@ import java.util.Date;
 public class IndexActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private FirebaseAuth firebaseAuth;
-    private Uri mHighQualityImageUri;
 
     private String mCurrentPhotoPath;
     private File photoFile;
-    private Bitmap rotatedBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,10 +125,6 @@ public class IndexActivity extends AppCompatActivity
     }
 
     public void btnOpenCamera(View view) {
-//        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-//            startActivityForResult(takePictureIntent, Constants.CAMERA_REQUEST);
-//        }
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -176,49 +165,18 @@ public class IndexActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         try {
             switch (requestCode) {
-                case 0:
+                case 1:
                     if (resultCode == RESULT_OK) {
                         File file = new File(mCurrentPhotoPath);
-                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.fromFile(file));
-                        if (bitmap != null) {
-                            ExifInterface ei = new ExifInterface(mCurrentPhotoPath);
-                            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
-                            rotatedBitmap = null;
-                            switch(orientation) {
-
-                                case ExifInterface.ORIENTATION_ROTATE_90:
-                                    rotatedBitmap = rotateImage(bitmap, 90);
-                                    break;
-
-                                case ExifInterface.ORIENTATION_ROTATE_180:
-                                    rotatedBitmap = rotateImage(bitmap, 180);
-                                    break;
-
-                                case ExifInterface.ORIENTATION_ROTATE_270:
-                                    rotatedBitmap = rotateImage(bitmap, 270);
-                                    break;
-
-                                case ExifInterface.ORIENTATION_NORMAL:
-                                default:
-                                    rotatedBitmap = bitmap;
-                            }
-                            Intent intent = new Intent(IndexActivity.this, SearchActivity.class);
-                            intent.putExtra("bitmap", rotatedBitmap);
-                            startActivity(intent);
-
-                        }
+                        Intent intent = new Intent(IndexActivity.this, SearchActivity.class);
+                        intent.putExtra("file", file);
+                        intent.putExtra("currentPhotoPath", mCurrentPhotoPath);
+                        startActivity(intent);
                     }
                     break;
             }
         } catch (Exception error) {
             error.printStackTrace();
         }
-    }
-
-    private static Bitmap rotateImage(Bitmap source, float angle) {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(angle);
-        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
-                matrix, true);
     }
 }
