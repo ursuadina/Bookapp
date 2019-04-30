@@ -77,40 +77,43 @@ public class LogInActivity extends AppCompatActivity{
             mEditTextUsername.setError(getResources().getString(R.string.error_username_empty));
         } else if (password.equals("") || TextUtils.isEmpty(password)) {
             mEditTextPassword.setError(getResources().getString(R.string.error_password_empty));
-        } else {
+         } else {
             Query query = FirebaseDatabase.getInstance().getReference("Users").orderByChild("username")
                     .equalTo(username);
             query.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     // Is only one user with this username.
-                    for (DataSnapshot ds: dataSnapshot.getChildren()) {
-                        mRegister = ds.getValue(Register.class);
-                        String email = mRegister.getEmail();
-                        SharedPreferencesHelper.setStringValueForUserInfo(Constants.EMAIL, email, LogInActivity.this);
-                        firebaseAuth.signInWithEmailAndPassword(email,mEditTextPassword.getText().toString())
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    if (mCheckBoxRemember.isChecked()) {
-                                        SharedPreferencesHelper.setStringValueForUserInfo(Constants.REMEMBER, "True", LogInActivity.this);
-                                        SharedPreferencesHelper.setStringValueForUserInfo(Constants.USERNAME, mEditTextUsername.getText().toString(), LogInActivity.this);
-                                        SharedPreferencesHelper.setStringValueForUserInfo(Constants.PASS, mEditTextPassword.getText().toString(), LogInActivity.this);
-                                    } else {
-                                        SharedPreferencesHelper.setStringValueForUserInfo(Constants.REMEMBER, "False", LogInActivity.this);
-                                        SharedPreferencesHelper.setStringValueForUserInfo(Constants.USERNAME, mEditTextUsername.getText().toString(), LogInActivity.this);
-                                        SharedPreferencesHelper.setStringValueForUserInfo(Constants.PASS, mEditTextPassword.getText().toString(), LogInActivity.this);
-                                    }
-                                    Intent intent = new Intent(LogInActivity.this, IndexActivity.class);
-                                    startActivity(intent);
-                                    finish();
-                                } else {
-                                    String errorMessage = task.getException().toString();
-                                    Toast.makeText(LogInActivity.this, "Error " + errorMessage, Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
+                    if (!dataSnapshot.hasChildren()){
+                        mEditTextUsername.setError(getResources().getString(R.string.error_username_non_existent));
+                    } else {
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            mRegister = ds.getValue(Register.class);
+                            String email = mRegister.getEmail();
+                            SharedPreferencesHelper.setStringValueForUserInfo(Constants.EMAIL, email, LogInActivity.this);
+                            firebaseAuth.signInWithEmailAndPassword(email, mEditTextPassword.getText().toString())
+                                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<AuthResult> task) {
+                                            if (task.isSuccessful()) {
+                                                if (mCheckBoxRemember.isChecked()) {
+                                                    SharedPreferencesHelper.setStringValueForUserInfo(Constants.REMEMBER, "True", LogInActivity.this);
+                                                    SharedPreferencesHelper.setStringValueForUserInfo(Constants.USERNAME, mEditTextUsername.getText().toString(), LogInActivity.this);
+                                                    SharedPreferencesHelper.setStringValueForUserInfo(Constants.PASS, mEditTextPassword.getText().toString(), LogInActivity.this);
+                                                } else {
+                                                    SharedPreferencesHelper.setStringValueForUserInfo(Constants.REMEMBER, "False", LogInActivity.this);
+                                                    SharedPreferencesHelper.setStringValueForUserInfo(Constants.USERNAME, mEditTextUsername.getText().toString(), LogInActivity.this);
+                                                    SharedPreferencesHelper.setStringValueForUserInfo(Constants.PASS, mEditTextPassword.getText().toString(), LogInActivity.this);
+                                                }
+                                                Intent intent = new Intent(LogInActivity.this, IndexActivity.class);
+                                                startActivity(intent);
+                                                finish();
+                                            } else {
+                                                mEditTextPassword.setError(getResources().getString(R.string.error_password_incorrect));
+                                            }
+                                        }
+                                    });
+                        }
                     }
                 }
 
