@@ -40,5 +40,8 @@
     <string name="search">Search</string>
     <string name="retake_photo">Retake photo</string>
     <string name="book_photo">Book photo</string>
-    <string name="book_name">Book name:</string>
+    <string name="book_title">Book Title</string>
+    <string name="author">Author</string>
+    <string name="book_search">Book search</string>
+    <string name="gallery_photo">Gallery Photo</string>
 </resources>

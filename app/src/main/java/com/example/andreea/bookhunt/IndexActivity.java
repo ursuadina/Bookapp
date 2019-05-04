@@ -16,6 +16,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.example.andreea.bookhunt.utils.Constants;
 import com.example.andreea.bookhunt.utils.SharedPreferencesHelper;
@@ -33,6 +35,11 @@ public class IndexActivity extends AppCompatActivity
 
     private String mCurrentPhotoPath;
     private File photoFile;
+
+    private TextView mTextViewUsername;
+    private TextView mTextViewEmail;
+    private NavigationView mNavigationView;
+    private LinearLayout mLinearLayoutHeader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +64,12 @@ public class IndexActivity extends AppCompatActivity
     }
 
     public void initView() {
-
+        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        mLinearLayoutHeader = (LinearLayout) mNavigationView.getHeaderView(0);
+        mTextViewUsername = (TextView) mLinearLayoutHeader.findViewById(R.id.tvUsername);
+        mTextViewUsername.setText(SharedPreferencesHelper.getStringValueForUserInfo(Constants.USERNAME, getApplicationContext()));
+        mTextViewEmail = (TextView) mLinearLayoutHeader.findViewById(R.id.tvEmail);
+        mTextViewEmail.setText(SharedPreferencesHelper.getStringValueForUserInfo(Constants.EMAIL, getApplicationContext()));
     }
 
     @Override
@@ -125,58 +137,7 @@ public class IndexActivity extends AppCompatActivity
     }
 
     public void btnOpenCamera(View view) {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
-            photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-            }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(getApplicationContext(), "com.example.andreea.bookhunt.fileprovider", photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, Constants.CAMERA_REQUEST);
-            }
-        }
-    }
-
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        try {
-            switch (requestCode) {
-                case 1:
-                    if (resultCode == RESULT_OK) {
-                        File file = new File(mCurrentPhotoPath);
-                        Intent intent = new Intent(IndexActivity.this, SearchActivity.class);
-                        intent.putExtra("file", file);
-                        intent.putExtra("currentPhotoPath", mCurrentPhotoPath);
-                        startActivity(intent);
-                    }
-                    break;
-            }
-        } catch (Exception error) {
-            error.printStackTrace();
-        }
+        Intent intent = new Intent(IndexActivity.this, SearchActivity.class);
+        startActivity(intent);
     }
 }

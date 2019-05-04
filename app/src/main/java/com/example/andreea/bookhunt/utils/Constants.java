@@ -12,5 +12,6 @@ public class Constants {
 
     public static final int RC_SIGN_IN_GOOGLE = 9001;
     public static final int CAMERA_REQUEST = 1;
+    public static final int PICK_IMAGE_REQUEST = 2;
 
 }

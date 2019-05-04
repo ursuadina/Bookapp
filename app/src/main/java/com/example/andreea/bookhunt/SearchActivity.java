@@ -1,6 +1,7 @@
 package com.example.andreea.bookhunt;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
@@ -12,6 +13,8 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,6 +30,10 @@ public class SearchActivity extends AppCompatActivity {
     private ImageView imageViewBook;
     private TextView textViewTitle;
     private TextView textViewBookName;
+    private EditText mEditTextBookTitle;
+    private EditText mEditTextAuthor;
+
+    private Uri selectedImageUri;
 
     private Bitmap rotatedBitmap;
     private String mCurrentPhotoPath;
@@ -39,39 +46,39 @@ public class SearchActivity extends AppCompatActivity {
         initView();
 
         Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
-        File file =(File) extras.get("file");
-        mCurrentPhotoPath = (String) extras.get("currentPhotoPath");
-    try {
-        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), Uri.fromFile(file));
-        if (bitmap != null) {
-            ExifInterface ei = new ExifInterface(mCurrentPhotoPath);
-            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
-            rotatedBitmap = null;
-            switch (orientation) {
-
-                case ExifInterface.ORIENTATION_ROTATE_90:
-                    rotatedBitmap = rotateImage(bitmap, 90);
-                    break;
-
-                case ExifInterface.ORIENTATION_ROTATE_180:
-                    rotatedBitmap = rotateImage(bitmap, 180);
-                    break;
-
-                case ExifInterface.ORIENTATION_ROTATE_270:
-                    rotatedBitmap = rotateImage(bitmap, 270);
-                    break;
-
-                case ExifInterface.ORIENTATION_NORMAL:
-                default:
-                    rotatedBitmap = bitmap;
-            }
-        }
-    }
-    catch (Exception error) {
-        error.printStackTrace();
-    }
-        imageViewBook.setImageBitmap(rotatedBitmap);
+//        Bundle extras = intent.getExtras();
+//        File file =(File) extras.get("file");
+//        mCurrentPhotoPath = (String) extras.get("currentPhotoPath");
+//        try {
+//            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), Uri.fromFile(file));
+//            if (bitmap != null) {
+//                ExifInterface ei = new ExifInterface(mCurrentPhotoPath);
+//                int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+//                rotatedBitmap = null;
+//                switch (orientation) {
+//
+//                    case ExifInterface.ORIENTATION_ROTATE_90:
+//                        rotatedBitmap = rotateImage(bitmap, 90);
+//                        break;
+//
+//                    case ExifInterface.ORIENTATION_ROTATE_180:
+//                        rotatedBitmap = rotateImage(bitmap, 180);
+//                        break;
+//
+//                    case ExifInterface.ORIENTATION_ROTATE_270:
+//                        rotatedBitmap = rotateImage(bitmap, 270);
+//                        break;
+//
+//                    case ExifInterface.ORIENTATION_NORMAL:
+//                    default:
+//                        rotatedBitmap = bitmap;
+//                }
+//            }
+//        }
+//        catch (Exception error) {
+//            error.printStackTrace();
+//        }
+//        imageViewBook.setImageBitmap(rotatedBitmap);
 //        String text = imageToText();
 //        String text1 = textViewBookName.getText().toString();
 //
@@ -88,7 +95,8 @@ public class SearchActivity extends AppCompatActivity {
     public void initView() {
         textViewTitle = (TextView) findViewById(R.id.textView3);
         imageViewBook = (ImageView)  findViewById(R.id.imageViewBookPhoto);
-        textViewBookName = (TextView) findViewById(R.id.textViewBookName);
+        mEditTextBookTitle = (EditText) findViewById(R.id.etBookTitle);
+        mEditTextAuthor = (EditText) findViewById(R.id.etAuthor);
     }
 
 
@@ -167,6 +175,34 @@ public class SearchActivity extends AppCompatActivity {
 //            String textNou = text1 + text;
 //            textViewBookName.setText(textNou);
         }
+        if (requestCode == Constants.PICK_IMAGE_REQUEST && resultCode == RESULT_OK) {
+            selectedImageUri = data.getData();
+            String path = getPathFromURI(selectedImageUri);
+            if (path != null) {
+                File f = new File(path);
+                selectedImageUri = Uri.fromFile(f);
+            }
+            // Set the image in ImageView
+            imageViewBook.setImageURI(selectedImageUri);
+        }
+    }
+
+    public String getPathFromURI(Uri contentUri) {
+        String res = null;
+        String[] proj = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            res = cursor.getString(column_index);
+        }
+        cursor.close();
+        return res;
+    }
+    public void btnSelectFromGallery(View view) {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), Constants.PICK_IMAGE_REQUEST);
     }
 
 //    public String imageToText() {
