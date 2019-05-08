@@ -1,46 +1,50 @@
 package com.example.andreea.bookhunt.models;
 
 public class Book {
-    private String mBookName;
-    private String mAuthor;
-    private String mPhotoUrl;
+    private String bookTitle;
+    private String author;
+    private String photoUrl;
 
-    public String getmBookName() {
-        return mBookName;
+    public String getBookTitle() {
+        return bookTitle;
     }
 
-    public void setmBookName(String mBookName) {
-        this.mBookName = mBookName;
+    public void setBookTitle(String bookTitle) {
+        this.bookTitle = bookTitle;
     }
 
-    public String getmAuthor() {
-        return mAuthor;
+    public String getAuthor() {
+        return author;
     }
 
-    public void setmAuthor(String mAuthor) {
-        this.mAuthor = mAuthor;
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
-    public String getmPhotoUrl() {
-        return mPhotoUrl;
+    public String getPhotoUrl() {
+        return photoUrl;
     }
 
-    public void setmPhotoUrl(String mPhotoUrl) {
-        this.mPhotoUrl = mPhotoUrl;
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
     }
 
     @Override
     public String toString() {
         return "Book{" +
-                "mBookName='" + mBookName + '\'' +
-                ", mAuthor='" + mAuthor + '\'' +
-                ", mPhotoUrl='" + mPhotoUrl + '\'' +
+                "bookTitle='" + bookTitle + '\'' +
+                ", author='" + author + '\'' +
+                ", photoUrl='" + photoUrl + '\'' +
                 '}';
     }
 
-    public Book(String mBookName, String mAuthor, String mPhotoUrl) {
-        this.mBookName = mBookName;
-        this.mAuthor = mAuthor;
-        this.mPhotoUrl = mPhotoUrl;
+    public Book(String bookTitle, String author, String mPhotoUrl) {
+        this.bookTitle = bookTitle;
+        this.author = author;
+        this.photoUrl = mPhotoUrl;
+    }
+
+    public Book() {
+
     }
 }

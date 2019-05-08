@@ -1,6 +1,8 @@
 package com.example.andreea.bookhunt;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
@@ -8,6 +10,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
@@ -20,16 +23,20 @@ import android.widget.Toast;
 
 import com.example.andreea.bookhunt.models.Book;
 import com.example.andreea.bookhunt.utils.Constants;
+import com.example.andreea.bookhunt.utils.Methods;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.snapshot.Index;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -64,13 +71,14 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        initView();
+        if(Methods.checkPermissions(SearchActivity.this, SearchActivity.this)) {
+            initView();
 
-        Intent intent = getIntent();
-        firebaseAuth = FirebaseAuth.getInstance();
-        storageReference = FirebaseStorage.getInstance().getReference();
-        databaseBooks = FirebaseDatabase.getInstance().getReference("Books");
-
+            Intent intent = getIntent();
+            firebaseAuth = FirebaseAuth.getInstance();
+            storageReference = FirebaseStorage.getInstance().getReference();
+            databaseBooks = FirebaseDatabase.getInstance().getReference("Books");
+        }
         //Methods.checkPermissions(SearchActivity.this, SearchActivity.this);
 
 //        Bundle extras = intent.getExtras();
@@ -127,7 +135,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
 
-    public void btnRetakePic(View view) {
+    public void btnTakePic(View view) {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -193,6 +201,7 @@ public class SearchActivity extends AppCompatActivity {
                            rotatedBitmap = bitmap;
                    }
                }
+               selectedImageUri = getImageUri(SearchActivity.this,rotatedBitmap);
                imageViewBook.setImageBitmap(rotatedBitmap);
            }  catch (Exception error) {
             error.printStackTrace();
@@ -253,15 +262,53 @@ public class SearchActivity extends AppCompatActivity {
                         String id = databaseBooks.push().getKey();
                         databaseBooks.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                 .child(id).setValue(mBook);
-                        Toast.makeText(SearchActivity.this, mBook.toString() + '\'' +"id = " + id, Toast.LENGTH_SHORT).show();
                     }
                 });
             }
         });
+        Intent intent = new Intent(SearchActivity.this, IndexActivity.class);
+        startActivity(intent);
+        finish();
     }
 
+    public Uri getImageUri(Context context, Bitmap image) {
+        if (Methods.checkPermissions(context, SearchActivity.this)) {
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            image.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+            String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), image, "Title", null);
+            return Uri.parse(path);
+        }
+        return null;
+    }
 
-//    public String imageToText() {
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case Constants.PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // do your stuff
+                } else {
+                    Toast.makeText(SearchActivity.this, "WRITE_EXTERNAL_STORAGE Denied",
+                            Toast.LENGTH_SHORT).show();
+                }
+                break;
+//            case Constants.PERMISSION_REQUEST_CAMERA:
+//                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    // do your stuff
+//                } else {
+//                    Toast.makeText(SearchActivity.this, "CAMERA Denied",
+//                            Toast.LENGTH_SHORT).show();
+//                }
+//                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions,
+                        grantResults);
+
+        }
+    }
+
+    //    public String imageToText() {
 //        TextRecognizer textRecognizer = new TextRecognizer.Builder(getApplicationContext()).build();
 //        Bitmap bitmap = ((BitmapDrawable)imageViewBook.getDrawable()).getBitmap();
 //        Frame imageFrame = new Frame.Builder()

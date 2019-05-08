@@ -5,8 +5,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -18,21 +22,31 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.andreea.bookhunt.models.Book;
+import com.example.andreea.bookhunt.recyclerviewutils.BookAdapter;
 import com.example.andreea.bookhunt.utils.Constants;
 import com.example.andreea.bookhunt.utils.Methods;
 import com.example.andreea.bookhunt.utils.SharedPreferencesHelper;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 
 public class IndexActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private FirebaseAuth firebaseAuth;
+    private DatabaseReference booksReference;
 
     private String mCurrentPhotoPath;
     private File photoFile;
@@ -41,6 +55,13 @@ public class IndexActivity extends AppCompatActivity
     private TextView mTextViewEmail;
     private NavigationView mNavigationView;
     private LinearLayout mLinearLayoutHeader;
+    private RecyclerView mRecyclerViewBooks;
+
+    private ArrayList<Book> books;
+
+    private BookAdapter bookAdapter;
+
+    private String text;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,10 +80,31 @@ public class IndexActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         initView();
-
         //Methods.checkPermissions(IndexActivity.this, IndexActivity.this);
         Intent intent = getIntent();
+
+        books = new ArrayList<>();
         firebaseAuth = FirebaseAuth.getInstance();
+        booksReference = FirebaseDatabase.getInstance().getReference("Books")
+                .child(firebaseAuth.getCurrentUser().getUid());
+
+        booksReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                books.clear();
+                for(DataSnapshot ds: dataSnapshot.getChildren()) {
+                    Book book = ds.getValue(Book.class);
+                    books.add(book);
+                }
+                bookAdapter = new BookAdapter(getApplicationContext(), books);
+                mRecyclerViewBooks.setAdapter(bookAdapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(IndexActivity.this, "Something went wrong.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void initView() {
@@ -72,6 +114,10 @@ public class IndexActivity extends AppCompatActivity
         mTextViewUsername.setText(SharedPreferencesHelper.getStringValueForUserInfo(Constants.USERNAME, getApplicationContext()));
         mTextViewEmail = (TextView) mLinearLayoutHeader.findViewById(R.id.tvEmail);
         mTextViewEmail.setText(SharedPreferencesHelper.getStringValueForUserInfo(Constants.EMAIL, getApplicationContext()));
+        mRecyclerViewBooks = findViewById(R.id.rvBooks);
+        mRecyclerViewBooks.setLayoutManager(new LinearLayoutManager(this));
+
+
     }
 
     @Override
@@ -138,7 +184,7 @@ public class IndexActivity extends AppCompatActivity
 
     }
 
-    public void btnOpenCamera(View view) {
+    public void btnSearchBook(View view) {
         Intent intent = new Intent(IndexActivity.this, SearchActivity.class);
         startActivity(intent);
     }

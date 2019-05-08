@@ -82,7 +82,7 @@ public class LogInActivity extends AppCompatActivity{
         } else if (password.equals("") || TextUtils.isEmpty(password)) {
             mEditTextPassword.setError(getResources().getString(R.string.error_password_empty));
          } else {
-            Query query = FirebaseDatabase.getInstance().getReference("User").orderByChild("username")
+            Query query = FirebaseDatabase.getInstance().getReference("Users").orderByChild("username")
                     .equalTo(username);
             query.addValueEventListener(new ValueEventListener() {
                 @Override
