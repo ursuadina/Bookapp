@@ -25,9 +25,12 @@ import android.widget.TextView;
 
 import com.example.andreea.bookhunt.utils.Constants;
 import com.example.andreea.bookhunt.utils.Methods;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,7 +47,7 @@ public class SearchActivity extends AppCompatActivity {
     private EditText mEditTextAuthor;
 
     private Uri selectedImageUri;
-    private Uri imageUri;
+    private String imageUri;
 
     private Bitmap rotatedBitmap;
     private String mCurrentPhotoPath;
@@ -55,6 +58,7 @@ public class SearchActivity extends AppCompatActivity {
     private String mImageName;
 
     private StorageReference storageReference;
+    private StorageReference imageRef;
     private FirebaseAuth firebaseAuth;
 
     @Override
@@ -165,6 +169,7 @@ public class SearchActivity extends AppCompatActivity {
         if (requestCode == Constants.CAMERA_REQUEST && resultCode == RESULT_OK) {
            try {
                File file = new File(mCurrentPhotoPath);
+               selectedImageUri = Uri.fromFile(file);
                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), Uri.fromFile(file));
                if (bitmap != null) {
                    ExifInterface ei = new ExifInterface(mCurrentPhotoPath);
@@ -233,7 +238,22 @@ public class SearchActivity extends AppCompatActivity {
         mBookTitle = mEditTextBookTitle.getText().toString();
         mAuthor = mEditTextAuthor.getText().toString();
 
-        
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        String userId = firebaseUser.getUid();
+
+        String imageName = mBookTitle + mAuthor + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".jpg";
+        imageRef = storageReference.child("images/users/"+ userId + "/" + imageName );
+        imageRef.putFile(selectedImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        imageUri = uri.toString();
+                    }
+                });
+            }
+        });
     }
 
 
