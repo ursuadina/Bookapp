@@ -1,14 +1,19 @@
 package com.example.andreea.bookhunt;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,10 +24,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.andreea.bookhunt.utils.Constants;
+import com.example.andreea.bookhunt.utils.Methods;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class SearchActivity extends AppCompatActivity {
@@ -34,10 +44,19 @@ public class SearchActivity extends AppCompatActivity {
     private EditText mEditTextAuthor;
 
     private Uri selectedImageUri;
+    private Uri imageUri;
 
     private Bitmap rotatedBitmap;
     private String mCurrentPhotoPath;
     private File photoFile;
+
+    private String mBookTitle;
+    private String mAuthor;
+    private String mImageName;
+
+    private StorageReference storageReference;
+    private FirebaseAuth firebaseAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +65,11 @@ public class SearchActivity extends AppCompatActivity {
         initView();
 
         Intent intent = getIntent();
+        firebaseAuth = FirebaseAuth.getInstance();
+        storageReference = FirebaseStorage.getInstance().getReference();
+
+        //Methods.checkPermissions(SearchActivity.this, SearchActivity.this);
+
 //        Bundle extras = intent.getExtras();
 //        File file =(File) extras.get("file");
 //        mCurrentPhotoPath = (String) extras.get("currentPhotoPath");
@@ -204,6 +228,14 @@ public class SearchActivity extends AppCompatActivity {
         intent.setType("image/*");
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), Constants.PICK_IMAGE_REQUEST);
     }
+
+    public void btnSearch(View view) {
+        mBookTitle = mEditTextBookTitle.getText().toString();
+        mAuthor = mEditTextAuthor.getText().toString();
+
+        
+    }
+
 
 //    public String imageToText() {
 //        TextRecognizer textRecognizer = new TextRecognizer.Builder(getApplicationContext()).build();

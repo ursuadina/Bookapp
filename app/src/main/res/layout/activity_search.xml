@@ -164,6 +164,7 @@
             android:layout_marginBottom="@dimen/margin_8"
             android:layout_weight="1"
             android:background="@drawable/rounded_button"
+            android:onClick="btnSearch"
             android:text="@string/search" />
 
 

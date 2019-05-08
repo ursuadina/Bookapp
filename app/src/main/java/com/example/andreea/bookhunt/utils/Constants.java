@@ -14,4 +14,9 @@ public class Constants {
     public static final int CAMERA_REQUEST = 1;
     public static final int PICK_IMAGE_REQUEST = 2;
 
+    public static final int PERMISSION_REQUEST_READ_EXTERNAL_STORAGE = 3;
+    public static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 4;
+    public static final int PERMISSION_REQUEST_INTERNET = 5;
+    public static final int PERMISSION_REQUEST_CAMERA = 6;
+
 }

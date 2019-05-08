@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.andreea.bookhunt.models.Register;
 import com.example.andreea.bookhunt.utils.Constants;
+import com.example.andreea.bookhunt.utils.Methods;
 import com.example.andreea.bookhunt.utils.SharedPreferencesHelper;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -48,6 +49,8 @@ public class LogInActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Methods.checkPermissions(LogInActivity.this, LogInActivity.this);
 
         firebaseAuth = FirebaseAuth.getInstance();
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

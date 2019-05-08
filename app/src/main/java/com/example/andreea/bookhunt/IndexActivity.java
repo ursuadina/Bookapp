@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.andreea.bookhunt.utils.Constants;
+import com.example.andreea.bookhunt.utils.Methods;
 import com.example.andreea.bookhunt.utils.SharedPreferencesHelper;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -59,6 +60,7 @@ public class IndexActivity extends AppCompatActivity
 
         initView();
 
+        //Methods.checkPermissions(IndexActivity.this, IndexActivity.this);
         Intent intent = getIntent();
         firebaseAuth = FirebaseAuth.getInstance();
     }
