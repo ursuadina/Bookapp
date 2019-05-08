@@ -1,6 +1,6 @@
 package com.example.andreea.bookhunt.models;
 
-public class Register {
+public class User {
     private String firstName;
     private String lastName;
     private String username;
@@ -40,7 +40,7 @@ public class Register {
 
     @Override
     public String toString() {
-        return "Register{" +
+        return "User{" +
                 "firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", username='" + username + '\'' +

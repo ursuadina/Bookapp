@@ -1,33 +1,30 @@
 package com.example.andreea.bookhunt;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.andreea.bookhunt.models.Book;
 import com.example.andreea.bookhunt.utils.Constants;
-import com.example.andreea.bookhunt.utils.Methods;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -35,7 +32,6 @@ import com.google.firebase.storage.UploadTask;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 public class SearchActivity extends AppCompatActivity {
@@ -56,10 +52,12 @@ public class SearchActivity extends AppCompatActivity {
     private String mBookTitle;
     private String mAuthor;
     private String mImageName;
+    private Book mBook;
 
     private StorageReference storageReference;
     private StorageReference imageRef;
     private FirebaseAuth firebaseAuth;
+    private DatabaseReference databaseBooks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +69,7 @@ public class SearchActivity extends AppCompatActivity {
         Intent intent = getIntent();
         firebaseAuth = FirebaseAuth.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
+        databaseBooks = FirebaseDatabase.getInstance().getReference("Books");
 
         //Methods.checkPermissions(SearchActivity.this, SearchActivity.this);
 
@@ -250,6 +249,11 @@ public class SearchActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Uri uri) {
                         imageUri = uri.toString();
+                        mBook = new Book(mBookTitle, mAuthor, imageUri);
+                        String id = databaseBooks.push().getKey();
+                        databaseBooks.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                .child(id).setValue(mBook);
+                        Toast.makeText(SearchActivity.this, mBook.toString() + '\'' +"id = " + id, Toast.LENGTH_SHORT).show();
                     }
                 });
             }

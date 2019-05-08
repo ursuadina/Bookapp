@@ -13,9 +13,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.andreea.bookhunt.models.Register;
+import com.example.andreea.bookhunt.models.User;
 import com.example.andreea.bookhunt.utils.Constants;
-import com.example.andreea.bookhunt.utils.Methods;
 import com.example.andreea.bookhunt.utils.SharedPreferencesHelper;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -44,7 +43,7 @@ public class LogInActivity extends AppCompatActivity{
 
     private FirebaseAuth firebaseAuth;
     private GoogleSignInClient googleSignInClient;
-    private Register mRegister;
+    private User mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +67,7 @@ public class LogInActivity extends AppCompatActivity{
             setContentView(R.layout.activity_log_in);
 
             initView();
-            mRegister = new Register();
+            mUser = new User();
 
         }
     }
@@ -83,7 +82,7 @@ public class LogInActivity extends AppCompatActivity{
         } else if (password.equals("") || TextUtils.isEmpty(password)) {
             mEditTextPassword.setError(getResources().getString(R.string.error_password_empty));
          } else {
-            Query query = FirebaseDatabase.getInstance().getReference("Users").orderByChild("username")
+            Query query = FirebaseDatabase.getInstance().getReference("User").orderByChild("username")
                     .equalTo(username);
             query.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -93,8 +92,8 @@ public class LogInActivity extends AppCompatActivity{
                         mEditTextUsername.setError(getResources().getString(R.string.error_username_non_existent));
                     } else {
                         for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            mRegister = ds.getValue(Register.class);
-                            String email = mRegister.getEmail();
+                            mUser = ds.getValue(User.class);
+                            String email = mUser.getEmail();
                             SharedPreferencesHelper.setStringValueForUserInfo(Constants.EMAIL, email, LogInActivity.this);
                             firebaseAuth.signInWithEmailAndPassword(email, mEditTextPassword.getText().toString())
                                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {

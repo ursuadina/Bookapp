@@ -12,7 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.andreea.bookhunt.models.Register;
+import com.example.andreea.bookhunt.models.User;
 import com.example.andreea.bookhunt.utils.Constants;
 import com.example.andreea.bookhunt.utils.EmailHelper;
 import com.example.andreea.bookhunt.utils.NameHelper;
@@ -40,7 +40,7 @@ public class RegisterActivity extends AppCompatActivity {
     private TextView mTextView;
     private ProgressDialog mProgressDialog;
 
-    private Register mRegister;
+    private User mUser;
 
     private FirebaseAuth firebaseAuth;
 
@@ -55,7 +55,7 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
         }
 
-        mRegister = new Register();
+        mUser = new User();
         mProgressDialog = new ProgressDialog(this);
 
         firebaseAuth = FirebaseAuth.getInstance();
@@ -186,7 +186,7 @@ public class RegisterActivity extends AppCompatActivity {
         String email = mEditTextEmail.getText().toString();
         if (EmailHelper.isEmailValid(email)) {
             
-            mRegister.setEmail(email);
+            mUser.setEmail(email);
             return true;
         } else {
             mEditTextEmail.setError(getResources().getString(R.string.error_email_input));
@@ -197,7 +197,7 @@ public class RegisterActivity extends AppCompatActivity {
     private boolean isFirstNameValid() {
         String firstName = mEditTextFirstName.getText().toString();
         if (NameHelper.isNameValid(firstName)) {
-            mRegister.setFirstName(firstName);
+            mUser.setFirstName(firstName);
             return true;
         } else {
             mEditTextFirstName.setError(getResources().getString(R.string.error_name_input));
@@ -208,7 +208,7 @@ public class RegisterActivity extends AppCompatActivity {
     private boolean isLastNameValid() {
         String lastName = mEditTextLastName.getText().toString();
         if (NameHelper.isNameValid(lastName)) {
-            mRegister.setLastName(lastName);
+            mUser.setLastName(lastName);
             return true;
         } else {
             mEditTextLastName.setError(getResources().getString(R.string.error_name_input));
@@ -235,7 +235,7 @@ public class RegisterActivity extends AppCompatActivity {
     private boolean isUsernameValid() {
         String username = mEditTextUsername.getText().toString();
         if (UsernameHelper.isUsernameValid(username)) {
-            mRegister.setUsername(username);
+            mUser.setUsername(username);
             return true;
         } else {
             mEditTextUsername.setError(getResources().getString(R.string.error_username_input));
@@ -249,7 +249,7 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         } else {
             String username = mEditTextUsername.getText().toString();
-            Query query1 = FirebaseDatabase.getInstance().getReference("Users").orderByChild("username")
+            Query query1 = FirebaseDatabase.getInstance().getReference("User").orderByChild("username")
                     .equalTo(username);
             query1.addListenerForSingleValueEvent(new ValueEventListener() {
                @Override
@@ -264,11 +264,11 @@ public class RegisterActivity extends AppCompatActivity {
                }
            });
         }
-        final String email = mRegister.getEmail();
+        final String email = mUser.getEmail();
         final String password = mEditTextPassword.getText().toString();
 
         mTextView.setVisibility(View.VISIBLE);
-        mTextView.setText(mRegister.toString());
+        mTextView.setText(mUser.toString());
 
         mProgressDialog.setMessage("Registering...");
         mProgressDialog.show();
@@ -280,12 +280,12 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            FirebaseDatabase.getInstance().getReference("Users")
+                            FirebaseDatabase.getInstance().getReference("User")
                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .setValue(mRegister).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    .setValue(mUser).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
-                                    firebaseAuth.signInWithEmailAndPassword(mRegister.getEmail(),
+                                    firebaseAuth.signInWithEmailAndPassword(mUser.getEmail(),
                                             mEditTextPassword.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                         @Override
                                         public void onComplete(@NonNull Task<AuthResult> task) {
