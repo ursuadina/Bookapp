@@ -1,6 +1,7 @@
 package com.example.andreea.bookhunt.models;
 
 public class Book {
+    private String bookId;
     private String bookTitle;
     private String author;
     private String photoUrl;
@@ -29,6 +30,14 @@ public class Book {
         this.photoUrl = photoUrl;
     }
 
+    public String getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(String bookId) {
+        this.bookId = bookId;
+    }
+
     @Override
     public String toString() {
         return "Book{" +
@@ -38,7 +47,8 @@ public class Book {
                 '}';
     }
 
-    public Book(String bookTitle, String author, String mPhotoUrl) {
+    public Book(String bookId, String bookTitle, String author, String mPhotoUrl) {
+        this.bookId = bookId;
         this.bookTitle = bookTitle;
         this.author = author;
         this.photoUrl = mPhotoUrl;

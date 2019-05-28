@@ -2,15 +2,24 @@ package com.example.andreea.bookhunt;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.andreea.bookhunt.models.User;
@@ -45,31 +54,127 @@ public class LogInActivity extends AppCompatActivity{
     private GoogleSignInClient googleSignInClient;
     private User mUser;
 
+    private ProgressBar progressBar;
+    private ConstraintLayout layout;
+    private boolean isConnected;
+    private boolean enterOnCreate;
+    private BroadcastReceiver state = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (!enterOnCreate) {
+                ConnectivityManager check = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+                Network[] info = check.getAllNetworks();
+                NetworkInfo networkInfo;
+                isConnected = false;
+                for (int i = 0; i < info.length; i++) {
+                    networkInfo = check.getNetworkInfo(info[i]);
+                    if (networkInfo.isConnected()) {
+                        isConnected = true;
+
+                    }
+                }
+                if (isConnected) {
+                    firebaseAuth = FirebaseAuth.getInstance();
+                    GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                            .requestIdToken(getString(R.string.default_web_client_id))
+                            .requestEmail()
+                            .build();
+
+                    googleSignInClient = GoogleSignIn.getClient(context, googleSignInOptions);
+
+                    if (SharedPreferencesHelper.getStringValueForUserInfo(Constants.REMEMBER, LogInActivity.this).equals("True")) {
+                        Intent intent1 = new Intent(LogInActivity.this, IndexActivity.class);
+                        startActivity(intent1);
+                        finish();
+                    } else {
+                        setContentView(R.layout.activity_log_in);
+
+                        initView();
+                        mUser = new User();
+
+                    }
+                } else {
+                    setContentView(R.layout.progress_layout);
+                }
+            } else {
+                enterOnCreate = false;
+            }
+        }
+    };
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        IntentFilter intentFilter = new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        IntentFilter intentFilter1 = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(state, intentFilter1);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(state);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        enterOnCreate = true;
         //Methods.checkPermissions(LogInActivity.this, LogInActivity.this);
+        isConnected = false;
+        ConnectivityManager check = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        Network[] info = check.getAllNetworks();
+        NetworkInfo networkInfo;
+        for (int i = 0; i < info.length; i++) {
+            networkInfo = check.getNetworkInfo(info[i]);
+            if (networkInfo.isConnected()) {
+                isConnected = true;
 
-        firebaseAuth = FirebaseAuth.getInstance();
-        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-
-        googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
-
-        if (SharedPreferencesHelper.getStringValueForUserInfo(Constants.REMEMBER, LogInActivity.this).equals("True")) {
-            Intent intent = new Intent(LogInActivity.this, IndexActivity.class);
-            startActivity(intent);
-            finish();
-        } else {
-            setContentView(R.layout.activity_log_in);
-
-            initView();
-            mUser = new User();
-
+            }
         }
+        if (isConnected) {
+            firebaseAuth = FirebaseAuth.getInstance();
+            GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(getString(R.string.default_web_client_id))
+                    .requestEmail()
+                    .build();
+
+            googleSignInClient = GoogleSignIn.getClient(getApplicationContext(), googleSignInOptions);
+
+            if (SharedPreferencesHelper.getStringValueForUserInfo(Constants.REMEMBER, LogInActivity.this).equals("True")) {
+                Intent intent1 = new Intent(LogInActivity.this, IndexActivity.class);
+                startActivity(intent1);
+                finish();
+            } else {
+                setContentView(R.layout.activity_log_in);
+
+                initView();
+                mUser = new User();
+
+            }
+        } else {
+            setContentView(R.layout.progress_layout);
+        }
+//        firebaseAuth = FirebaseAuth.getInstance();
+//        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//                .requestIdToken(getString(R.string.default_web_client_id))
+//                .requestEmail()
+//                .build();
+//
+//        googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
+//
+//        if (SharedPreferencesHelper.getStringValueForUserInfo(Constants.REMEMBER, LogInActivity.this).equals("True")) {
+//            Intent intent = new Intent(LogInActivity.this, IndexActivity.class);
+//            startActivity(intent);
+//            finish();
+//        } else {
+//            setContentView(R.layout.activity_log_in);
+//
+//            initView();
+//            mUser = new User();
+//
+//        }
     }
 
     public void btnLogInOnClick(View view) {

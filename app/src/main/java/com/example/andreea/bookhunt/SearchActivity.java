@@ -258,8 +258,8 @@ public class SearchActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Uri uri) {
                         imageUri = uri.toString();
-                        mBook = new Book(mBookTitle, mAuthor, imageUri);
                         String id = databaseBooks.push().getKey();
+                        mBook = new Book(id, mBookTitle, mAuthor, imageUri);
                         databaseBooks.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                 .child(id).setValue(mBook);
                     }

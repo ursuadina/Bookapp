@@ -19,12 +19,14 @@
             android:layout_width="140dp"
             android:layout_height="140dp"
             android:layout_marginStart="8dp"
-            app:layout_constraintStart_toStartOf="@+id/guideline7"
-            app:layout_constraintBottom_toTopOf="@+id/guideline9"
-            app:layout_constraintTop_toBottomOf="@+id/guideline10"
-            tools:srcCompat="@tools:sample/avatars[1]"
+            android:layout_marginTop="@dimen/margin_8"
+            android:layout_marginBottom="@dimen/margin_8"
             android:scaleType="fitXY"
-            />
+            app:layout_constraintBottom_toTopOf="@+id/guideline9"
+            app:layout_constraintStart_toStartOf="@+id/guideline7"
+            app:layout_constraintTop_toBottomOf="@+id/guideline10"
+            app:layout_constraintVertical_bias="0.0"
+            tools:srcCompat="@tools:sample/avatars[1]" />
 
         <TextView
             android:id="@+id/tvBookTitle"
@@ -33,10 +35,10 @@
             android:layout_marginTop="32dp"
             android:layout_marginEnd="20dp"
             android:text="@string/book_title"
+            android:textSize="@dimen/text_size"
             app:layout_constraintEnd_toStartOf="@+id/guideline8"
             app:layout_constraintStart_toEndOf="@+id/ivBookPhoto"
-            app:layout_constraintTop_toBottomOf="@+id/guideline10"
-            android:textSize="@dimen/text_size"/>
+            app:layout_constraintTop_toBottomOf="@+id/guideline10" />
 
         <TextView
             android:id="@+id/tvBookAuthor"
@@ -63,7 +65,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_begin="@dimen/margin_guideline_17"  />
+            app:layout_constraintGuide_begin="@dimen/margin_guideline_17" />
 
         <android.support.constraint.Guideline
             android:id="@+id/guideline9"
@@ -78,6 +80,17 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintGuide_begin="@dimen/margin_guideline_17" />
+
+        <ImageButton
+            android:id="@+id/imageButtonDelete"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/ic_delete_item2"
+            android:scaleType="fitXY"
+            app:layout_constraintEnd_toStartOf="@+id/guideline8"
+            app:layout_constraintTop_toTopOf="@+id/guideline10" />
     </android.support.constraint.ConstraintLayout>
 
 </android.support.v7.widget.CardView>

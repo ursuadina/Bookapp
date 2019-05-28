@@ -20,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,12 +57,13 @@ public class IndexActivity extends AppCompatActivity
     private NavigationView mNavigationView;
     private LinearLayout mLinearLayoutHeader;
     private RecyclerView mRecyclerViewBooks;
-
+    private ImageButton mImageButtonDelete;
     private ArrayList<Book> books;
 
     private BookAdapter bookAdapter;
 
     private String text;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
