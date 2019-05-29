@@ -59,7 +59,8 @@ public class IndexActivity extends AppCompatActivity
     private RecyclerView mRecyclerViewBooks;
     private ImageButton mImageButtonDelete;
     private ArrayList<Book> books;
-
+    private View view1;
+    private View view2;
     private BookAdapter bookAdapter;
 
     private String text;
@@ -110,6 +111,12 @@ public class IndexActivity extends AppCompatActivity
     }
 
     public void initView() {
+        view1 = findViewById(R.id.content_index);
+        view1.setVisibility(View.VISIBLE);
+
+        view2 = findViewById(R.id.content_result);
+        view2.setVisibility(View.GONE);
+
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mLinearLayoutHeader = (LinearLayout) mNavigationView.getHeaderView(0);
         mTextViewUsername = (TextView) mLinearLayoutHeader.findViewById(R.id.tvUsername);
@@ -161,7 +168,14 @@ public class IndexActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_gallery) {
+            view1 = findViewById(R.id.content_index);
+            view1.setVisibility(View.GONE);
 
+//            view2 = findViewById(R.id.content_result);
+//            view2.setVisibility(View.VI);
+            Intent intent = new Intent(IndexActivity.this, ResultActivity.class);
+            startActivity(intent);
+            finish();
         } else if (id == R.id.nav_profile) {
 
         } else if (id == R.id.nav_log_out) {
