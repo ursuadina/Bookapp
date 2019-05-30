@@ -30,6 +30,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
 import java.io.File;
 import java.util.ArrayList;
 
@@ -79,6 +81,14 @@ public class IndexActivity extends AppCompatActivity
                 for(DataSnapshot ds: dataSnapshot.getChildren()) {
                     Book book = ds.getValue(Book.class);
                     books.add(book);
+                }
+                if (books.size() == 0) {
+                    TextView textView = findViewById(R.id.no_books);
+                    textView.setVisibility(View.VISIBLE);
+                }
+                else {
+                    TextView textView = findViewById(R.id.no_books);
+                    textView.setVisibility(View.GONE);
                 }
                 bookAdapter = new BookAdapter(getApplicationContext(), books);
                 mRecyclerViewBooks.setAdapter(bookAdapter);

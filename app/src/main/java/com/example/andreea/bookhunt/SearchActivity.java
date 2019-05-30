@@ -262,15 +262,16 @@ public class SearchActivity extends AppCompatActivity {
                         mBook = new Book(id, mBookTitle, mAuthor, imageUri);
                         databaseBooks.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                 .child(id).setValue(mBook);
+                        Intent intent = new Intent(SearchActivity.this, ResultActivity.class);
+                        intent.putExtra(Constants.TITLE, mBookTitle);
+                        intent.putExtra(Constants.AUTHOR, mAuthor);
+                        intent.putExtra(Constants.PHOTO_URL, mBook.getPhotoUrl());
+                        startActivity(intent);
+                        finish();
                     }
                 });
             }
         });
-        Intent intent = new Intent(SearchActivity.this, ResultActivity.class);
-        intent.putExtra(Constants.TITLE, mBookTitle);
-        intent.putExtra(Constants.AUTHOR, mAuthor);
-        startActivity(intent);
-        finish();
     }
 
     public Uri getImageUri(Context context, Bitmap image) {

@@ -8,6 +8,21 @@
     tools:context=".IndexActivity"
     tools:showIn="@layout/app_bar_index">
 
+    <TextView
+        android:id="@+id/no_books"
+        android:layout_width="197dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/no_books"
+        android:textSize="@dimen/text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/rvBooks"
+        app:layout_constraintEnd_toEndOf="@+id/rvBooks"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"/>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvBooks"
         android:layout_width="match_parent"

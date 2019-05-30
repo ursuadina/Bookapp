@@ -1,6 +1,7 @@
 package com.example.andreea.bookhunt;
 
 import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -15,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +26,7 @@ import com.example.andreea.bookhunt.utils.Constants;
 import com.example.andreea.bookhunt.utils.Convertor;
 import com.example.andreea.bookhunt.utils.SharedPreferencesHelper;
 import com.google.firebase.auth.FirebaseAuth;
+import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
 
@@ -42,12 +45,14 @@ public class ResultActivity extends AppCompatActivity  implements NavigationView
 
     private String mBookTitle;
     private String mAuthor;
+    private String mPhotoUrl;
     private String review_widget;
 
     private float phone_width_dp;
     private float phone_height_dp;
 
     private WebView engine;
+    private FloatingActionButton floatingActionButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +67,8 @@ public class ResultActivity extends AppCompatActivity  implements NavigationView
 
         mBookTitle = intent.getStringExtra(Constants.TITLE);
         mAuthor = intent.getStringExtra(Constants.AUTHOR);
-
+        mPhotoUrl = intent.getStringExtra(Constants.PHOTO_URL);
+        Picasso.get().load(mPhotoUrl).into((ImageView)findViewById(R.id.imageViewResult));
         firebaseAuth = FirebaseAuth.getInstance();
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -95,10 +101,10 @@ public class ResultActivity extends AppCompatActivity  implements NavigationView
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         float phone_width = displayMetrics.widthPixels - 100;
-        float phone_height = displayMetrics.heightPixels;
+        float phone_height = displayMetrics.heightPixels - 500;
 
         phone_width_dp = Convertor.convertPixelsToDp(phone_width);
-        phone_height_dp = Convertor.convertPixelsToDp(phone_height);
+        phone_height_dp = Convertor.convertPixelsToDp(phone_height) - 200;
     }
 
     @Override
@@ -164,6 +170,9 @@ public class ResultActivity extends AppCompatActivity  implements NavigationView
 
         view_index = findViewById(R.id.content_index);
         view_index.setVisibility(View.GONE);
+
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
+        floatingActionButton.hide();
 
         engine = (WebView) findViewById(R.id.web_engine);
         engine.getSettings().setJavaScriptEnabled(true);

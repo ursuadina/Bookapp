@@ -7,11 +7,16 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ResultActivity"
     android:orientation="vertical"
+    android:theme="@style/AppTheme.NoActionBar"
     tools:showIn="@layout/app_bar_index">
 
-    <WebView
-        android:id="@+id/web_engine"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
+        <ImageView
+            android:id="@+id/imageViewResult"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="fitCenter"/>
+        <WebView
+            android:id="@+id/web_engine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 </LinearLayout>

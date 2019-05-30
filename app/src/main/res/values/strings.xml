@@ -44,4 +44,5 @@
     <string name="author">Author</string>
     <string name="book_search">Book search</string>
     <string name="gallery_photo">Gallery Photo</string>
+    <string name="no_books">There are no books in your search history. Start your Book Hunt adventure by searching some books.</string>
 </resources>
