@@ -23,8 +23,10 @@
 
     <include layout="@layout/content_index"
         android:id="@+id/content_index"/>
-    <include layout="@layout/content_result"
-        android:id="@+id/content_result"/>
+
+    <include
+        android:id="@+id/content_result"
+        layout="@layout/content_result" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

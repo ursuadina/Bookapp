@@ -1,16 +1,10 @@
 package com.example.andreea.bookhunt;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.content.FileProvider;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -28,7 +22,6 @@ import android.widget.Toast;
 import com.example.andreea.bookhunt.models.Book;
 import com.example.andreea.bookhunt.recyclerviewutils.BookAdapter;
 import com.example.andreea.bookhunt.utils.Constants;
-import com.example.andreea.bookhunt.utils.Methods;
 import com.example.andreea.bookhunt.utils.SharedPreferencesHelper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -38,10 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 
 public class IndexActivity extends AppCompatActivity
@@ -59,8 +49,8 @@ public class IndexActivity extends AppCompatActivity
     private RecyclerView mRecyclerViewBooks;
     private ImageButton mImageButtonDelete;
     private ArrayList<Book> books;
-    private View view1;
-    private View view2;
+    private View view_index;
+    private View view_result;
     private BookAdapter bookAdapter;
 
     private String text;
@@ -70,17 +60,8 @@ public class IndexActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_index);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        initNavDrawer();
 
         initView();
         //Methods.checkPermissions(IndexActivity.this, IndexActivity.this);
@@ -111,11 +92,11 @@ public class IndexActivity extends AppCompatActivity
     }
 
     public void initView() {
-        view1 = findViewById(R.id.content_index);
-        view1.setVisibility(View.VISIBLE);
+        view_index = findViewById(R.id.content_index);
+        view_index.setVisibility(View.VISIBLE);
 
-        view2 = findViewById(R.id.content_result);
-        view2.setVisibility(View.GONE);
+        view_result = findViewById(R.id.content_result);
+        view_result.setVisibility(View.GONE);
 
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mLinearLayoutHeader = (LinearLayout) mNavigationView.getHeaderView(0);
@@ -126,7 +107,20 @@ public class IndexActivity extends AppCompatActivity
         mRecyclerViewBooks = findViewById(R.id.rvBooks);
         mRecyclerViewBooks.setLayoutManager(new LinearLayoutManager(this));
 
+    }
 
+    public void initNavDrawer() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
     }
 
     @Override
@@ -168,11 +162,11 @@ public class IndexActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_gallery) {
-            view1 = findViewById(R.id.content_index);
-            view1.setVisibility(View.GONE);
+            view_index = findViewById(R.id.content_index);
+            view_index.setVisibility(View.GONE);
 
-//            view2 = findViewById(R.id.content_result);
-//            view2.setVisibility(View.VI);
+//            view_result = findViewById(R.id.content_result);
+//            view_result.setVisibility(View.VI);
             Intent intent = new Intent(IndexActivity.this, ResultActivity.class);
             startActivity(intent);
             finish();

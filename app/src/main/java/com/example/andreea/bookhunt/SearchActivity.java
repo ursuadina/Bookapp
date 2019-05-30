@@ -266,7 +266,9 @@ public class SearchActivity extends AppCompatActivity {
                 });
             }
         });
-        Intent intent = new Intent(SearchActivity.this, IndexActivity.class);
+        Intent intent = new Intent(SearchActivity.this, ResultActivity.class);
+        intent.putExtra(Constants.TITLE, mBookTitle);
+        intent.putExtra(Constants.AUTHOR, mAuthor);
         startActivity(intent);
         finish();
     }
