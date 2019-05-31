@@ -17,15 +17,19 @@ import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.andreea.bookhunt.models.Book;
 import com.example.andreea.bookhunt.retrofitUtils.GoodreadsAPI;
 import com.example.andreea.bookhunt.retrofitUtils.model.GoodreadsResponse;
 import com.example.andreea.bookhunt.utils.Constants;
 import com.example.andreea.bookhunt.utils.Convertor;
 import com.example.andreea.bookhunt.utils.SharedPreferencesHelper;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
@@ -39,9 +43,11 @@ import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 public class ResultActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener {
 
     private FirebaseAuth firebaseAuth;
+    private DatabaseReference databaseBooks;
 
     private View view_index;
     private View view_result;
+    private RatingBar ratingBarGoodReads;
 
     private String mBookTitle;
     private String mAuthor;
@@ -50,6 +56,8 @@ public class ResultActivity extends AppCompatActivity  implements NavigationView
 
     private float phone_width_dp;
     private float phone_height_dp;
+
+    private Book mBook;
 
     private WebView engine;
     private FloatingActionButton floatingActionButton;
@@ -68,8 +76,9 @@ public class ResultActivity extends AppCompatActivity  implements NavigationView
         mBookTitle = intent.getStringExtra(Constants.TITLE);
         mAuthor = intent.getStringExtra(Constants.AUTHOR);
         mPhotoUrl = intent.getStringExtra(Constants.PHOTO_URL);
-        Picasso.get().load(mPhotoUrl).into((ImageView)findViewById(R.id.imageViewResult));
+//        Picasso.get().load(mPhotoUrl).into((ImageView)findViewById(R.id.imageViewResult));
         firebaseAuth = FirebaseAuth.getInstance();
+        databaseBooks = FirebaseDatabase.getInstance().getReference("Books");
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL)
@@ -85,6 +94,22 @@ public class ResultActivity extends AppCompatActivity  implements NavigationView
                 String review_widget2 = review_widget.replaceAll("width=\"565\" height=\"400\"", "width=\"" + phone_width_dp + "\" height=\"" + phone_height_dp + "\"");
                 String review_widget_final = review_widget2.replaceAll("width:565px;", "width:" + phone_width_dp + "px;");
                 engine.loadData(review_widget_final, "text/html", "UTF-8");
+
+                Picasso.get().load(mPhotoUrl).into((ImageView)findViewById(R.id.imageViewResult));
+
+                float average_rating = response.body().getBook().getAverage_rating();
+                ratingBarGoodReads.setVisibility(View.VISIBLE);
+                ratingBarGoodReads.setRating(average_rating);
+                ratingBarGoodReads.setStepSize((float) 0.5);
+
+                String id = databaseBooks.push().getKey();
+                String description = response.body().getBook().getDescription();
+                String description_new = description.replaceAll("<br />", "\n");
+
+                mBook = new Book(id, mBookTitle, mAuthor, mPhotoUrl, average_rating, description_new);
+                databaseBooks.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(id).setValue(mBook);
+
                 Log.d("ResultActivity", "onResponse: GoodReadsReasponse: " + response.body().getBook());
                 Log.d("ResultActivity", "onResponse: Server Response: " + response.toString());
             }
@@ -173,6 +198,9 @@ public class ResultActivity extends AppCompatActivity  implements NavigationView
 
         floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
         floatingActionButton.hide();
+
+        ratingBarGoodReads = (RatingBar) findViewById(R.id.ratingBarGoodReads);
+        ratingBarGoodReads.setVisibility(View.GONE);
 
         engine = (WebView) findViewById(R.id.web_engine);
         engine.getSettings().setJavaScriptEnabled(true);

@@ -6,9 +6,11 @@ public class Constants {
     public static final String USERNAME = "username";
     public static final String PASS = "password";
     public static final String EMAIL = "email";
+    public static final String BOOK_ID = "book_id";
     public static final String TITLE = "title";
     public static final String AUTHOR = "author";
     public static final String PHOTO_URL = "photo_url";
+    public static final String DESCRIPTION = "description";
     public static final String DEVELOPER_KEY = "zqlr6wiS6ICcrwjL8HRcyw";
 
     public static final String REMEMBER = "remember_login";

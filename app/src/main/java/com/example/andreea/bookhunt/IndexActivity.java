@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.andreea.bookhunt.fragments.Index;
 import com.example.andreea.bookhunt.models.Book;
 import com.example.andreea.bookhunt.recyclerviewutils.BookAdapter;
 import com.example.andreea.bookhunt.utils.Constants;
@@ -90,7 +91,7 @@ public class IndexActivity extends AppCompatActivity
                     TextView textView = findViewById(R.id.no_books);
                     textView.setVisibility(View.GONE);
                 }
-                bookAdapter = new BookAdapter(getApplicationContext(), books);
+                bookAdapter = new BookAdapter(IndexActivity.this, books);
                 mRecyclerViewBooks.setAdapter(bookAdapter);
             }
 

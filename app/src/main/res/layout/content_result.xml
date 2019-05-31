@@ -1,22 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ResultActivity"
-    android:orientation="vertical"
     android:theme="@style/AppTheme.NoActionBar"
     tools:showIn="@layout/app_bar_index">
 
         <ImageView
             android:id="@+id/imageViewResult"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="200dp"
-            android:scaleType="fitCenter"/>
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:scaleType="fitCenter"
+            app:layout_constraintEnd_toEndOf="@id/guideline11"
+            app:layout_constraintStart_toStartOf="@id/guideline12"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <WebView
             android:id="@+id/web_engine"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-</LinearLayout>
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/guideline11"
+            app:layout_constraintStart_toStartOf="@id/guideline12"
+            app:layout_constraintTop_toBottomOf="@+id/imageViewResult"
+            app:layout_constraintVertical_bias="0.009" />
+
+        <RatingBar
+            android:id="@+id/ratingBarGoodReads"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/web_engine"
+            app:layout_constraintEnd_toEndOf="@id/guideline11"
+            app:layout_constraintTop_toBottomOf="@+id/imageViewResult"
+            android:stepSize="0.5"
+            style="?android:attr/ratingBarStyleSmall"
+            android:numStars="5"
+            />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="@dimen/margin_guideline_17" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="@dimen/margin_guideline_17" />
+</android.support.constraint.ConstraintLayout>

@@ -5,6 +5,8 @@ public class Book {
     private String bookTitle;
     private String author;
     private String photoUrl;
+    private float rating;
+    private String description;
 
     public String getBookTitle() {
         return bookTitle;
@@ -38,6 +40,14 @@ public class Book {
         this.bookId = bookId;
     }
 
+    public float getRating() { return rating; }
+
+    public void setRating(float rating) { this.rating = rating; }
+
+    public String getDescription() { return description; }
+
+    public void setDescription(String description) { this.description = description; }
+
     @Override
     public String toString() {
         return "Book{" +
@@ -47,11 +57,13 @@ public class Book {
                 '}';
     }
 
-    public Book(String bookId, String bookTitle, String author, String mPhotoUrl) {
+    public Book(String bookId, String bookTitle, String author, String photoUrl, float rating, String description) {
         this.bookId = bookId;
         this.bookTitle = bookTitle;
         this.author = author;
-        this.photoUrl = mPhotoUrl;
+        this.photoUrl = photoUrl;
+        this.rating = rating;
+        this.description = description;
     }
 
     public Book() {
