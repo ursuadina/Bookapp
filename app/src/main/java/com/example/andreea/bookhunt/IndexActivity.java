@@ -19,7 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.andreea.bookhunt.fragments.Index;
+
 import com.example.andreea.bookhunt.models.Book;
 import com.example.andreea.bookhunt.recyclerviewutils.BookAdapter;
 import com.example.andreea.bookhunt.utils.Constants;
@@ -54,6 +54,7 @@ public class IndexActivity extends AppCompatActivity
     private ArrayList<Book> books;
     private View view_index;
     private View view_result;
+    private View view_result_idb;
     private BookAdapter bookAdapter;
 
     private String text;
@@ -109,6 +110,9 @@ public class IndexActivity extends AppCompatActivity
         view_result = findViewById(R.id.content_result);
         view_result.setVisibility(View.GONE);
 
+        view_result = findViewById(R.id.content_result_idb);
+        view_result.setVisibility(View.GONE);
+
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mLinearLayoutHeader = (LinearLayout) mNavigationView.getHeaderView(0);
         mTextViewUsername = (TextView) mLinearLayoutHeader.findViewById(R.id.tvUsername);
@@ -122,6 +126,7 @@ public class IndexActivity extends AppCompatActivity
 
     public void initNavDrawer() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.app_name);
         setSupportActionBar(toolbar);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -173,14 +178,7 @@ public class IndexActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_gallery) {
-            view_index = findViewById(R.id.content_index);
-            view_index.setVisibility(View.GONE);
 
-//            view_result = findViewById(R.id.content_result);
-//            view_result.setVisibility(View.VI);
-            Intent intent = new Intent(IndexActivity.this, ResultActivity.class);
-            startActivity(intent);
-            finish();
         } else if (id == R.id.nav_profile) {
 
         } else if (id == R.id.nav_log_out) {

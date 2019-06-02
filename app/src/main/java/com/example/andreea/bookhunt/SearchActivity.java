@@ -15,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -128,6 +129,9 @@ public class SearchActivity extends AppCompatActivity {
                 matrix, true);
     }
     public void initView() {
+        android.support.v7.widget.Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar1);
+        setSupportActionBar(toolbar);
+
         textViewTitle = (TextView) findViewById(R.id.textView3);
         imageViewBook = (ImageView)  findViewById(R.id.imageViewBookPhoto);
         mEditTextBookTitle = (EditText) findViewById(R.id.etBookTitle);
@@ -262,7 +266,7 @@ public class SearchActivity extends AppCompatActivity {
 //                        mBook = new Book(id, mBookTitle, mAuthor, imageUri);
 //                        databaseBooks.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
 //                                .child(id).setValue(mBook);
-                        Intent intent = new Intent(SearchActivity.this, ResultActivity.class);
+                        Intent intent = new Intent(SearchActivity.this, OptionsActivity.class);
                         //intent.putExtra(Constants.BOOK_ID, id);
                         intent.putExtra(Constants.TITLE, mBookTitle);
                         intent.putExtra(Constants.AUTHOR, mAuthor);

@@ -45,4 +45,8 @@
     <string name="book_search">Book search</string>
     <string name="gallery_photo">Gallery Photo</string>
     <string name="no_books">There are no books in your search history. Start your Book Hunt adventure by searching some books.</string>
+    <string name="goodreads">GoodReads</string>
+    <string name="result_option">We managed to get results from the following sites. Which one would you like to see?</string>
+    <string name="new_york_times">New York Times</string>
+    <string name="i_dream_books">I Dream Books</string>
 </resources>

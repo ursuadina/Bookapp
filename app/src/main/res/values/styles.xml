@@ -6,6 +6,9 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textViewStyle">@style/AlegreyaTextViewStyle</item>
+        <item name="android:buttonStyle">@style/AlegreyaButtonStyle</item>
+        <item name="android:checkboxStyle">@style/AlegreyaCheckBoxStyle</item>
     </style>
 
     <style name="TextInput" parent="TextAppearance.AppCompat">
@@ -26,5 +29,21 @@
     <style name="AppTheme.CustomTheme" >
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowCloseOnTouchOutside">true</item>
+    </style>
+
+    <style name="AlegreyaTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/alegreya</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
+    <style name="AlegreyaButtonStyle" parent="android:Widget.Holo.Button">
+        <item name="android:fontFamily">@font/alegreya</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="AlegreyaCheckBoxStyle" parent="android:Widget.CompoundButton.CheckBox">
+        <item name="android:fontFamily">@font/alegreya</item>
+        <item name="android:textColor">@android:color/black</item>
     </style>
 </resources>

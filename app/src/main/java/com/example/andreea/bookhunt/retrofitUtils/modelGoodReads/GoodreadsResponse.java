@@ -1,7 +1,7 @@
-package com.example.andreea.bookhunt.retrofitUtils.model;
+package com.example.andreea.bookhunt.retrofitUtils.modelGoodReads;
 
 
-import com.example.andreea.bookhunt.retrofitUtils.model.book.BookGoodreads;
+import com.example.andreea.bookhunt.retrofitUtils.modelGoodReads.book.BookGoodreads;
 
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;

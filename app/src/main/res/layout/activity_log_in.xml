@@ -37,6 +37,7 @@
                 android:hint="@string/username"
                 android:inputType="text"
                 android:textColorHighlight="#000"
+                android:fontFamily="@font/alegreya"
                 android:textSize="@dimen/text_size"
                 android:textStyle="bold" />
         </android.support.design.widget.TextInputLayout>
@@ -51,6 +52,7 @@
                 android:id="@+id/etPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/alegreya"
                 android:hint="@string/password"
                 android:inputType="textPassword"
                 android:textColorHighlight="#000"
@@ -105,6 +107,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintStart_toStartOf="@+id/guideline2"
+        android:fontFamily="@font/alegreya"
         />
 
     <android.support.constraint.Guideline

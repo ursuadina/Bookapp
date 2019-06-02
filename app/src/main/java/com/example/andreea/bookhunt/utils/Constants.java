@@ -11,12 +11,14 @@ public class Constants {
     public static final String AUTHOR = "author";
     public static final String PHOTO_URL = "photo_url";
     public static final String DESCRIPTION = "description";
-    public static final String DEVELOPER_KEY = "zqlr6wiS6ICcrwjL8HRcyw";
+    public static final String DEVELOPER_KEY_GOODREADS = "zqlr6wiS6ICcrwjL8HRcyw";
+    public static final String DEVELOPER_KEY_IDREAMBOOKS = "3b357f3c1e4faf4c6381b3fb70d4ec5e9ff35865";
 
     public static final String REMEMBER = "remember_login";
 
     public static final String MESSAGE = "message";
-    public static final String BASE_URL = "https://www.goodreads.com/book/";
+    public static final String BASE_URL_GOODREADS = "https://www.goodreads.com/book/";
+    public static final String BASE_URL_IDREAMBOOKS = "https://idreambooks.com/api/books/";
 
 
     public static final int RC_SIGN_IN_GOOGLE = 9001;

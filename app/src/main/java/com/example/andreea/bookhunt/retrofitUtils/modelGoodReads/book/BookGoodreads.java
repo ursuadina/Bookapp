@@ -1,4 +1,4 @@
-package com.example.andreea.bookhunt.retrofitUtils.model.book;
+package com.example.andreea.bookhunt.retrofitUtils.modelGoodReads.book;
 
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;

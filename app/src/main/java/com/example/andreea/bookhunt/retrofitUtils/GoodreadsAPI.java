@@ -1,6 +1,6 @@
 package com.example.andreea.bookhunt.retrofitUtils;
 
-import com.example.andreea.bookhunt.retrofitUtils.model.GoodreadsResponse;
+import com.example.andreea.bookhunt.retrofitUtils.modelGoodReads.GoodreadsResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
