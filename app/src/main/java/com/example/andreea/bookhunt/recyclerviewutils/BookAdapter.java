@@ -3,6 +3,7 @@ package com.example.andreea.bookhunt.recyclerviewutils;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,8 @@ import android.widget.Toast;
 
 import com.example.andreea.bookhunt.PopupWindowActivity;
 import com.example.andreea.bookhunt.R;
+import com.example.andreea.bookhunt.ResultActivity;
+import com.example.andreea.bookhunt.ResultsIDreamBooksActivity;
 import com.example.andreea.bookhunt.models.Book;
 import com.example.andreea.bookhunt.utils.Constants;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -72,6 +75,46 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
                 context.startActivity(intent);
             }
         });
+        bookViewHolder.mImageButtonAddReview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addReviewBook(book.getBookId());
+            }
+        });
+        bookViewHolder.mImageButtonViewGoodreads.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewGoodreadsReview(book.getBookTitle(), book.getAuthor(), book.getPhotoUrl());
+            }
+        });
+        bookViewHolder.mImageButtonViewIDB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewIDBReview(book.getBookTitle(), book.getAuthor(), book.getPhotoUrl());
+            }
+        });
+    }
+
+    private void viewIDBReview(String bookTitle, String author, String photoUrl) {
+        Intent intent = new Intent(context, ResultsIDreamBooksActivity.class);
+        intent.putExtra(Constants.TITLE, bookTitle);
+        intent.putExtra(Constants.AUTHOR, author);
+        intent.putExtra(Constants.PHOTO_URL, photoUrl);
+        context.startActivity(intent);
+    }
+
+    private void viewGoodreadsReview(String bookTitle, String author, String photoUrl) {
+        //todo: sa nu mai creeze un nou element in baza de date
+        Intent intent = new Intent(context, ResultActivity.class);
+        intent.putExtra(Constants.TITLE, bookTitle);
+        intent.putExtra(Constants.AUTHOR, author);
+        intent.putExtra(Constants.PHOTO_URL, photoUrl);
+        context.startActivity(intent);
+    }
+
+    private void addReviewBook(String bookId) {
+        //TODO: add book review + rating
+        Toast.makeText(context, "TODO: add book review", Toast.LENGTH_SHORT).show();
     }
 
     public void deleteBook(String id, String photoUrl) {

@@ -15,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
@@ -247,6 +248,9 @@ public class LogInActivity extends AppCompatActivity{
     }
 
     public void initView() {
+        android.support.v7.widget.Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarLogIn);
+        setSupportActionBar(toolbar);
+
         mEditTextUsername = (EditText) findViewById(R.id.etUsername);
         mEditTextPassword = (EditText) findViewById(R.id.etPassword);
         mCheckBoxRemember = (CheckBox) findViewById(R.id.checkBoxRemember);

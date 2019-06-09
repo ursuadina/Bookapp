@@ -1,5 +1,6 @@
 package com.example.andreea.bookhunt.recyclerviewutils;
 
+import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +21,10 @@ public class BookViewHolder extends RecyclerView.ViewHolder {
     public ImageButton mImageButtonDelete;
     public RatingBar mRatingBarGoodReads;
     public ImageButton mImageButtonExpand;
+    public ImageButton mImageButtonAddReview;
+    public ImageButton mImageButtonViewGoodreads;
+    public ImageButton mImageButtonViewIDB;
+
     public BookViewHolder(@NonNull View itemView) {
         super(itemView);
 
@@ -34,6 +39,9 @@ public class BookViewHolder extends RecyclerView.ViewHolder {
         mImageButtonDelete = (ImageButton) itemView.findViewById(R.id.imageButtonDelete);
         mRatingBarGoodReads = (RatingBar) itemView.findViewById(R.id.ratingBar);
         mImageButtonExpand = (ImageButton) itemView.findViewById(R.id.imageButtonExpand);
+        mImageButtonAddReview = (ImageButton) itemView.findViewById(R.id.imageButtonAddReview);
+        mImageButtonViewGoodreads = (ImageButton) itemView.findViewById(R.id.imageButtonGR);
+        mImageButtonViewIDB = (ImageButton) itemView.findViewById(R.id.imageButtonIDB);
     }
 
 }
