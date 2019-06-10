@@ -60,6 +60,18 @@
             android:text="@string/i_dream_books"
             android:background="@drawable/rounded_button"
             android:onClick="btnIDBResults"/>
+
+        <Button
+            android:id="@+id/buttonBH"
+            android:layout_width="@dimen/width_0"
+            android:layout_height="@dimen/button_height_55"
+            android:layout_marginTop="@dimen/margin_8"
+            android:layout_marginEnd="@dimen/margin_8"
+            android:layout_marginBottom="@dimen/margin_8"
+            android:layout_weight="1"
+            android:text="@string/app_name"
+            android:background="@drawable/rounded_button"
+            />
     </LinearLayout>
 
     <android.support.constraint.Guideline

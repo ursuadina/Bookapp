@@ -51,10 +51,6 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         Intent intent = getIntent();
-        if (intent != null) {
-            Toast.makeText(RegisterActivity.this, intent.getStringExtra(Constants.MESSAGE),
-                    Toast.LENGTH_SHORT).show();
-        }
 
         mUser = new User();
         mProgressDialog = new ProgressDialog(this);
@@ -253,7 +249,7 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         } else {
             String username = mEditTextUsername.getText().toString();
-            Query query1 = FirebaseDatabase.getInstance().getReference("User").orderByChild("username")
+            Query query1 = FirebaseDatabase.getInstance().getReference("Users").orderByChild("username")
                     .equalTo(username);
             query1.addListenerForSingleValueEvent(new ValueEventListener() {
                @Override
@@ -284,7 +280,7 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            FirebaseDatabase.getInstance().getReference("User")
+                            FirebaseDatabase.getInstance().getReference("Users")
                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                     .setValue(mUser).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override

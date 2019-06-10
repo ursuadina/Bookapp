@@ -55,6 +55,7 @@ public class IndexActivity extends AppCompatActivity
     private View view_index;
     private View view_result;
     private View view_result_idb;
+    private View view_fav;
     private BookAdapter bookAdapter;
 
     private String text;
@@ -112,6 +113,9 @@ public class IndexActivity extends AppCompatActivity
 
         view_result = findViewById(R.id.content_result_idb);
         view_result.setVisibility(View.GONE);
+
+        view_fav = findViewById(R.id.content_fav);
+        view_fav.setVisibility(View.GONE);
 
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mLinearLayoutHeader = (LinearLayout) mNavigationView.getHeaderView(0);
@@ -181,6 +185,9 @@ public class IndexActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_profile) {
 
+        } else if (id == R.id.nav_fav) {
+           Intent intent = new Intent(IndexActivity.this, FavouriteActivity.class);
+           startActivity(intent);
         } else if (id == R.id.nav_log_out) {
             btnLogOutClick();
 

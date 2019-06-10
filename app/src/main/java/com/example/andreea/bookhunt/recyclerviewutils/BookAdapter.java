@@ -8,12 +8,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.andreea.bookhunt.PopupWindowActivity;
 import com.example.andreea.bookhunt.R;
 import com.example.andreea.bookhunt.ResultActivity;
 import com.example.andreea.bookhunt.ResultsIDreamBooksActivity;
+import com.example.andreea.bookhunt.ReviewActivity;
 import com.example.andreea.bookhunt.models.Book;
 import com.example.andreea.bookhunt.utils.Constants;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -48,7 +50,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull BookViewHolder bookViewHolder, int i) {
+    public void onBindViewHolder(@NonNull final BookViewHolder bookViewHolder, int i) {
         book = books.get(i);
         title = book.getBookTitle();
         photoUrl = book.getPhotoUrl();
@@ -93,6 +95,23 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
                 viewIDBReview(book.getBookTitle(), book.getAuthor(), book.getPhotoUrl());
             }
         });
+
+        bookViewHolder.mImageButtonAddFav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addToFav(bookViewHolder.mImageButtonAddFav);
+            }
+        });
+    }
+
+    private void addToFav(ImageButton mImageButtonAddFav) {
+        if((Integer) mImageButtonAddFav.getTag() == R.drawable.ic_favorite_border_black_24dp) {
+            mImageButtonAddFav.setImageResource(R.drawable.ic_favorite_black_24dp);
+            mImageButtonAddFav.setTag(R.drawable.ic_favorite_black_24dp);
+        } else {
+            mImageButtonAddFav.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+            mImageButtonAddFav.setTag(R.drawable.ic_favorite_border_black_24dp);
+        }
     }
 
     private void viewIDBReview(String bookTitle, String author, String photoUrl) {
@@ -114,7 +133,9 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
 
     private void addReviewBook(String bookId) {
         //TODO: add book review + rating
-        Toast.makeText(context, "TODO: add book review", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, "TODO: add book review", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(context, ReviewActivity.class);
+        context.startActivity(intent);
     }
 
     public void deleteBook(String id, String photoUrl) {

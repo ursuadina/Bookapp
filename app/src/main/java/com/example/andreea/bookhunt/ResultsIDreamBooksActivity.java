@@ -139,11 +139,12 @@ public class ResultsIDreamBooksActivity extends AppCompatActivity  implements Na
         int id = item.getItemId();
 
         if (id == R.id.nav_gallery) {
-            Intent intent = new Intent(ResultsIDreamBooksActivity.this, IndexActivity.class);
-            startActivity(intent);
-            finish();
+
         } else if (id == R.id.nav_profile) {
 
+        } else if (id == R.id.nav_fav) {
+            Intent intent = new Intent(ResultsIDreamBooksActivity.this, FavouriteActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_log_out) {
             btnLogOutClick();
 
@@ -176,6 +177,9 @@ public class ResultsIDreamBooksActivity extends AppCompatActivity  implements Na
 
         View view_result_idb = findViewById(R.id.content_result_idb);
         view_result_idb.setVisibility(View.VISIBLE);
+
+        View  view_fav = findViewById(R.id.content_fav);
+        view_fav.setVisibility(View.GONE);
 
         floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
         floatingActionButton.hide();

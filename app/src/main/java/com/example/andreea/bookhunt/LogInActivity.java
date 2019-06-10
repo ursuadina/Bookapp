@@ -237,7 +237,6 @@ public class LogInActivity extends AppCompatActivity{
 
     public void btnSignInOnClick(View view) {
         Intent intent = new Intent(LogInActivity.this, RegisterActivity.class);
-        intent.putExtra(Constants.MESSAGE, "buna din pagina de login");
         startActivity(intent);
     }
 

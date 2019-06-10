@@ -24,7 +24,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ReviewActivity"></activity>
+        <activity android:name=".FavouriteActivity"></activity>
+        <activity
+            android:name=".ReviewActivity"
+            android:windowSoftInputMode="adjustPan" />
         <activity android:name=".ResultsIDreamBooksActivity" />
         <activity android:name=".OptionsActivity" />
         <activity

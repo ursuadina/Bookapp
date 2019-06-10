@@ -45,6 +45,7 @@ public class ResultActivity extends AppCompatActivity  implements NavigationView
     private View view_index;
     private View view_result;
     private View view_result_idb;
+    private View view_fav;
     private RatingBar ratingBarGoodReads;
 
     private String mBookTitle;
@@ -159,11 +160,12 @@ public class ResultActivity extends AppCompatActivity  implements NavigationView
         int id = item.getItemId();
 
         if (id == R.id.nav_gallery) {
-            Intent intent = new Intent(ResultActivity.this, IndexActivity.class);
-            startActivity(intent);
-            finish();
+
         } else if (id == R.id.nav_profile) {
 
+        } else if (id == R.id.nav_fav) {
+            Intent intent = new Intent(ResultActivity.this, FavouriteActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_log_out) {
             btnLogOutClick();
 
@@ -196,6 +198,9 @@ public class ResultActivity extends AppCompatActivity  implements NavigationView
 
         view_result_idb = findViewById(R.id.content_result_idb);
         view_result_idb.setVisibility(View.GONE);
+
+        view_fav = findViewById(R.id.content_fav);
+        view_fav.setVisibility(View.GONE);
 
         floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
         floatingActionButton.hide();
