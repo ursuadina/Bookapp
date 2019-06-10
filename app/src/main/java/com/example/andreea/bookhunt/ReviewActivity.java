@@ -61,12 +61,6 @@ public class ReviewActivity extends AppCompatActivity {
         reviews.add(new Review("this book surprised me", "uadina123", (float) 3.5));
         reviews.add(new Review("is a very good book","ioana",4));
         reviews.add(new Review("awesome", "andreea123", 3));
-        reviews.add(new Review("awesome", "andreea123", 3));
-        reviews.add(new Review("awesome", "andreea123", 3));
-        reviews.add(new Review("awesome", "andreea123", 3));
-        reviews.add(new Review("awesome", "andreea123", 3));
-        reviews.add(new Review("awesome", "andreea123", 3));
-        reviews.add(new Review("awesome", "andreea123", 3));
         return reviews;
     }
 

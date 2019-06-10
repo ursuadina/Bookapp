@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.example.andreea.bookhunt.BHResultActivity;
 import com.example.andreea.bookhunt.PopupWindowActivity;
 import com.example.andreea.bookhunt.R;
 import com.example.andreea.bookhunt.ResultActivity;
@@ -100,6 +101,14 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
             @Override
             public void onClick(View v) {
                 addToFav(bookViewHolder.mImageButtonAddFav);
+            }
+        });
+
+        bookViewHolder.mImageButtonBH.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, BHResultActivity.class);
+                context.startActivity(intent);
             }
         });
     }

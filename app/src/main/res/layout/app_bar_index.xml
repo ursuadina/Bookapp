@@ -36,6 +36,10 @@
         android:id="@+id/content_fav"
         layout="@layout/content_fav"/>
 
+    <include
+        android:id="@+id/bh_content"
+        layout="@layout/bh_content"/>
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"

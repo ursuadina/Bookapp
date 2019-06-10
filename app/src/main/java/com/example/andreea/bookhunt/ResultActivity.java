@@ -202,6 +202,9 @@ public class ResultActivity extends AppCompatActivity  implements NavigationView
         view_fav = findViewById(R.id.content_fav);
         view_fav.setVisibility(View.GONE);
 
+        View view_bh = findViewById(R.id.bh_content);
+        view_bh.setVisibility(View.GONE);
+
         floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
         floatingActionButton.hide();
 

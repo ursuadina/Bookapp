@@ -117,6 +117,9 @@ public class IndexActivity extends AppCompatActivity
         view_fav = findViewById(R.id.content_fav);
         view_fav.setVisibility(View.GONE);
 
+        View view_bh = findViewById(R.id.bh_content);
+        view_bh.setVisibility(View.GONE);
+
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mLinearLayoutHeader = (LinearLayout) mNavigationView.getHeaderView(0);
         mTextViewUsername = (TextView) mLinearLayoutHeader.findViewById(R.id.tvUsername);

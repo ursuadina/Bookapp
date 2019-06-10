@@ -39,4 +39,9 @@ public class OptionsActivity extends AppCompatActivity {
         intent.putExtras(bundleExtras);
         startActivity(intent);
     }
+
+    public void btnBHResult(View view) {
+        Intent intent = new Intent(OptionsActivity.this, BHResultActivity.class);
+        startActivity(intent);
+    }
 }
