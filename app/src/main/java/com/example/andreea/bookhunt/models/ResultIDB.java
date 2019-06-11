@@ -1,6 +1,9 @@
 package com.example.andreea.bookhunt.models;
 
-public class ResultIDB {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class ResultIDB implements Parcelable {
     private String mSnippet;
     private String mSource;
     private float mRating;
@@ -34,4 +37,33 @@ public class ResultIDB {
     public void setmRating(float mRating) {
         this.mRating = mRating;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mSnippet);
+        dest.writeString(mSource);
+        dest.writeFloat(mRating);
+    }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public ResultIDB createFromParcel(Parcel in) {
+            return new ResultIDB(in);
+        }
+
+        public ResultIDB[] newArray(int size) {
+            return new ResultIDB[size];
+        }
+    };
+
+    public ResultIDB(Parcel in) {
+        mSnippet = in.readString();
+        mSource = in.readString();
+        mRating = in.readFloat();
+    }
+
 }

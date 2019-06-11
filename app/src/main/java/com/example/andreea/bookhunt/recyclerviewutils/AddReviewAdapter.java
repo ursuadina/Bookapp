@@ -17,7 +17,7 @@ public class AddReviewAdapter extends RecyclerView.Adapter<AddReviewViewHolder> 
     private ArrayList<Review> addReviewArrayList;
 
     private String review;
-    private String user;
+    private String userId;
     private float rating;
     private Review addReview;
 
@@ -36,11 +36,11 @@ public class AddReviewAdapter extends RecyclerView.Adapter<AddReviewViewHolder> 
     public void onBindViewHolder(@NonNull AddReviewViewHolder addReviewViewHolder, int i) {
         addReview = addReviewArrayList.get(i);
         review = addReview.getReview();
-        user = addReview.getUser();
+        userId = addReview.getUserId();
         rating = addReview.getRating();
 
         addReviewViewHolder.mTextViewReview.setText(review);
-        addReviewViewHolder.mTextViewUser.setText(user);
+        addReviewViewHolder.mTextViewUser.setText(userId);
         addReviewViewHolder.mRatingBarReview.setRating(rating);
 
     }

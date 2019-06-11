@@ -48,25 +48,25 @@ public class ReviewActivity extends AppCompatActivity {
         buttonAddReviewBH = findViewById(R.id.buttonAddReviewBH);
         editTextReview = findViewById(R.id.editTextReview);
 
-        recyclerViewReviews = (RecyclerView) findViewById(R.id.rvAddReview);
-        recyclerViewReviews.setLayoutManager(new LinearLayoutManager(this));
-        reviewArrayList =getReview();
-        reviewAdapter = new AddReviewAdapter(ReviewActivity.this, reviewArrayList);
-        recyclerViewReviews.setAdapter(reviewAdapter);
+//        recyclerViewReviews = (RecyclerView) findViewById(R.id.rvAddReview);
+//        recyclerViewReviews.setLayoutManager(new LinearLayoutManager(this));
+//        reviewArrayList =getReview();
+//        reviewAdapter = new AddReviewAdapter(ReviewActivity.this, reviewArrayList);
+//        recyclerViewReviews.setAdapter(reviewAdapter);
     }
 
-    public ArrayList<Review> getReview() {
-        //String mPhotoUrl, String mTitle, String mCountry, double mPrice, double mRating, String typeTrip, String startDate, String endDate
-        ArrayList<Review> reviews = new ArrayList<>();
-        reviews.add(new Review("this book surprised me", "uadina123", (float) 3.5));
-        reviews.add(new Review("is a very good book","ioana",4));
-        reviews.add(new Review("awesome", "andreea123", 3));
-        return reviews;
-    }
+//    public ArrayList<Review> getReview() {
+//        //String mPhotoUrl, String mTitle, String mCountry, double mPrice, double mRating, String typeTrip, String startDate, String endDate
+//        ArrayList<Review> reviews = new ArrayList<>();
+//        reviews.add(new Review("this book surprised me", "uadina123", (float) 3.5));
+//        reviews.add(new Review("is a very good book","ioana",4));
+//        reviews.add(new Review("awesome", "andreea123", 3));
+//        return reviews;
+//    }
 
     public void btnAddReviewBHOnClick(View view) {
         String reviewAdded = editTextReview.getText().toString();
         float rating = ratingBar.getRating();
-        reviewArrayList.add(new Review(reviewAdded, "andreea123",rating));
+        //reviewArrayList.add(new Review(reviewAdded, "andreea123",rating));
     }
 }

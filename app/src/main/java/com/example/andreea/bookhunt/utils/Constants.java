@@ -13,7 +13,10 @@ public class Constants {
     public static final String DESCRIPTION = "description";
     public static final String DEVELOPER_KEY_GOODREADS = "zqlr6wiS6ICcrwjL8HRcyw";
     public static final String DEVELOPER_KEY_IDREAMBOOKS = "3b357f3c1e4faf4c6381b3fb70d4ec5e9ff35865";
-
+    public static final String IS_CREATED = "is_created";
+    public static final String REVIEW_WIDGET = "review_widget";
+    public static final String AVERAGE_RATING = "average_rating";
+    public static final String RESULT_ARRAY_IDB = "array_idb";
     public static final String REMEMBER = "remember_login";
 
     public static final String MESSAGE = "message";

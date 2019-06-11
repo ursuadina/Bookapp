@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.example.andreea.bookhunt.models.Book;
 import com.example.andreea.bookhunt.utils.Constants;
 import com.example.andreea.bookhunt.utils.Methods;
+import com.example.andreea.bookhunt.utils.SharedPreferencesHelper;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -266,6 +267,7 @@ public class SearchActivity extends AppCompatActivity {
 //                        mBook = new Book(id, mBookTitle, mAuthor, imageUri);
 //                        databaseBooks.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
 //                                .child(id).setValue(mBook);
+                        SharedPreferencesHelper.setStringValueForUserInfo(Constants.IS_CREATED, "False", SearchActivity.this);
                         Intent intent = new Intent(SearchActivity.this, OptionsActivity.class);
                         //intent.putExtra(Constants.BOOK_ID, id);
                         intent.putExtra(Constants.TITLE, mBookTitle);
@@ -295,7 +297,12 @@ public class SearchActivity extends AppCompatActivity {
         switch (requestCode) {
             case Constants.PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // do your stuff
+                    initView();
+
+                    Intent intent = getIntent();
+                    firebaseAuth = FirebaseAuth.getInstance();
+                    storageReference = FirebaseStorage.getInstance().getReference();
+                    databaseBooks = FirebaseDatabase.getInstance().getReference("Books");
                 } else {
                     Toast.makeText(SearchActivity.this, "WRITE_EXTERNAL_STORAGE Denied",
                             Toast.LENGTH_SHORT).show();
@@ -309,6 +316,19 @@ public class SearchActivity extends AppCompatActivity {
 //                            Toast.LENGTH_SHORT).show();
 //                }
 //                break;
+            case Constants.PERMISSION_REQUEST_READ_EXTERNAL_STORAGE:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    initView();
+
+                    Intent intent = getIntent();
+                    firebaseAuth = FirebaseAuth.getInstance();
+                    storageReference = FirebaseStorage.getInstance().getReference();
+                    databaseBooks = FirebaseDatabase.getInstance().getReference("Books");
+                } else {
+                    Toast.makeText(SearchActivity.this, "WRITE_EXTERNAL_STORAGE Denied",
+                            Toast.LENGTH_SHORT).show();
+                }
+                break;
             default:
                 super.onRequestPermissionsResult(requestCode, permissions,
                         grantResults);

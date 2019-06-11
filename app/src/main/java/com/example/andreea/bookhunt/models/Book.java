@@ -7,6 +7,7 @@ public class Book {
     private String photoUrl;
     private float rating;
     private String description;
+    private String originalBookId;
 
     public String getBookTitle() {
         return bookTitle;
@@ -48,6 +49,14 @@ public class Book {
 
     public void setDescription(String description) { this.description = description; }
 
+    public String getOriginalBookId() {
+        return originalBookId;
+    }
+
+    public void setOriginalBookId(String originalBookId) {
+        this.originalBookId = originalBookId;
+    }
+
     @Override
     public String toString() {
         return "Book{" +
@@ -57,14 +66,16 @@ public class Book {
                 '}';
     }
 
-    public Book(String bookId, String bookTitle, String author, String photoUrl, float rating, String description) {
+    public Book(String bookId, String bookTitle, String author, String photoUrl, float rating, String description, String originalBookId) {
         this.bookId = bookId;
         this.bookTitle = bookTitle;
         this.author = author;
         this.photoUrl = photoUrl;
         this.rating = rating;
         this.description = description;
+        this.originalBookId = originalBookId;
     }
+
 
     public Book() {
 

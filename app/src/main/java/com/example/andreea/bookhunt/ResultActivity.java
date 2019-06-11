@@ -1,6 +1,7 @@
 package com.example.andreea.bookhunt;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -21,14 +22,19 @@ import android.widget.RatingBar;
 import android.widget.Toast;
 
 import com.example.andreea.bookhunt.models.Book;
+import com.example.andreea.bookhunt.models.OriginalBooks;
 import com.example.andreea.bookhunt.retrofitUtils.GoodreadsAPI;
 import com.example.andreea.bookhunt.retrofitUtils.modelGoodReads.GoodreadsResponse;
 import com.example.andreea.bookhunt.utils.Constants;
 import com.example.andreea.bookhunt.utils.Convertor;
 import com.example.andreea.bookhunt.utils.SharedPreferencesHelper;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import retrofit2.Call;
@@ -41,6 +47,7 @@ public class ResultActivity extends AppCompatActivity  implements NavigationView
 
     private FirebaseAuth firebaseAuth;
     private DatabaseReference databaseBooks;
+    private DatabaseReference databaseOriginalBooks;
 
     private View view_index;
     private View view_result;
@@ -48,10 +55,15 @@ public class ResultActivity extends AppCompatActivity  implements NavigationView
     private View view_fav;
     private RatingBar ratingBarGoodReads;
 
+    private String bookId;
     private String mBookTitle;
     private String mAuthor;
     private String mPhotoUrl;
     private String review_widget;
+    private String originalBookId;
+    private String description_new;
+    private String titleAuthor;
+    private float average_rating;
 
     private float phone_width_dp;
     private float phone_height_dp;
@@ -78,47 +90,81 @@ public class ResultActivity extends AppCompatActivity  implements NavigationView
 //        Picasso.get().load(mPhotoUrl).into((ImageView)findViewById(R.id.imageViewResult));
         firebaseAuth = FirebaseAuth.getInstance();
         databaseBooks = FirebaseDatabase.getInstance().getReference("Books");
+        databaseOriginalBooks = FirebaseDatabase.getInstance().getReference("OriginalBooks");
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Constants.BASE_URL_GOODREADS)
-                .addConverterFactory(SimpleXmlConverterFactory.create())
-                .build();
+        review_widget = intent.getStringExtra(Constants.REVIEW_WIDGET);
+        String review_widget2 = review_widget.replaceAll("width=\"565\" height=\"400\"", "width=\"" + phone_width_dp + "\" height=\"" + phone_height_dp + "\"");
+        String review_widget_final = review_widget2.replaceAll("width:565px;", "width:" + phone_width_dp + "px;");
+        engine.loadData(review_widget_final, "text/html", "UTF-8");
 
-        GoodreadsAPI goodreadsAPI = retrofit.create(GoodreadsAPI.class);
-        Call<GoodreadsResponse> call = goodreadsAPI.getGoodreadsResponse(Constants.DEVELOPER_KEY_GOODREADS, mBookTitle, mAuthor);
-        call.enqueue(new Callback<GoodreadsResponse>() {
-            @Override
-            public void onResponse(Call<GoodreadsResponse> call, Response<GoodreadsResponse> response) {
-                review_widget = response.body().getBook().getReviews_widget();
-                String review_widget2 = review_widget.replaceAll("width=\"565\" height=\"400\"", "width=\"" + phone_width_dp + "\" height=\"" + phone_height_dp + "\"");
-                String review_widget_final = review_widget2.replaceAll("width:565px;", "width:" + phone_width_dp + "px;");
-                engine.loadData(review_widget_final, "text/html", "UTF-8");
+        Picasso.get().load(mPhotoUrl).into((ImageView)findViewById(R.id.imageViewResult));
 
-                Picasso.get().load(mPhotoUrl).into((ImageView)findViewById(R.id.imageViewResult));
+        average_rating = intent.getFloatExtra(Constants.AVERAGE_RATING, 0);
+        ratingBarGoodReads.setVisibility(View.VISIBLE);
+        ratingBarGoodReads.setRating(average_rating);
+        ratingBarGoodReads.setStepSize((float) 0.5);
 
-                float average_rating = response.body().getBook().getAverage_rating();
-                ratingBarGoodReads.setVisibility(View.VISIBLE);
-                ratingBarGoodReads.setRating(average_rating);
-                ratingBarGoodReads.setStepSize((float) 0.5);
-
-                String id = databaseBooks.push().getKey();
-                String description = response.body().getBook().getDescription();
-                String description_new = description.replaceAll("<br />", "\n");
-
-                mBook = new Book(id, mBookTitle, mAuthor, mPhotoUrl, average_rating, description_new);
-                databaseBooks.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .child(id).setValue(mBook);
-
-                Log.d("ResultActivity", "onResponse: GoodReadsReasponse: " + response.body().getBook());
-                Log.d("ResultActivity", "onResponse: Server Response: " + response.toString());
-            }
-
-            @Override
-            public void onFailure(Call<GoodreadsResponse> call, Throwable t) {
-                Log.e("ResultActivity", "onFailure: Unable to retrieve RSS: " + t.getMessage());
-                Toast.makeText(ResultActivity.this, "An error occured", Toast.LENGTH_SHORT).show();
-            }
-        });
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl(Constants.BASE_URL_GOODREADS)
+//                .addConverterFactory(SimpleXmlConverterFactory.create())
+//                .build();
+//
+//        GoodreadsAPI goodreadsAPI = retrofit.create(GoodreadsAPI.class);
+//        Call<GoodreadsResponse> call = goodreadsAPI.getGoodreadsResponse(Constants.DEVELOPER_KEY_GOODREADS, mBookTitle, mAuthor);
+//        call.enqueue(new Callback<GoodreadsResponse>() {
+//            @Override
+//            public void onResponse(Call<GoodreadsResponse> call, Response<GoodreadsResponse> response) {
+//                review_widget = response.body().getBook().getReviews_widget();
+//                String review_widget2 = review_widget.replaceAll("width=\"565\" height=\"400\"", "width=\"" + phone_width_dp + "\" height=\"" + phone_height_dp + "\"");
+//                String review_widget_final = review_widget2.replaceAll("width:565px;", "width:" + phone_width_dp + "px;");
+//                engine.loadData(review_widget_final, "text/html", "UTF-8");
+//
+//                Picasso.get().load(mPhotoUrl).into((ImageView)findViewById(R.id.imageViewResult));
+//
+//                average_rating = response.body().getBook().getAverage_rating();
+//                ratingBarGoodReads.setVisibility(View.VISIBLE);
+//                ratingBarGoodReads.setRating(average_rating);
+//                ratingBarGoodReads.setStepSize((float) 0.5);
+//
+//                bookId = databaseBooks.push().getKey();
+//                String description = response.body().getBook().getDescription();
+//                description_new = description.replaceAll("<br />", "\n");
+//
+//                titleAuthor = mBookTitle + "_" + mAuthor;
+//                Query query1 = databaseOriginalBooks.orderByChild("titleAuthor").equalTo(titleAuthor);
+//                query1.addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                        if (!dataSnapshot.exists()) {
+//                            originalBookId = databaseOriginalBooks.push().getKey();
+//                            OriginalBooks originalBooks = new OriginalBooks(originalBookId, mBookTitle, description_new, mAuthor, titleAuthor);
+//                            databaseOriginalBooks.push().setValue(originalBooks);
+//                        } else {
+//                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
+//                                originalBookId = ds.getValue(OriginalBooks.class).getBookId();
+//                            }
+//                        }
+//                        mBook = new Book(bookId, mBookTitle, mAuthor, mPhotoUrl, average_rating, description_new, originalBookId);
+//                        databaseBooks.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+//                                .child(bookId).setValue(mBook);
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//                        Toast.makeText(ResultActivity.this, "nu s-a gasit", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//
+//                Log.d("ResultActivity", "onResponse: GoodReadsReasponse: " + response.body().getBook());
+//                Log.d("ResultActivity", "onResponse: Server Response: " + response.toString());
+//            }
+//
+//            @Override
+//            public void onFailure(Call<GoodreadsResponse> call, Throwable t) {
+//                Log.e("ResultActivity", "onFailure: Unable to retrieve RSS: " + t.getMessage());
+//                Toast.makeText(ResultActivity.this, "An error occured", Toast.LENGTH_SHORT).show();
+//            }
+//        });
     }
 
     private void getPhoneDimensions() {

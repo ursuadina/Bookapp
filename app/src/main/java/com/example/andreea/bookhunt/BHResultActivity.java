@@ -1,6 +1,7 @@
 package com.example.andreea.bookhunt;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,8 +18,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.andreea.bookhunt.models.Book;
+import com.example.andreea.bookhunt.models.OriginalBooks;
 import com.example.andreea.bookhunt.models.ResultIDB;
 import com.example.andreea.bookhunt.models.Review;
 import com.example.andreea.bookhunt.recyclerviewutils.AddReviewAdapter;
@@ -29,8 +33,12 @@ import com.example.andreea.bookhunt.retrofitUtils.modelIDreamBooks.bookIDB.criti
 import com.example.andreea.bookhunt.utils.Constants;
 import com.example.andreea.bookhunt.utils.SharedPreferencesHelper;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,9 +52,18 @@ import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 public class BHResultActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private FirebaseAuth firebaseAuth;
-    private DatabaseReference databaseBooks;
+    private DatabaseReference databaseOriginalBooks;
+    private DatabaseReference databaseReviews;
 
-
+    private String bookId;
+    private String mBookTitle;
+    private String mAuthor;
+    private String mPhotoUrl;
+    private String review_widget;
+    private String originalBookId;
+    private String description_new;
+    private String titleAuthor;
+    private float average_rating;
 
     private Review mReview;
     private ArrayList<Review> reviewArrayList;
@@ -54,7 +71,7 @@ public class BHResultActivity extends AppCompatActivity implements NavigationVie
     private RecyclerView recyclerViewReviews;
     private Button buttonAddReviewBH;
     private EditText editTextReview;
-
+    private TextView textViewNoReviews;
     private FloatingActionButton floatingActionButton;
 
     @Override
@@ -63,16 +80,64 @@ public class BHResultActivity extends AppCompatActivity implements NavigationVie
         setContentView(R.layout.activity_bhresult);
         Intent intent = getIntent();
 
+        mBookTitle = intent.getStringExtra(Constants.TITLE);
+        mAuthor = intent.getStringExtra(Constants.AUTHOR);
+        mPhotoUrl = intent.getStringExtra(Constants.PHOTO_URL);
+        titleAuthor = mBookTitle + "_" + mAuthor;
+
         initView();
 
         initNavDrawer();
 
         firebaseAuth = FirebaseAuth.getInstance();
+        databaseReviews = FirebaseDatabase.getInstance().getReference("Reviews");
+        databaseOriginalBooks = FirebaseDatabase.getInstance().getReference("OriginalBooks");
 
+        reviewArrayList = new ArrayList<>();
+        Query query1 = databaseOriginalBooks.orderByChild("titleAuthor").equalTo(titleAuthor);
+        query1.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists()) {
+                    originalBookId = databaseOriginalBooks.push().getKey();
+                    OriginalBooks originalBooks = new OriginalBooks(originalBookId, mBookTitle, description_new, mAuthor, titleAuthor);
+                    databaseOriginalBooks.push().setValue(originalBooks);
+                } else {
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        originalBookId = ds.getValue(OriginalBooks.class).getBookId();
+                    }
+                }
+                Query query = databaseReviews.orderByChild("bookId").equalTo(originalBookId);
+                query.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if(!dataSnapshot.exists()) {
+                            textViewNoReviews.setVisibility(View.VISIBLE);
+                        } else {
+                            textViewNoReviews.setVisibility(View.GONE);
+                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                Review review = ds.getValue(Review.class);
+                                reviewArrayList.add(review);
+                            }
+                            reviewAdapter = new AddReviewAdapter(BHResultActivity.this, reviewArrayList);
+                            recyclerViewReviews.setAdapter(reviewAdapter);
+                        }
+                    }
 
-        reviewArrayList =getReview();
-        reviewAdapter = new AddReviewAdapter(BHResultActivity.this, reviewArrayList);
-        recyclerViewReviews.setAdapter(reviewAdapter);
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(BHResultActivity.this, "nu s-a gasit", Toast.LENGTH_SHORT).show();
+            }
+        });
+//        reviewAdapter = new AddReviewAdapter(BHResultActivity.this, reviewArrayList);
+//        recyclerViewReviews.setAdapter(reviewAdapter);
     }
 
     @Override
@@ -155,6 +220,8 @@ public class BHResultActivity extends AppCompatActivity implements NavigationVie
         recyclerViewReviews = (RecyclerView) findViewById(R.id.rvResultsBH);
         recyclerViewReviews.setLayoutManager(new LinearLayoutManager(this));
 
+        textViewNoReviews = (TextView) findViewById(R.id.no_reviews);
+
     }
 
     public void initNavDrawer() {
@@ -171,12 +238,41 @@ public class BHResultActivity extends AppCompatActivity implements NavigationVie
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    public ArrayList<Review> getReview() {
-        //String mPhotoUrl, String mTitle, String mCountry, double mPrice, double mRating, String typeTrip, String startDate, String endDate
-        ArrayList<Review> reviews = new ArrayList<>();
-        reviews.add(new Review("this book surprised me", "uadina123", (float) 3.5));
-        reviews.add(new Review("is a very good book", "ioana", 4));
-        reviews.add(new Review("awesome", "andreea123", 3));
-        return reviews;
-    }
+//    public ArrayList<Review> getReview(String titleAuthor, final DatabaseReference databaseReviews, final DatabaseReference databaseOriginalBooks) {
+//        ArrayList<Review> reviews = new ArrayList<>();
+//        Query query1 = databaseOriginalBooks.orderByChild("titleAuthor").equalTo(titleAuthor);
+//        query1.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                if (!dataSnapshot.exists()) {
+//                    originalBookId = databaseOriginalBooks.push().getKey();
+//                    OriginalBooks originalBooks = new OriginalBooks(originalBookId, mBookTitle, description_new, mAuthor, titleAuthor);
+//                    databaseOriginalBooks.push().setValue(originalBooks);
+//                } else {
+//                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+//                        originalBookId = ds.getValue(OriginalBooks.class).getBookId();
+//                    }
+//                }
+//                Query query = databaseReviews.orderByChild("bookId").equalTo(originalBookId);
+//                query.addValueEventListener(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                        if
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                    }
+//                })
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//                Toast.makeText(BHResultActivity.this, "nu s-a gasit", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//        return reviews;
+//    }
+
 }

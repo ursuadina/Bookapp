@@ -71,6 +71,7 @@ public class ResultsIDreamBooksActivity extends AppCompatActivity  implements Na
         initNavDrawer();
 
         resultIDBArrayList = new ArrayList<>();
+        resultIDBArrayList = intent.getParcelableArrayListExtra(Constants.RESULT_ARRAY_IDB);
         mBookTitle = intent.getStringExtra(Constants.TITLE);
         mAuthor = intent.getStringExtra(Constants.AUTHOR);
         mPhotoUrl = intent.getStringExtra(Constants.PHOTO_URL);
@@ -78,36 +79,39 @@ public class ResultsIDreamBooksActivity extends AppCompatActivity  implements Na
         firebaseAuth = FirebaseAuth.getInstance();
         databaseBooks = FirebaseDatabase.getInstance().getReference("Books");
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Constants.BASE_URL_IDREAMBOOKS)
-                .addConverterFactory(SimpleXmlConverterFactory.create())
-                .build();
+        resultsIDBAdapter = new ResultsIDBAdapter(ResultsIDreamBooksActivity.this, resultIDBArrayList);
+        mRecyclerViewResults.setAdapter(resultsIDBAdapter);
 
-        IDreamBooksAPI iDreamBooksAPI = retrofit.create(IDreamBooksAPI.class);
-        String titleAuthor = mBookTitle + " " + mAuthor;
-        String titleAuthor1 = titleAuthor.replaceAll(" ", "+");
-        Call<IDreamBooksResponse> call = iDreamBooksAPI.getIDreamBooksResponse(titleAuthor, Constants.DEVELOPER_KEY_IDREAMBOOKS);
-        call.enqueue(new Callback<IDreamBooksResponse>() {
-            @Override
-            public void onResponse(Call<IDreamBooksResponse> call, Response<IDreamBooksResponse> response) {
-                List<CriticReview> criticReviews = response.body().getBookIDB().getCriticReviews().getCriticReview();
-                for(int i = 0; i < criticReviews.size(); i++) {
-                    mSnippet = criticReviews.get(i).getSnippet();
-                    mSource = criticReviews.get(i).getSource();
-                    mReview = criticReviews.get(i).getStarRating();
-                    mResultIDB = new ResultIDB(mSnippet, mSource, mReview);
-                    resultIDBArrayList.add(mResultIDB);
-                }
-                resultsIDBAdapter = new ResultsIDBAdapter(ResultsIDreamBooksActivity.this, resultIDBArrayList);
-                mRecyclerViewResults.setAdapter(resultsIDBAdapter);
-            }
-
-            @Override
-            public void onFailure(Call<IDreamBooksResponse> call, Throwable t) {
-                Log.e("ResultsIDreamBooks", "onFailure: Unable to retrieve RSS: " + t.getMessage());
-                Toast.makeText(ResultsIDreamBooksActivity.this, "An error occured", Toast.LENGTH_SHORT).show();
-            }
-        });
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl(Constants.BASE_URL_IDREAMBOOKS)
+//                .addConverterFactory(SimpleXmlConverterFactory.create())
+//                .build();
+//
+//        IDreamBooksAPI iDreamBooksAPI = retrofit.create(IDreamBooksAPI.class);
+//        String titleAuthor = mBookTitle + " " + mAuthor;
+//        String titleAuthor1 = titleAuthor.replaceAll(" ", "+");
+//        Call<IDreamBooksResponse> call = iDreamBooksAPI.getIDreamBooksResponse(titleAuthor, Constants.DEVELOPER_KEY_IDREAMBOOKS);
+//        call.enqueue(new Callback<IDreamBooksResponse>() {
+//            @Override
+//            public void onResponse(Call<IDreamBooksResponse> call, Response<IDreamBooksResponse> response) {
+//                List<CriticReview> criticReviews = response.body().getBookIDB().getCriticReviews().getCriticReview();
+//                for(int i = 0; i < criticReviews.size(); i++) {
+//                    mSnippet = criticReviews.get(i).getSnippet();
+//                    mSource = criticReviews.get(i).getSource();
+//                    mReview = criticReviews.get(i).getStarRating();
+//                    mResultIDB = new ResultIDB(mSnippet, mSource, mReview);
+//                    resultIDBArrayList.add(mResultIDB);
+//                }
+//                resultsIDBAdapter = new ResultsIDBAdapter(ResultsIDreamBooksActivity.this, resultIDBArrayList);
+//                mRecyclerViewResults.setAdapter(resultsIDBAdapter);
+//            }
+//
+//            @Override
+//            public void onFailure(Call<IDreamBooksResponse> call, Throwable t) {
+//                Log.e("ResultsIDreamBooks", "onFailure: Unable to retrieve RSS: " + t.getMessage());
+//                Toast.makeText(ResultsIDreamBooksActivity.this, "An error occured", Toast.LENGTH_SHORT).show();
+//            }
+//        });
     }
 
     @Override
