@@ -32,6 +32,10 @@ public class ReviewActivity extends AppCompatActivity {
     private Button buttonAddReviewBH;
     private EditText editTextReview;
 
+    private String originalBookId;
+    private String bookTitle;
+    private String author;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

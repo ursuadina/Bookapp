@@ -2,9 +2,11 @@ package com.example.andreea.bookhunt.recyclerviewutils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,22 +14,38 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.andreea.bookhunt.BHResultActivity;
+import com.example.andreea.bookhunt.OptionsActivity;
 import com.example.andreea.bookhunt.PopupWindowActivity;
 import com.example.andreea.bookhunt.R;
 import com.example.andreea.bookhunt.ResultActivity;
 import com.example.andreea.bookhunt.ResultsIDreamBooksActivity;
 import com.example.andreea.bookhunt.ReviewActivity;
 import com.example.andreea.bookhunt.models.Book;
+import com.example.andreea.bookhunt.models.ResultIDB;
+import com.example.andreea.bookhunt.retrofitUtils.IDreamBooksAPI;
+import com.example.andreea.bookhunt.retrofitUtils.modelIDreamBooks.IDreamBooksResponse;
+import com.example.andreea.bookhunt.retrofitUtils.modelIDreamBooks.bookIDB.criticReviews.criticReview.CriticReview;
 import com.example.andreea.bookhunt.utils.Constants;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
 public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
 
@@ -81,19 +99,19 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
         bookViewHolder.mImageButtonAddReview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addReviewBook(book.getBookId());
+                addReviewBook(book.getOriginalBookId(), book.getBookTitle(), book.getAuthor());
             }
         });
         bookViewHolder.mImageButtonViewGoodreads.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                viewGoodreadsReview(book.getBookTitle(), book.getAuthor(), book.getPhotoUrl());
+                viewGoodreadsReview(book.getBookId());//book.getBookTitle(), book.getAuthor(), book.getPhotoUrl());
             }
         });
         bookViewHolder.mImageButtonViewIDB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                viewIDBReview(book.getBookTitle(), book.getAuthor(), book.getPhotoUrl());
+                viewIDBReview(book.getBookTitle(), book.getAuthor());
             }
         });
 
@@ -123,27 +141,84 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
         }
     }
 
-    private void viewIDBReview(String bookTitle, String author, String photoUrl) {
-        Intent intent = new Intent(context, ResultsIDreamBooksActivity.class);
-        intent.putExtra(Constants.TITLE, bookTitle);
-        intent.putExtra(Constants.AUTHOR, author);
-        intent.putExtra(Constants.PHOTO_URL, photoUrl);
-        context.startActivity(intent);
+    private void viewIDBReview(String bookTitle, String author) {
+//        Intent intent = new Intent(context, ResultsIDreamBooksActivity.class);
+//        intent.putExtra(Constants.TITLE, bookTitle);
+//        intent.putExtra(Constants.AUTHOR, author);
+//        intent.putExtra(Constants.PHOTO_URL, photoUrl);
+//        context.startActivity(intent);
+        Retrofit retrofitIDB = new Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL_IDREAMBOOKS)
+                .addConverterFactory(SimpleXmlConverterFactory.create())
+                .build();
+        IDreamBooksAPI iDreamBooksAPI = retrofitIDB.create(IDreamBooksAPI.class);
+        String titleAuthor1 = bookTitle + " " + author;
+        Call<IDreamBooksResponse> callIDB = iDreamBooksAPI.getIDreamBooksResponse(titleAuthor1, Constants.DEVELOPER_KEY_IDREAMBOOKS);
+        callIDB.enqueue(new Callback<IDreamBooksResponse>() {
+            @Override
+            public void onResponse(Call<IDreamBooksResponse> call, Response<IDreamBooksResponse> response) {
+                ArrayList<ResultIDB> resultIDBArrayList = new ArrayList<>();
+                List<CriticReview> criticReviews = response.body().getBookIDB().getCriticReviews().getCriticReview();
+                for(int i = 0; i < criticReviews.size(); i++) {
+                    String mSnippet = criticReviews.get(i).getSnippet();
+                    String mSource = criticReviews.get(i).getSource();
+                    float mReview = criticReviews.get(i).getStarRating();
+                    ResultIDB mResultIDB = new ResultIDB(mSnippet, mSource, mReview);
+                    resultIDBArrayList.add(mResultIDB);
+                }
+                Intent intent = new Intent(context, ResultsIDreamBooksActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList(Constants.RESULT_ARRAY_IDB, resultIDBArrayList);
+                intent.putExtras(bundle);
+                context.startActivity(intent);
+            }
+
+
+            @Override
+            public void onFailure(Call<IDreamBooksResponse> call, Throwable t) {
+                Log.e("ResultsIDreamBooks", "onFailure: Unable to retrieve RSS: " + t.getMessage());
+                Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    private void viewGoodreadsReview(String bookTitle, String author, String photoUrl) {
-        //todo: sa nu mai creeze un nou element in baza de date
-        Intent intent = new Intent(context, ResultActivity.class);
-        intent.putExtra(Constants.TITLE, bookTitle);
-        intent.putExtra(Constants.AUTHOR, author);
-        intent.putExtra(Constants.PHOTO_URL, photoUrl);
-        context.startActivity(intent);
+    private void viewGoodreadsReview(String bookId) { //String bookTitle, String author, String photoUrl) {
+
+        Query query = FirebaseDatabase.getInstance().getReference("Books/" + FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .orderByChild("bookId").equalTo(bookId);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot ds : dataSnapshot.getChildren()) {
+                    Book currentBook = ds.getValue(Book.class);
+                    String review_widget = currentBook.getReview_widget();
+                    String photoUrl = currentBook.getPhotoUrl();
+                    float average_rating = currentBook.getRating();
+                    String bookTitle = currentBook.getBookTitle();
+                    String author = currentBook.getAuthor();
+
+                    Intent intent = new Intent(context, ResultActivity.class);
+                    intent.putExtra(Constants.PHOTO_URL, photoUrl);
+                    intent.putExtra(Constants.REVIEW_WIDGET, review_widget);
+                    intent.putExtra(Constants.AVERAGE_RATING, average_rating);
+                    context.startActivity(intent);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
-    private void addReviewBook(String bookId) {
+    private void addReviewBook(String bookId, String bookTitle, String author) {
         //TODO: add book review + rating
         //Toast.makeText(context, "TODO: add book review", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(context, ReviewActivity.class);
+        intent.putExtra(Constants.BOOK_ID, bookId);
+        intent.putExtra(Constants.TITLE, bookTitle);
+        intent.putExtra(Constants.AUTHOR, author);
         context.startActivity(intent);
     }
 

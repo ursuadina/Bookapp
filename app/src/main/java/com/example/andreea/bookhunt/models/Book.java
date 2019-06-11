@@ -8,6 +8,7 @@ public class Book {
     private float rating;
     private String description;
     private String originalBookId;
+    private String review_widget;
 
     public String getBookTitle() {
         return bookTitle;
@@ -57,6 +58,14 @@ public class Book {
         this.originalBookId = originalBookId;
     }
 
+    public String getReview_widget() {
+        return review_widget;
+    }
+
+    public void setReview_widget(String review_widget) {
+        this.review_widget = review_widget;
+    }
+
     @Override
     public String toString() {
         return "Book{" +
@@ -66,7 +75,7 @@ public class Book {
                 '}';
     }
 
-    public Book(String bookId, String bookTitle, String author, String photoUrl, float rating, String description, String originalBookId) {
+    public Book(String bookId, String bookTitle, String author, String photoUrl, float rating, String description, String originalBookId, String review_widget) {
         this.bookId = bookId;
         this.bookTitle = bookTitle;
         this.author = author;
@@ -74,8 +83,8 @@ public class Book {
         this.rating = rating;
         this.description = description;
         this.originalBookId = originalBookId;
+        this.review_widget = review_widget;
     }
-
 
     public Book() {
 

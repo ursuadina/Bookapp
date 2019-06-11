@@ -81,65 +81,6 @@ public class OptionsActivity extends AppCompatActivity {
         databaseBooks = FirebaseDatabase.getInstance().getReference("Books");
         databaseOriginalBooks = FirebaseDatabase.getInstance().getReference("OriginalBooks");
 
-        getGoodreadsResponse();
-
-        getIDBResponse();
-    }
-
-    private void getIDBResponse() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Constants.BASE_URL_IDREAMBOOKS)
-                .addConverterFactory(SimpleXmlConverterFactory.create())
-                .build();
-        IDreamBooksAPI iDreamBooksAPI = retrofit.create(IDreamBooksAPI.class);
-        String titleAuthor1 = mBookTitle + " " + mAuthor;
-        Call<IDreamBooksResponse> call = iDreamBooksAPI.getIDreamBooksResponse(titleAuthor1, Constants.DEVELOPER_KEY_IDREAMBOOKS);
-        call.enqueue(new Callback<IDreamBooksResponse>() {
-            @Override
-            public void onResponse(Call<IDreamBooksResponse> call, Response<IDreamBooksResponse> response) {
-                resultIDBArrayList = new ArrayList<>();
-                List<CriticReview> criticReviews = response.body().getBookIDB().getCriticReviews().getCriticReview();
-                for(int i = 0; i < criticReviews.size(); i++) {
-                    mSnippet = criticReviews.get(i).getSnippet();
-                    mSource = criticReviews.get(i).getSource();
-                    mReview = criticReviews.get(i).getStarRating();
-                    mResultIDB = new ResultIDB(mSnippet, mSource, mReview);
-                    resultIDBArrayList.add(mResultIDB);
-                }
-                Query query1 = databaseOriginalBooks.orderByChild("titleAuthor").equalTo(titleAuthor);
-                query1.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (!dataSnapshot.exists()) {
-                            originalBookId = databaseOriginalBooks.push().getKey();
-                            OriginalBooks originalBooks = new OriginalBooks(originalBookId, mBookTitle, description, mAuthor, titleAuthor);
-                            databaseOriginalBooks.push().setValue(originalBooks);
-                        } else {
-                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                                originalBookId = ds.getValue(OriginalBooks.class).getBookId();
-                            }
-                        }
-                        bundleExtras.putParcelableArrayList(Constants.RESULT_ARRAY_IDB, resultIDBArrayList);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Toast.makeText(OptionsActivity.this, "nu s-a gasit", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            @Override
-            public void onFailure(Call<IDreamBooksResponse> call, Throwable t) {
-                Log.e("ResultsIDreamBooks", "onFailure: Unable to retrieve RSS: " + t.getMessage());
-                Toast.makeText(OptionsActivity.this, "An error occured", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-    }
-
-    private void getGoodreadsResponse() {
-
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL_GOODREADS)
                 .addConverterFactory(SimpleXmlConverterFactory.create())
@@ -172,7 +113,7 @@ public class OptionsActivity extends AppCompatActivity {
                             }
                         }
                         if(SharedPreferencesHelper.getStringValueForUserInfo(Constants.IS_CREATED, getApplicationContext()).equals("False")) {
-                            mBook = new Book(bookId, mBookTitle, mAuthor, mPhotoUrl, average_rating, description, originalBookId);
+                            mBook = new Book(bookId, mBookTitle, mAuthor, mPhotoUrl, average_rating, description, originalBookId, review_widget);
                             databaseBooks.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                     .child(bookId).setValue(mBook);
                             SharedPreferencesHelper.setStringValueForUserInfo(Constants.IS_CREATED, "True", OptionsActivity.this);
@@ -198,15 +139,45 @@ public class OptionsActivity extends AppCompatActivity {
                 Toast.makeText(OptionsActivity.this, "An error occured", Toast.LENGTH_SHORT).show();
             }
         });
+
+
+        //----------------------------------------------------------
+        Retrofit retrofitIDB = new Retrofit.Builder()
+            .baseUrl(Constants.BASE_URL_IDREAMBOOKS)
+            .addConverterFactory(SimpleXmlConverterFactory.create())
+            .build();
+        IDreamBooksAPI iDreamBooksAPI = retrofitIDB.create(IDreamBooksAPI.class);
+        String titleAuthor1 = mBookTitle + " " + mAuthor;
+        Call<IDreamBooksResponse> callIDB = iDreamBooksAPI.getIDreamBooksResponse(titleAuthor1, Constants.DEVELOPER_KEY_IDREAMBOOKS);
+        callIDB.enqueue(new Callback<IDreamBooksResponse>() {
+            @Override
+            public void onResponse(Call<IDreamBooksResponse> call, Response<IDreamBooksResponse> response) {
+                resultIDBArrayList = new ArrayList<>();
+                List<CriticReview> criticReviews = response.body().getBookIDB().getCriticReviews().getCriticReview();
+                for(int i = 0; i < criticReviews.size(); i++) {
+                    mSnippet = criticReviews.get(i).getSnippet();
+                    mSource = criticReviews.get(i).getSource();
+                    mReview = criticReviews.get(i).getStarRating();
+                    mResultIDB = new ResultIDB(mSnippet, mSource, mReview);
+                    resultIDBArrayList.add(mResultIDB);
+                }
+                bundleExtras.putParcelableArrayList(Constants.RESULT_ARRAY_IDB, resultIDBArrayList);
+            }
+
+
+            @Override
+            public void onFailure(Call<IDreamBooksResponse> call, Throwable t) {
+                Log.e("ResultsIDreamBooks", "onFailure: Unable to retrieve RSS: " + t.getMessage());
+                Toast.makeText(OptionsActivity.this, "An error occured", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     private void initView() {
         mButtonGoodReads = (Button) findViewById(R.id.buttonGoodReads);
         mButtonNYT = (Button) findViewById(R.id.buttonNYT);
 
-//        if(SharedPreferencesHelper.getStringValueForUserInfo(Constants.IS_CREATED, getApplicationContext()).equals("False")) {
-//            SharedPreferencesHelper.setStringValueForUserInfo(Constants.IS_CREATED, "True", OptionsActivity.this);
-//        }
     }
 
     public void btnGoodReadsResult(View view) {

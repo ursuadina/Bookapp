@@ -14,9 +14,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.example.andreea.bookhunt.models.Book;
 import com.example.andreea.bookhunt.recyclerviewutils.BookAdapter;
+import com.example.andreea.bookhunt.utils.Constants;
 import com.example.andreea.bookhunt.utils.SharedPreferencesHelper;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -30,6 +33,12 @@ public class FavouriteActivity extends AppCompatActivity
     private ArrayList<Book> books;
 
     private FirebaseAuth firebaseAuth;
+
+    private TextView mTextViewUsername;
+    private TextView mTextViewEmail;
+    private NavigationView mNavigationView;
+    private LinearLayout mLinearLayoutHeader;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +73,6 @@ public class FavouriteActivity extends AppCompatActivity
 
         FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
         floatingActionButton.hide();
-
     }
 
     @Override
@@ -136,5 +144,13 @@ public class FavouriteActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        mLinearLayoutHeader = (LinearLayout) mNavigationView.getHeaderView(0);
+        mTextViewUsername = (TextView) mLinearLayoutHeader.findViewById(R.id.tvUsername);
+        mTextViewUsername.setText(SharedPreferencesHelper.getStringValueForUserInfo(Constants.USERNAME, getApplicationContext()));
+        mTextViewEmail = (TextView) mLinearLayoutHeader.findViewById(R.id.tvEmail);
+        mTextViewEmail.setText(SharedPreferencesHelper.getStringValueForUserInfo(Constants.EMAIL, getApplicationContext()));
     }
 }

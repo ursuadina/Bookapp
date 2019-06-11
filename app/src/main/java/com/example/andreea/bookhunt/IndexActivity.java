@@ -120,12 +120,7 @@ public class IndexActivity extends AppCompatActivity
         View view_bh = findViewById(R.id.bh_content);
         view_bh.setVisibility(View.GONE);
 
-        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
-        mLinearLayoutHeader = (LinearLayout) mNavigationView.getHeaderView(0);
-        mTextViewUsername = (TextView) mLinearLayoutHeader.findViewById(R.id.tvUsername);
-        mTextViewUsername.setText(SharedPreferencesHelper.getStringValueForUserInfo(Constants.USERNAME, getApplicationContext()));
-        mTextViewEmail = (TextView) mLinearLayoutHeader.findViewById(R.id.tvEmail);
-        mTextViewEmail.setText(SharedPreferencesHelper.getStringValueForUserInfo(Constants.EMAIL, getApplicationContext()));
+
         mRecyclerViewBooks = findViewById(R.id.rvBooks);
         mRecyclerViewBooks.setLayoutManager(new LinearLayoutManager(this));
 
@@ -144,6 +139,13 @@ public class IndexActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        mLinearLayoutHeader = (LinearLayout) mNavigationView.getHeaderView(0);
+        mTextViewUsername = (TextView) mLinearLayoutHeader.findViewById(R.id.tvUsername);
+        mTextViewUsername.setText(SharedPreferencesHelper.getStringValueForUserInfo(Constants.USERNAME, getApplicationContext()));
+        mTextViewEmail = (TextView) mLinearLayoutHeader.findViewById(R.id.tvEmail);
+        mTextViewEmail.setText(SharedPreferencesHelper.getStringValueForUserInfo(Constants.EMAIL, getApplicationContext()));
     }
 
     @Override

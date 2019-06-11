@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -73,6 +74,11 @@ public class BHResultActivity extends AppCompatActivity implements NavigationVie
     private EditText editTextReview;
     private TextView textViewNoReviews;
     private FloatingActionButton floatingActionButton;
+
+    private TextView mTextViewUsername;
+    private TextView mTextViewEmail;
+    private NavigationView mNavigationView;
+    private LinearLayout mLinearLayoutHeader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -236,6 +242,13 @@ public class BHResultActivity extends AppCompatActivity implements NavigationVie
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        mLinearLayoutHeader = (LinearLayout) mNavigationView.getHeaderView(0);
+        mTextViewUsername = (TextView) mLinearLayoutHeader.findViewById(R.id.tvUsername);
+        mTextViewUsername.setText(SharedPreferencesHelper.getStringValueForUserInfo(Constants.USERNAME, getApplicationContext()));
+        mTextViewEmail = (TextView) mLinearLayoutHeader.findViewById(R.id.tvEmail);
+        mTextViewEmail.setText(SharedPreferencesHelper.getStringValueForUserInfo(Constants.EMAIL, getApplicationContext()));
     }
 
 //    public ArrayList<Review> getReview(String titleAuthor, final DatabaseReference databaseReviews, final DatabaseReference databaseOriginalBooks) {

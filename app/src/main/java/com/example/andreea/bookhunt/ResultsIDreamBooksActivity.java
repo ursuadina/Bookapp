@@ -15,6 +15,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.andreea.bookhunt.models.Book;
@@ -59,6 +61,12 @@ public class ResultsIDreamBooksActivity extends AppCompatActivity  implements Na
     private RecyclerView mRecyclerViewResults;
 
     private FloatingActionButton floatingActionButton;
+    private TextView mTextViewUsername;
+    private TextView mTextViewEmail;
+    private NavigationView mNavigationView;
+    private LinearLayout mLinearLayoutHeader;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,8 +80,6 @@ public class ResultsIDreamBooksActivity extends AppCompatActivity  implements Na
 
         resultIDBArrayList = new ArrayList<>();
         resultIDBArrayList = intent.getParcelableArrayListExtra(Constants.RESULT_ARRAY_IDB);
-        mBookTitle = intent.getStringExtra(Constants.TITLE);
-        mAuthor = intent.getStringExtra(Constants.AUTHOR);
         mPhotoUrl = intent.getStringExtra(Constants.PHOTO_URL);
 //        Picasso.get().load(mPhotoUrl).into((ImageView)findViewById(R.id.imageViewResult));
         firebaseAuth = FirebaseAuth.getInstance();
@@ -208,5 +214,13 @@ public class ResultsIDreamBooksActivity extends AppCompatActivity  implements Na
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        mLinearLayoutHeader = (LinearLayout) mNavigationView.getHeaderView(0);
+        mTextViewUsername = (TextView) mLinearLayoutHeader.findViewById(R.id.tvUsername);
+        mTextViewUsername.setText(SharedPreferencesHelper.getStringValueForUserInfo(Constants.USERNAME, getApplicationContext()));
+        mTextViewEmail = (TextView) mLinearLayoutHeader.findViewById(R.id.tvEmail);
+        mTextViewEmail.setText(SharedPreferencesHelper.getStringValueForUserInfo(Constants.EMAIL, getApplicationContext()));
     }
 }
