@@ -6,18 +6,23 @@ public class Review {
     private String review;
     private String userId;
     private float rating;
-    private Date createdAt;
+    private String createdAt;
     private String bookId;
+    private String reviewId;
+    private long createdAtMiliseconds;
 
     public Review() {
     }
 
-    public Review(String review, String userId, float rating, Date createdAt, String bookId) {
+
+    public Review(String review, String userId, float rating, String createdAt, String bookId, String reviewId, long createdAtMiliseconds) {
         this.review = review;
         this.userId = userId;
         this.rating = rating;
         this.createdAt = createdAt;
         this.bookId = bookId;
+        this.reviewId = reviewId;
+        this.createdAtMiliseconds = createdAtMiliseconds;
     }
 
     public String getReview() {
@@ -44,11 +49,35 @@ public class Review {
         this.rating = rating;
     }
 
-    public Date getCreatedAt() {
+    public String getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(String bookId) {
+        this.bookId = bookId;
+    }
+
+    public String getReviewId() {
+        return reviewId;
+    }
+
+    public void setReviewId(String reviewId) {
+        this.reviewId = reviewId;
+    }
+
+    public long getCreatedAtMiliseconds() {
+        return createdAtMiliseconds;
+    }
+
+    public void setCreatedAtMiliseconds(long createdAtMiliseconds) {
+        this.createdAtMiliseconds = createdAtMiliseconds;
     }
 }

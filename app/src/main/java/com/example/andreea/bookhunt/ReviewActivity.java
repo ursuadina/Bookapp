@@ -1,6 +1,7 @@
 package com.example.andreea.bookhunt;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,15 +11,26 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.andreea.bookhunt.models.Book;
 import com.example.andreea.bookhunt.models.ResultIDB;
 import com.example.andreea.bookhunt.models.Review;
 import com.example.andreea.bookhunt.recyclerviewutils.AddReviewAdapter;
+import com.example.andreea.bookhunt.recyclerviewutils.BookAdapter;
 import com.example.andreea.bookhunt.recyclerviewutils.ResultsIDBAdapter;
+import com.example.andreea.bookhunt.utils.Constants;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ReviewActivity extends AppCompatActivity {
@@ -32,9 +44,13 @@ public class ReviewActivity extends AppCompatActivity {
     private Button buttonAddReviewBH;
     private EditText editTextReview;
 
+
     private String originalBookId;
     private String bookTitle;
     private String author;
+
+    private DatabaseReference databaseReviews;
+    private FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,18 +58,53 @@ public class ReviewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_review);
 
         Intent intent = getIntent();
+        originalBookId = intent.getStringExtra(Constants.BOOK_ID);
+        bookTitle = intent.getStringExtra(Constants.TITLE);
+        author = intent.getStringExtra(Constants.AUTHOR);
 
         initView();
+
+        databaseReviews = FirebaseDatabase.getInstance().getReference("Reviews");
+        firebaseAuth = FirebaseAuth.getInstance();
+        reviewArrayList = new ArrayList<>();
+
+        databaseReviews.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChildren()) {
+                    reviewArrayList.clear();
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        Review review = ds.getValue(Review.class);
+                        reviewArrayList.add(review);
+                    }
+                    reviewAdapter = new AddReviewAdapter(ReviewActivity.this, reviewArrayList);
+                    recyclerViewReviews.setAdapter(reviewAdapter);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(ReviewActivity.this, "Something went wrong.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void initView() {
         textViewTitle = findViewById(R.id.textViewReview);
+        String textViewTitleString = textViewTitle.getText().toString();
+        textViewTitle.setText(textViewTitleString + bookTitle + " by " + author);
         ratingBar = findViewById(R.id.ratingBarAddReview);
         buttonAddReviewBH = findViewById(R.id.buttonAddReviewBH);
+        buttonAddReviewBH.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btnAddReviewBHOnClick(originalBookId);
+            }
+        });
         editTextReview = findViewById(R.id.editTextReview);
 
-//        recyclerViewReviews = (RecyclerView) findViewById(R.id.rvAddReview);
-//        recyclerViewReviews.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewReviews = (RecyclerView) findViewById(R.id.rvAddReview);
+        recyclerViewReviews.setLayoutManager(new LinearLayoutManager(this));
 //        reviewArrayList =getReview();
 //        reviewAdapter = new AddReviewAdapter(ReviewActivity.this, reviewArrayList);
 //        recyclerViewReviews.setAdapter(reviewAdapter);
@@ -68,9 +119,15 @@ public class ReviewActivity extends AppCompatActivity {
 //        return reviews;
 //    }
 
-    public void btnAddReviewBHOnClick(View view) {
+    public void btnAddReviewBHOnClick(String originalBookId) {
         String reviewAdded = editTextReview.getText().toString();
         float rating = ratingBar.getRating();
+        Date date = new Date();
+        long timeMili = (-1) * date.getTime();
+        String currentUserId = firebaseAuth.getCurrentUser().getUid();
+        String reviewId = databaseReviews.push().getKey();
+        Review review = new Review(reviewAdded, currentUserId, rating, date.toString(), originalBookId, reviewId, timeMili);
+        databaseReviews.push().setValue(review);
         //reviewArrayList.add(new Review(reviewAdded, "andreea123",rating));
     }
 }
