@@ -1,5 +1,6 @@
 package com.example.andreea.bookhunt;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -65,6 +66,7 @@ public class OptionsActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private DatabaseReference databaseBooks;
     private DatabaseReference databaseOriginalBooks;
+    private ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +82,14 @@ public class OptionsActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         databaseBooks = FirebaseDatabase.getInstance().getReference("Books");
         databaseOriginalBooks = FirebaseDatabase.getInstance().getReference("OriginalBooks");
+
+        progressDialog = new ProgressDialog(OptionsActivity.this);
+        progressDialog.setMax(100);
+        progressDialog.setMessage("Retrieving data....");
+        progressDialog.setTitle("");
+        //progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        // show it
+        progressDialog.show();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL_GOODREADS)
@@ -106,14 +116,14 @@ public class OptionsActivity extends AppCompatActivity {
                         if (!dataSnapshot.exists()) {
                             originalBookId = databaseOriginalBooks.push().getKey();
                             OriginalBooks originalBooks = new OriginalBooks(originalBookId, mBookTitle, description, mAuthor, titleAuthor);
-                            databaseOriginalBooks.push().setValue(originalBooks);
+                            databaseOriginalBooks.child(originalBookId).setValue(originalBooks);
                         } else {
                             for (DataSnapshot ds : dataSnapshot.getChildren()) {
                                 originalBookId = ds.getValue(OriginalBooks.class).getBookId();
                             }
                         }
                         if(SharedPreferencesHelper.getStringValueForUserInfo(Constants.IS_CREATED, getApplicationContext()).equals("False")) {
-                            mBook = new Book(bookId, mBookTitle, mAuthor, mPhotoUrl, average_rating, description, originalBookId, review_widget);
+                            mBook = new Book(bookId, mBookTitle, mAuthor, mPhotoUrl, average_rating, description, originalBookId, review_widget, false);
                             databaseBooks.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                     .child(bookId).setValue(mBook);
                             SharedPreferencesHelper.setStringValueForUserInfo(Constants.IS_CREATED, "True", OptionsActivity.this);
@@ -121,14 +131,18 @@ public class OptionsActivity extends AppCompatActivity {
                         bundleExtras.putString(Constants.REVIEW_WIDGET, review_widget);
                         bundleExtras.putString(Constants.PHOTO_URL, mPhotoUrl);
                         bundleExtras.putFloat(Constants.AVERAGE_RATING, average_rating);
+                        bundleExtras.putString(Constants.BOOK_ID, originalBookId);
+                        SharedPreferencesHelper.setStringValueForUserInfo(Constants.DONE_GOODREADS, "done", OptionsActivity.this);
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
                         Toast.makeText(OptionsActivity.this, "nu s-a gasit", Toast.LENGTH_SHORT).show();
+                        SharedPreferencesHelper.setStringValueForUserInfo(Constants.DONE_GOODREADS, "done", OptionsActivity.this);
                     }
                 });
 
+                SharedPreferencesHelper.setStringValueForUserInfo(Constants.DONE_GOODREADS, "done", OptionsActivity.this);
                 Log.d("ResultActivity", "onResponse: GoodReadsReasponse: " + response.body().getBook());
                 Log.d("ResultActivity", "onResponse: Server Response: " + response.toString());
             }
@@ -162,6 +176,7 @@ public class OptionsActivity extends AppCompatActivity {
                     resultIDBArrayList.add(mResultIDB);
                 }
                 bundleExtras.putParcelableArrayList(Constants.RESULT_ARRAY_IDB, resultIDBArrayList);
+                progressDialog.dismiss();
             }
 
 
@@ -169,8 +184,10 @@ public class OptionsActivity extends AppCompatActivity {
             public void onFailure(Call<IDreamBooksResponse> call, Throwable t) {
                 Log.e("ResultsIDreamBooks", "onFailure: Unable to retrieve RSS: " + t.getMessage());
                 Toast.makeText(OptionsActivity.this, "An error occured", Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
             }
         });
+
 
     }
 

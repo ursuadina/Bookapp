@@ -45,7 +45,7 @@ public class BookViewHolder extends RecyclerView.ViewHolder {
         mImageButtonViewGoodreads = (ImageButton) itemView.findViewById(R.id.imageButtonGR);
         mImageButtonViewIDB = (ImageButton) itemView.findViewById(R.id.imageButtonIDB);
         mImageButtonAddFav = (ImageButton) itemView.findViewById(R.id.imageButtonAddFav);
-        mImageButtonAddFav.setTag(R.drawable.ic_favorite_border_black_24dp);
+       // mImageButtonAddFav.setTag(R.drawable.ic_favorite_border_black_24dp);
         mImageButtonBH = (ImageButton) itemView.findViewById(R.id.imageButtonBH);
     }
 

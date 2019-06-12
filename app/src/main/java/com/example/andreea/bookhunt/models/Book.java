@@ -9,6 +9,7 @@ public class Book {
     private String description;
     private String originalBookId;
     private String review_widget;
+    private boolean fav;
 
     public String getBookTitle() {
         return bookTitle;
@@ -66,6 +67,14 @@ public class Book {
         this.review_widget = review_widget;
     }
 
+    public boolean isfav() {
+        return fav;
+    }
+
+    public void setfav(boolean fav) {
+        this.fav = fav;
+    }
+
     @Override
     public String toString() {
         return "Book{" +
@@ -75,7 +84,7 @@ public class Book {
                 '}';
     }
 
-    public Book(String bookId, String bookTitle, String author, String photoUrl, float rating, String description, String originalBookId, String review_widget) {
+    public Book(String bookId, String bookTitle, String author, String photoUrl, float rating, String description, String originalBookId, String review_widget, boolean fav) {
         this.bookId = bookId;
         this.bookTitle = bookTitle;
         this.author = author;
@@ -84,6 +93,7 @@ public class Book {
         this.description = description;
         this.originalBookId = originalBookId;
         this.review_widget = review_widget;
+        this.fav = fav;
     }
 
     public Book() {

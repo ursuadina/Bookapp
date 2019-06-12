@@ -58,11 +58,12 @@ public class BHResultActivity extends AppCompatActivity implements NavigationVie
 
     private String bookId;
     private String mBookTitle;
-    private String mAuthor;
+    private String origianlBookId;
     private String mPhotoUrl;
     private String review_widget;
     private String originalBookId;
     private String description_new;
+    private String mAuthor;
     private String titleAuthor;
     private float average_rating;
 
@@ -86,38 +87,28 @@ public class BHResultActivity extends AppCompatActivity implements NavigationVie
         setContentView(R.layout.activity_bhresult);
         Intent intent = getIntent();
 
-        mBookTitle = intent.getStringExtra(Constants.TITLE);
-        mAuthor = intent.getStringExtra(Constants.AUTHOR);
-        mPhotoUrl = intent.getStringExtra(Constants.PHOTO_URL);
-        titleAuthor = mBookTitle + "_" + mAuthor;
-
         initView();
 
         initNavDrawer();
+
+        //mBookTitle = intent.getStringExtra(Constants.TITLE);
+        mPhotoUrl = intent.getStringExtra(Constants.PHOTO_URL);
+        origianlBookId = intent.getStringExtra(Constants.BOOK_ID);
+        //mAuthor = intent.getStringExtra(Constants.AUTHOR);
+        //titleAuthor = mBookTitle + "_" + mAuthor;
+
+
 
         firebaseAuth = FirebaseAuth.getInstance();
         databaseReviews = FirebaseDatabase.getInstance().getReference("Reviews");
         databaseOriginalBooks = FirebaseDatabase.getInstance().getReference("OriginalBooks");
 
         reviewArrayList = new ArrayList<>();
-        Query query1 = databaseOriginalBooks.orderByChild("titleAuthor").equalTo(titleAuthor);
-        query1.addListenerForSingleValueEvent(new ValueEventListener() {
+        Query query1 = databaseReviews.orderByChild("bookId").equalTo(origianlBookId);
+        query1.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.exists()) {
-                    originalBookId = databaseOriginalBooks.push().getKey();
-                    OriginalBooks originalBooks = new OriginalBooks(originalBookId, mBookTitle, description_new, mAuthor, titleAuthor);
-                    databaseOriginalBooks.push().setValue(originalBooks);
-                } else {
-                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                        originalBookId = ds.getValue(OriginalBooks.class).getBookId();
-                    }
-                }
-                Query query = databaseReviews.orderByChild("bookId").equalTo(originalBookId);
-                query.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if(!dataSnapshot.exists()) {
+                if(!dataSnapshot.exists()) {
                             textViewNoReviews.setVisibility(View.VISIBLE);
                         } else {
                             textViewNoReviews.setVisibility(View.GONE);
@@ -128,20 +119,56 @@ public class BHResultActivity extends AppCompatActivity implements NavigationVie
                             reviewAdapter = new AddReviewAdapter(BHResultActivity.this, reviewArrayList);
                             recyclerViewReviews.setAdapter(reviewAdapter);
                         }
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(BHResultActivity.this, "nu s-a gasit", Toast.LENGTH_SHORT).show();
+
             }
         });
+//        Query query1 = databaseOriginalBooks.orderByChild("titleAuthor").equalTo(titleAuthor);
+//        query1.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                if (!dataSnapshot.exists()) {
+//                    originalBookId = databaseOriginalBooks.push().getKey();
+//                    OriginalBooks originalBooks = new OriginalBooks(originalBookId, mBookTitle, description_new, mAuthor, titleAuthor);
+//                    databaseOriginalBooks.push().setValue(originalBooks);
+//                } else {
+//                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+//                        originalBookId = ds.getValue(OriginalBooks.class).getBookId();
+//                    }
+//                }
+//                Query query = databaseReviews.orderByChild("bookId").equalTo(originalBookId);
+//                query.addValueEventListener(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                        if(!dataSnapshot.exists()) {
+//                            textViewNoReviews.setVisibility(View.VISIBLE);
+//                        } else {
+//                            textViewNoReviews.setVisibility(View.GONE);
+//                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
+//                                Review review = ds.getValue(Review.class);
+//                                reviewArrayList.add(review);
+//                            }
+//                            reviewAdapter = new AddReviewAdapter(BHResultActivity.this, reviewArrayList);
+//                            recyclerViewReviews.setAdapter(reviewAdapter);
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//                Toast.makeText(BHResultActivity.this, "nu s-a gasit", Toast.LENGTH_SHORT).show();
+//            }
+//        });
 //        reviewAdapter = new AddReviewAdapter(BHResultActivity.this, reviewArrayList);
 //        recyclerViewReviews.setAdapter(reviewAdapter);
     }
@@ -175,6 +202,8 @@ public class BHResultActivity extends AppCompatActivity implements NavigationVie
         int id = item.getItemId();
 
         if (id == R.id.nav_gallery) {
+            Intent intent = new Intent(BHResultActivity.this, IndexActivity.class);
+            startActivity(intent);
 
         } else if (id == R.id.nav_profile) {
 

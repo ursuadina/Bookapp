@@ -20,6 +20,7 @@ import com.example.andreea.bookhunt.recyclerviewutils.AddReviewAdapter;
 import com.example.andreea.bookhunt.recyclerviewutils.BookAdapter;
 import com.example.andreea.bookhunt.recyclerviewutils.ResultsIDBAdapter;
 import com.example.andreea.bookhunt.utils.Constants;
+import com.example.andreea.bookhunt.utils.SharedPreferencesHelper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -68,7 +69,7 @@ public class ReviewActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         reviewArrayList = new ArrayList<>();
 
-        databaseReviews.addValueEventListener(new ValueEventListener() {
+        databaseReviews.orderByChild("createdAtMiliseconds").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.hasChildren()) {
@@ -126,7 +127,8 @@ public class ReviewActivity extends AppCompatActivity {
         long timeMili = (-1) * date.getTime();
         String currentUserId = firebaseAuth.getCurrentUser().getUid();
         String reviewId = databaseReviews.push().getKey();
-        Review review = new Review(reviewAdded, currentUserId, rating, date.toString(), originalBookId, reviewId, timeMili);
+        String username = SharedPreferencesHelper.getStringValueForUserInfo(Constants.USERNAME, ReviewActivity.this);
+        Review review = new Review(reviewAdded, currentUserId, rating, date.toString(), originalBookId, reviewId, timeMili, username);
         databaseReviews.push().setValue(review);
         //reviewArrayList.add(new Review(reviewAdded, "andreea123",rating));
     }

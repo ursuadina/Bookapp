@@ -23,11 +23,9 @@ public class AddReviewAdapter extends RecyclerView.Adapter<AddReviewViewHolder> 
     private ArrayList<Review> addReviewArrayList;
 
     private String review;
-    private String userId;
+    private String username;
     private float rating;
     private Review addReview;
-    private String reviewId;
-    private AddReviewViewHolder addReviewViewHolder1;
 
 
     public AddReviewAdapter(Context context, ArrayList<Review> addReviewArrayList) {
@@ -45,32 +43,12 @@ public class AddReviewAdapter extends RecyclerView.Adapter<AddReviewViewHolder> 
     public void onBindViewHolder(@NonNull AddReviewViewHolder addReviewViewHolder, int i) {
         addReview = addReviewArrayList.get(i);
         review = addReview.getReview();
-        userId = addReview.getUserId();
+        username = addReview.getUserName();
         rating = addReview.getRating();
-        reviewId = addReview.getReviewId();
-        addReviewViewHolder1 = addReviewViewHolder;
-        Query query = FirebaseDatabase.getInstance().getReference("Users").orderByKey().equalTo(userId);
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChildren() || dataSnapshot.exists()) {
-                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                        String username = ds.getValue(User.class).getUsername();
-                        // addReviewViewHolder1.mTextViewReview.setText(review);
-                        addReviewViewHolder1.mTextViewUser.setText(username);
-                        //  addReviewViewHolder1.mRatingBarReview.setRating(rating);
-                    }
-                }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        addReviewViewHolder1.mTextViewReview.setText(review);
-//        addReviewViewHolder.mTextViewUser.setText(userId);
-        addReviewViewHolder1.mRatingBarReview.setRating(rating);
+        addReviewViewHolder.mTextViewReview.setText(review);
+        addReviewViewHolder.mTextViewUser.setText(username);
+        addReviewViewHolder.mRatingBarReview.setRating(rating);
 
     }
 

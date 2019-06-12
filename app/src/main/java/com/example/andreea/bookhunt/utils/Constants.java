@@ -18,6 +18,8 @@ public class Constants {
     public static final String AVERAGE_RATING = "average_rating";
     public static final String RESULT_ARRAY_IDB = "array_idb";
     public static final String REMEMBER = "remember_login";
+    public static final String DONE_GOODREADS = "done_goodreads";
+    public static final String DONE_IDB = "done_idb";
 
     public static final String MESSAGE = "message";
     public static final String BASE_URL_GOODREADS = "https://www.goodreads.com/book/";

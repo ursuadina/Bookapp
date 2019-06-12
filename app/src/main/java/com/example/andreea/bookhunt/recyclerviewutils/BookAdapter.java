@@ -56,6 +56,8 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
     private String photoUrl;
     private String description;
     private Book book;
+    private String originalBookId;
+    private String author;
 
     public BookAdapter(Context context, ArrayList<Book> books) {
         this.context = context;
@@ -74,12 +76,20 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
         title = book.getBookTitle();
         photoUrl = book.getPhotoUrl();
         description = book.getDescription();
+        originalBookId = book.getOriginalBookId();
+        author = book.getAuthor();
 
         bookViewHolder.mTextViewBookAuthor.setText(books.get(i).getAuthor());
         bookViewHolder.mTextViewBookTitle.setText(books.get(i).getBookTitle());
         Picasso.get().load(books.get(i).getPhotoUrl()).into(bookViewHolder.mImageViewBookPhoto);
         bookViewHolder.mRatingBarGoodReads.setRating(books.get(i).getRating());
         bookViewHolder.mRatingBarGoodReads.setStepSize((float) 0.5);
+
+        if (book.isfav()) {
+            bookViewHolder.mImageButtonAddFav.setImageResource(R.drawable.ic_favorite_black_24dp);
+        } else {
+            bookViewHolder.mImageButtonAddFav.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+        }
         bookViewHolder.mImageButtonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,7 +128,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
         bookViewHolder.mImageButtonAddFav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addToFav(bookViewHolder.mImageButtonAddFav);
+                addToFav(bookViewHolder.mImageButtonAddFav, book);
             }
         });
 
@@ -126,18 +136,39 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, BHResultActivity.class);
+                intent.putExtra(Constants.PHOTO_URL, photoUrl);
+                intent.putExtra(Constants.TITLE, title);
+                intent.putExtra(Constants.AUTHOR, author);
+                intent.putExtra(Constants.BOOK_ID, originalBookId);
                 context.startActivity(intent);
             }
         });
     }
 
-    private void addToFav(ImageButton mImageButtonAddFav) {
-        if((Integer) mImageButtonAddFav.getTag() == R.drawable.ic_favorite_border_black_24dp) {
+    private void addToFav(ImageButton mImageButtonAddFav, Book book) {
+        if(!book.isfav()) {//(Integer) mImageButtonAddFav.getTag() == R.drawable.ic_favorite_border_black_24dp) {
             mImageButtonAddFav.setImageResource(R.drawable.ic_favorite_black_24dp);
-            mImageButtonAddFav.setTag(R.drawable.ic_favorite_black_24dp);
+            //mImageButtonAddFav.setTag(R.drawable.ic_favorite_black_24dp);
+            book.setfav(true);
+
+            DatabaseReference databaseFavourite = FirebaseDatabase.getInstance().getReference("Favourite");
+            databaseFavourite.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(book.getBookId()).setValue(book);
+
+            DatabaseReference databaseBooks =  FirebaseDatabase.getInstance().getReference("Books");
+            databaseBooks.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(book.getBookId()).setValue(book);
         } else {
             mImageButtonAddFav.setImageResource(R.drawable.ic_favorite_border_black_24dp);
-            mImageButtonAddFav.setTag(R.drawable.ic_favorite_border_black_24dp);
+            //mImageButtonAddFav.setTag(R.drawable.ic_favorite_border_black_24dp);
+
+            book.setfav(false);
+            DatabaseReference databaseFavourite = FirebaseDatabase.getInstance()
+                    .getReference("Favourite")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(book.getBookId());
+            databaseFavourite.removeValue();
+
+            DatabaseReference databaseBooks =  FirebaseDatabase.getInstance().getReference("Books");
+            databaseBooks.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(book.getBookId()).setValue(book);
         }
     }
 
@@ -224,10 +255,16 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
 
     public void deleteBook(String id, String photoUrl) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().
-                getReference("Books").
-                child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                getReference("Books")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child(id);
         databaseReference.removeValue();
+
+        DatabaseReference databaseFavourite = FirebaseDatabase.getInstance()
+                .getReference("Favourite")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(id);
+        databaseFavourite.removeValue();
 
         StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(photoUrl);
         storageReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {

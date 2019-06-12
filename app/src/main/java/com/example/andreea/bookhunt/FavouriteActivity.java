@@ -1,6 +1,7 @@
 package com.example.andreea.bookhunt;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,12 +17,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.andreea.bookhunt.models.Book;
 import com.example.andreea.bookhunt.recyclerviewutils.BookAdapter;
 import com.example.andreea.bookhunt.utils.Constants;
 import com.example.andreea.bookhunt.utils.SharedPreferencesHelper;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -38,6 +46,7 @@ public class FavouriteActivity extends AppCompatActivity
     private TextView mTextViewEmail;
     private NavigationView mNavigationView;
     private LinearLayout mLinearLayoutHeader;
+    private DatabaseReference databaseFavourite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +56,36 @@ public class FavouriteActivity extends AppCompatActivity
         initView();
 
         initNavDrawer();
+        books = new ArrayList<>();
+
         firebaseAuth = FirebaseAuth.getInstance();
-//        books = new ArrayList<>();
+        databaseFavourite = FirebaseDatabase.getInstance().getReference("Favourite")
+                 .child(firebaseAuth.getCurrentUser().getUid());
+
+        databaseFavourite.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                books.clear();
+                for(DataSnapshot ds: dataSnapshot.getChildren()) {
+                    Book book = ds.getValue(Book.class);
+                    books.add(book);
+                }
+                if (books.size() == 0) {
+                    TextView textViewNoFav = (TextView) findViewById(R.id.textViewNoFav);
+                    textViewNoFav.setVisibility(View.VISIBLE);
+                } else {
+                    TextView textViewNoFav = (TextView) findViewById(R.id.textViewNoFav);
+                    textViewNoFav.setVisibility(View.GONE);
+                }
+                bookAdapter = new BookAdapter(FavouriteActivity.this, books);
+                recyclerViewFav.setAdapter(bookAdapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(FavouriteActivity.this, "Something went wrong.", Toast.LENGTH_SHORT).show();
+            }
+        });
 //        books.add(new Book("-Lh18HVhZkgpGeskoKUS", "To kill a mockingbird", "Harper Lee", "https://firebasestorage.googleapis.com/v0/b/book-hunt.appspot.com/o/images%2Fusers%2Fve00qQvfE7NLggglinqwxSIGW1U2%2FTo%20kill%20a%20mockingbirdHarper%20Lee20190610_234625.jpg?alt=media&token=ae65f60e-fcb9-4985-ac84-3620f68be1e9"
 //                , (float) 4.26, "The unforgettable novel of a childhood in a sleepy Southern town and the crisis of conscience that rocked it, To Kill A Mockingbird became both an instant bestseller and a critical success when it was first published in 1960. It went on to win the Pulitzer Prize in 1961 and was later made into an Academy Award-winning film, also a classic.\\n\\nCompassionate, dramatic, and deeply moving, To Kill A Mockingbird takes readers to the roots of human behavior - to innocence and experience, kindness and cruelty, love and hatred, humor and pathos. Now with over 18 million copies in print and translated into forty languages, this regional story by a young Alabama woman claims universal appeal. Harper Lee always considered her book to be a simple love story. Today it is regarded as a masterpiece of American literature."));
 //        bookAdapter = new BookAdapter(FavouriteActivity.this, books);
@@ -104,6 +141,8 @@ public class FavouriteActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_gallery) {
+            Intent intent = new Intent(FavouriteActivity.this, IndexActivity.class);
+            startActivity(intent);
 
         } else if (id == R.id.nav_profile) {
 

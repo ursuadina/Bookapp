@@ -1,7 +1,5 @@
 package com.example.andreea.bookhunt.models;
 
-import java.util.Date;
-
 public class Review {
     private String review;
     private String userId;
@@ -10,12 +8,13 @@ public class Review {
     private String bookId;
     private String reviewId;
     private long createdAtMiliseconds;
+    private String userName;
 
     public Review() {
     }
 
 
-    public Review(String review, String userId, float rating, String createdAt, String bookId, String reviewId, long createdAtMiliseconds) {
+    public Review(String review, String userId, float rating, String createdAt, String bookId, String reviewId, long createdAtMiliseconds, String userName) {
         this.review = review;
         this.userId = userId;
         this.rating = rating;
@@ -23,6 +22,7 @@ public class Review {
         this.bookId = bookId;
         this.reviewId = reviewId;
         this.createdAtMiliseconds = createdAtMiliseconds;
+        this.userName = userName;
     }
 
     public String getReview() {
@@ -79,5 +79,13 @@ public class Review {
 
     public void setCreatedAtMiliseconds(long createdAtMiliseconds) {
         this.createdAtMiliseconds = createdAtMiliseconds;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }
