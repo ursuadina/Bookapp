@@ -1,6 +1,8 @@
 package com.example.andreea.bookhunt;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +19,7 @@ import com.example.andreea.bookhunt.models.ResultIDB;
 import com.example.andreea.bookhunt.recyclerviewutils.ResultsIDBAdapter;
 import com.example.andreea.bookhunt.retrofitUtils.GoodreadsAPI;
 import com.example.andreea.bookhunt.retrofitUtils.IDreamBooksAPI;
+import com.example.andreea.bookhunt.retrofitUtils.modelAuthor.AuthorResponse;
 import com.example.andreea.bookhunt.retrofitUtils.modelGoodReads.GoodreadsResponse;
 import com.example.andreea.bookhunt.retrofitUtils.modelIDreamBooks.IDreamBooksResponse;
 import com.example.andreea.bookhunt.retrofitUtils.modelIDreamBooks.bookIDB.criticReviews.criticReview.CriticReview;
@@ -60,7 +63,8 @@ public class OptionsActivity extends AppCompatActivity {
     private String mSource;
     private ResultIDB mResultIDB;
     private ArrayList<ResultIDB> resultIDBArrayList;
-
+    private GoodreadsAPI goodreadsAPI;
+    private String authorNew;
     private Book mBook;
 
     private FirebaseAuth firebaseAuth;
@@ -96,55 +100,101 @@ public class OptionsActivity extends AppCompatActivity {
                 .addConverterFactory(SimpleXmlConverterFactory.create())
                 .build();
 
-        GoodreadsAPI goodreadsAPI = retrofit.create(GoodreadsAPI.class);
+        goodreadsAPI = retrofit.create(GoodreadsAPI.class);
         Call<GoodreadsResponse> call = goodreadsAPI.getGoodreadsResponse(Constants.DEVELOPER_KEY_GOODREADS, mBookTitle, mAuthor);
         call.enqueue(new Callback<GoodreadsResponse>() {
             @Override
             public void onResponse(Call<GoodreadsResponse> call, Response<GoodreadsResponse> response) {
-                review_widget = response.body().getBook().getReviews_widget();
+                if (response.isSuccessful()) {
+                    review_widget = response.body().getBook().getReviews_widget();
 
-                average_rating = response.body().getBook().getAverage_rating();
+                    average_rating = response.body().getBook().getAverage_rating();
 
-                bookId = databaseBooks.push().getKey();
-                description = response.body().getBook().getDescription().replaceAll("<br />", "\n");
+                    bookId = databaseBooks.push().getKey();
+                    if (response.body().getBook().getDescription() != null ) {
+                        description = response.body().getBook().getDescription().replaceAll("<br />", "\n");
+                    } else {
+                        description = "There is no description for this book";
+                    }
+                    titleAuthor = mBookTitle + "_" + mAuthor;
+                    Query query1 = databaseOriginalBooks.orderByChild("titleAuthor").equalTo(titleAuthor);
+                    query1.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (!dataSnapshot.exists()) {
+                                originalBookId = databaseOriginalBooks.push().getKey();
+                                OriginalBooks originalBooks = new OriginalBooks(originalBookId, mBookTitle, description, mAuthor, titleAuthor);
+                                databaseOriginalBooks.child(originalBookId).setValue(originalBooks);
+                            } else {
+                                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                    originalBookId = ds.getValue(OriginalBooks.class).getBookId();
+                                }
+                            }
+                            if (SharedPreferencesHelper.getStringValueForUserInfo(Constants.IS_CREATED, getApplicationContext()).equals("False")) {
+                                mBook = new Book(bookId, mBookTitle, mAuthor, mPhotoUrl, average_rating, description, originalBookId, review_widget, false);
+                                databaseBooks.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .child(bookId).setValue(mBook);
+                                SharedPreferencesHelper.setStringValueForUserInfo(Constants.IS_CREATED, "True", OptionsActivity.this);
+                            }
+                            bundleExtras.putString(Constants.REVIEW_WIDGET, review_widget);
+                            bundleExtras.putString(Constants.PHOTO_URL, mPhotoUrl);
+                            bundleExtras.putFloat(Constants.AVERAGE_RATING, average_rating);
+                            bundleExtras.putString(Constants.BOOK_ID, originalBookId);
+                            SharedPreferencesHelper.setStringValueForUserInfo(Constants.DONE_GOODREADS, "done", OptionsActivity.this);
+                            mButtonGoodReads.setEnabled(true);
+                        }
 
-                titleAuthor = mBookTitle + "_" + mAuthor;
-                Query query1 = databaseOriginalBooks.orderByChild("titleAuthor").equalTo(titleAuthor);
-                query1.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (!dataSnapshot.exists()) {
-                            originalBookId = databaseOriginalBooks.push().getKey();
-                            OriginalBooks originalBooks = new OriginalBooks(originalBookId, mBookTitle, description, mAuthor, titleAuthor);
-                            databaseOriginalBooks.child(originalBookId).setValue(originalBooks);
-                        } else {
-                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                                originalBookId = ds.getValue(OriginalBooks.class).getBookId();
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            Toast.makeText(OptionsActivity.this, "nu s-a gasit", Toast.LENGTH_SHORT).show();
+                            SharedPreferencesHelper.setStringValueForUserInfo(Constants.DONE_GOODREADS, "done", OptionsActivity.this);
+                        }
+                    });
+
+                    SharedPreferencesHelper.setStringValueForUserInfo(Constants.DONE_GOODREADS, "done", OptionsActivity.this);
+                    Log.d("ResultActivity", "onResponse: GoodReadsReasponse: " + response.body().getBook());
+                    Log.d("ResultActivity", "onResponse: Server Response: " + response.toString());
+                } else {
+                    Retrofit retrofit1 = new Retrofit.Builder()
+                            .baseUrl(Constants.BASE_URL_GOODREADS)
+                            .addConverterFactory(SimpleXmlConverterFactory.create())
+                            .build();
+                    Call<AuthorResponse> call1 = goodreadsAPI.getAuthorResponse(mAuthor, Constants.DEVELOPER_KEY_GOODREADS);
+                    call1.enqueue(new Callback<AuthorResponse>() {
+                        @Override
+                        public void onResponse(Call<AuthorResponse> call, Response<AuthorResponse> response) {
+                            if(response.isSuccessful()) {
+                                authorNew = response.body().getAuthor().getName();
+                                new AlertDialog.Builder(OptionsActivity.this)
+                                        .setTitle("Wrong author")
+                                        .setMessage("Did you want to write " + authorNew+ "?")
+                                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Intent intent1 = new Intent(OptionsActivity.this, OptionsActivity.class);
+                                                intent1.putExtra(Constants.TITLE, mBookTitle);
+                                                intent1.putExtra(Constants.AUTHOR, authorNew);
+                                                intent1.putExtra(Constants.PHOTO_URL, mPhotoUrl);
+                                                startActivity(intent1);
+                                                finish();
+                                            }
+                                        })
+
+                                        // A null listener allows the button to dismiss the dialog and take no further action.
+                                        .setNegativeButton(android.R.string.no, null)
+                                        .setIcon(android.R.drawable.ic_dialog_alert)
+                                        .show();
+                            } else {
+                                mButtonGoodReads.setEnabled(false);
+                                mButtonGoodReads.setBackground(getDrawable(R.drawable.rounded_button_disabled));
                             }
                         }
-                        if(SharedPreferencesHelper.getStringValueForUserInfo(Constants.IS_CREATED, getApplicationContext()).equals("False")) {
-                            mBook = new Book(bookId, mBookTitle, mAuthor, mPhotoUrl, average_rating, description, originalBookId, review_widget, false);
-                            databaseBooks.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .child(bookId).setValue(mBook);
-                            SharedPreferencesHelper.setStringValueForUserInfo(Constants.IS_CREATED, "True", OptionsActivity.this);
+
+                        @Override
+                        public void onFailure(Call<AuthorResponse> call, Throwable t) {
+
                         }
-                        bundleExtras.putString(Constants.REVIEW_WIDGET, review_widget);
-                        bundleExtras.putString(Constants.PHOTO_URL, mPhotoUrl);
-                        bundleExtras.putFloat(Constants.AVERAGE_RATING, average_rating);
-                        bundleExtras.putString(Constants.BOOK_ID, originalBookId);
-                        SharedPreferencesHelper.setStringValueForUserInfo(Constants.DONE_GOODREADS, "done", OptionsActivity.this);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Toast.makeText(OptionsActivity.this, "nu s-a gasit", Toast.LENGTH_SHORT).show();
-                        SharedPreferencesHelper.setStringValueForUserInfo(Constants.DONE_GOODREADS, "done", OptionsActivity.this);
-                    }
-                });
-
-                SharedPreferencesHelper.setStringValueForUserInfo(Constants.DONE_GOODREADS, "done", OptionsActivity.this);
-                Log.d("ResultActivity", "onResponse: GoodReadsReasponse: " + response.body().getBook());
-                Log.d("ResultActivity", "onResponse: Server Response: " + response.toString());
+                    });
+                }
             }
 
             @Override
@@ -166,19 +216,26 @@ public class OptionsActivity extends AppCompatActivity {
         callIDB.enqueue(new Callback<IDreamBooksResponse>() {
             @Override
             public void onResponse(Call<IDreamBooksResponse> call, Response<IDreamBooksResponse> response) {
-                resultIDBArrayList = new ArrayList<>();
-                List<CriticReview> criticReviews = response.body().getBookIDB().getCriticReviews().getCriticReview();
-                for(int i = 0; i < criticReviews.size(); i++) {
-                    mSnippet = criticReviews.get(i).getSnippet();
-                    mSource = criticReviews.get(i).getSource();
-                    mReview = criticReviews.get(i).getStarRating();
-                    mResultIDB = new ResultIDB(mSnippet, mSource, mReview);
-                    resultIDBArrayList.add(mResultIDB);
+                if (response.isSuccessful()) {
+                    resultIDBArrayList = new ArrayList<>();
+                    List<CriticReview> criticReviews = response.body().getBookIDB().getCriticReviews().getCriticReview();
+                    for (int i = 0; i < criticReviews.size(); i++) {
+                        mSnippet = criticReviews.get(i).getSnippet();
+                        mSource = criticReviews.get(i).getSource();
+                        mReview = criticReviews.get(i).getStarRating();
+                        mResultIDB = new ResultIDB(mSnippet, mSource, mReview);
+                        resultIDBArrayList.add(mResultIDB);
+                    }
+                    bundleExtras.putParcelableArrayList(Constants.RESULT_ARRAY_IDB, resultIDBArrayList);
+                    SharedPreferencesHelper.setStringValueForUserInfo(Constants.DISABLE_IDB, "false", OptionsActivity.this);
+                    mButtonNYT.setEnabled(true);
+                    progressDialog.dismiss();
+                } else {
+                    mButtonNYT.setEnabled(false);
+                    mButtonNYT.setBackground(getDrawable(R.drawable.rounded_button_disabled));
+                    progressDialog.dismiss();
                 }
-                bundleExtras.putParcelableArrayList(Constants.RESULT_ARRAY_IDB, resultIDBArrayList);
-                progressDialog.dismiss();
             }
-
 
             @Override
             public void onFailure(Call<IDreamBooksResponse> call, Throwable t) {

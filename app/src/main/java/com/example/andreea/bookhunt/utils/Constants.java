@@ -20,9 +20,11 @@ public class Constants {
     public static final String REMEMBER = "remember_login";
     public static final String DONE_GOODREADS = "done_goodreads";
     public static final String DONE_IDB = "done_idb";
+    public static final String DISABLE_GR = "disable_gr_button";
+    public static final String DISABLE_IDB = "disable_idb_button";
 
     public static final String MESSAGE = "message";
-    public static final String BASE_URL_GOODREADS = "https://www.goodreads.com/book/";
+    public static final String BASE_URL_GOODREADS = "https://www.goodreads.com/";
     public static final String BASE_URL_IDREAMBOOKS = "https://idreambooks.com/api/books/";
 
 
