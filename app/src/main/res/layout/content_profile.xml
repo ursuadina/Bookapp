@@ -2,7 +2,9 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -215,7 +217,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="161dp" />
+        app:layout_constraintGuide_begin="177dp" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline24"
@@ -324,12 +326,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:text="@string/password"
         android:textSize="@dimen/text_size"
-        app:layout_constraintBottom_toTopOf="@+id/guideline27"
         app:layout_constraintEnd_toStartOf="@+id/guideline23"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline17"
@@ -340,10 +340,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="20dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/guideline27"
         app:layout_constraintEnd_toStartOf="@+id/guideline18"
         app:layout_constraintStart_toStartOf="@+id/guideline23"
         app:layout_constraintTop_toTopOf="@+id/guideline26">
@@ -369,11 +367,10 @@
         android:id="@+id/lnPass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="8dp"
         android:orientation="horizontal"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/guideline27"
         app:layout_constraintEnd_toStartOf="@+id/guideline18"
         app:layout_constraintStart_toStartOf="@+id/guideline23"
         app:layout_constraintTop_toTopOf="@+id/guideline26">
@@ -405,5 +402,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="299dp" />
+        app:layout_constraintGuide_begin="381dp" />
+
+    <TextView
+        android:id="@+id/tvConfPass"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/confirm_password"
+        android:textSize="@dimen/text_size"
+        app:layout_constraintEnd_toStartOf="@+id/guideline23"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/guideline17"
+        app:layout_constraintTop_toBottomOf="@+id/tvPass"
+        android:visibility="gone"/>
 </android.support.constraint.ConstraintLayout>

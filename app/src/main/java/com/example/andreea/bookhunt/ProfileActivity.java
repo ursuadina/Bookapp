@@ -18,29 +18,37 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.andreea.bookhunt.utils.Constants;
+import com.example.andreea.bookhunt.utils.EmailHelper;
+import com.example.andreea.bookhunt.utils.NameHelper;
 import com.example.andreea.bookhunt.utils.SharedPreferencesHelper;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 public class ProfileActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener{
 
     private TextView textViewFirstName;
     private TextView textViewLastName;
+    private TextView textViewEmail;
+    private TextView textViewPass;
 
     private LinearLayout linearLayoutFN;
     private LinearLayout linearLayoutFNRead;
     private LinearLayout linearLayoutLN;
     private LinearLayout linearLayoutLNRead;
+    private LinearLayout linearLayoutEmail;
+    private LinearLayout linearLayoutEmailRead;
+    private LinearLayout linearLayoutPass;
+    private LinearLayout linearLayoutPassRead;
 
     private EditText textInputEditTextFirstName;
     private EditText textInputEditTextLastName;
+    private EditText textInputEditTextEmail;
+    private EditText textInputEditTextPass;
 
     private FirebaseAuth firebaseAuth;
-
-    private TextView mTextViewUsername;
-    private TextView mTextViewEmail;
-    private NavigationView mNavigationView;
-    private LinearLayout mLinearLayoutHeader;
+    private DatabaseReference databaseReferenceUsers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +61,7 @@ public class ProfileActivity extends AppCompatActivity  implements NavigationVie
         initNavDrawer();
 
         firebaseAuth = FirebaseAuth.getInstance();
+        databaseReferenceUsers = FirebaseDatabase.getInstance().getReference("Users");
     }
 
     public void initNavDrawer() {
@@ -90,23 +99,31 @@ public class ProfileActivity extends AppCompatActivity  implements NavigationVie
         View view_profile = findViewById(R.id.content_profile);
         view_profile.setVisibility(View.VISIBLE);
 
-        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
-        mLinearLayoutHeader = (LinearLayout) mNavigationView.getHeaderView(0);
-        mTextViewUsername = (TextView) mLinearLayoutHeader.findViewById(R.id.tvUsername);
+        NavigationView mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        LinearLayout mLinearLayoutHeader = (LinearLayout) mNavigationView.getHeaderView(0);
+        TextView mTextViewUsername = (TextView) mLinearLayoutHeader.findViewById(R.id.tvUsername);
         mTextViewUsername.setText(SharedPreferencesHelper.getStringValueForUserInfo(Constants.USERNAME, getApplicationContext()));
-        mTextViewEmail = (TextView) mLinearLayoutHeader.findViewById(R.id.tvEmail);
+        TextView mTextViewEmail = (TextView) mLinearLayoutHeader.findViewById(R.id.tvEmail);
         mTextViewEmail.setText(SharedPreferencesHelper.getStringValueForUserInfo(Constants.EMAIL, getApplicationContext()));
 
         textViewFirstName = (TextView) findViewById(R.id.textViewFirstNameEdit);
         textViewLastName = (TextView) findViewById(R.id.textViewLastNameEdit);
+        textViewEmail = (TextView) findViewById(R.id.textViewEmailEdit);
+        textViewPass = (TextView) findViewById(R.id.textViewPassEdit);
 
         textInputEditTextFirstName = (EditText) findViewById(R.id.teFirstNameEditTextInput);
         textInputEditTextLastName = (EditText) findViewById(R.id.teLastNameEditTextInput);
+        textInputEditTextEmail= (EditText) findViewById(R.id.teEmailEditTextInput);
+        textInputEditTextPass = (EditText) findViewById(R.id.tePassEditTextInput);
 
         linearLayoutFN = (LinearLayout) findViewById(R.id.lnFN);
         linearLayoutFNRead = (LinearLayout) findViewById(R.id.lnFNRead);
         linearLayoutLN = (LinearLayout) findViewById(R.id.lnLN);
         linearLayoutLNRead = (LinearLayout) findViewById(R.id.lnLNRead);
+        linearLayoutEmail = (LinearLayout) findViewById(R.id.lnEmail);
+        linearLayoutEmailRead = (LinearLayout) findViewById(R.id.lnEmailRead);
+        linearLayoutPass = (LinearLayout) findViewById(R.id.lnPass);
+        linearLayoutPassRead = (LinearLayout) findViewById(R.id.lnPassRead);
 
 
     }
@@ -184,9 +201,13 @@ public class ProfileActivity extends AppCompatActivity  implements NavigationVie
 
     public void btnSaveFN(View view) {
         String fnEdited = textInputEditTextFirstName.getText().toString();
-        textViewFirstName.setText(fnEdited);
-        linearLayoutFNRead.setVisibility(View.VISIBLE);
-        linearLayoutFN.setVisibility(View.GONE);
+        if (NameHelper.isNameValid(fnEdited)) {
+            textViewFirstName.setText(fnEdited);
+            linearLayoutFNRead.setVisibility(View.VISIBLE);
+            linearLayoutFN.setVisibility(View.GONE);
+        } else {
+            textInputEditTextFirstName.setError(getResources().getString(R.string.error_name_input));
+        }
     }
 
     public void btnEditFN(View view) {
@@ -201,21 +222,41 @@ public class ProfileActivity extends AppCompatActivity  implements NavigationVie
 
     public void btnSaveLN(View view) {
         String lnEdited = textInputEditTextLastName.getText().toString();
-        textViewLastName.setText(lnEdited);
-        linearLayoutLNRead.setVisibility(View.VISIBLE);
-        linearLayoutLN.setVisibility(View.GONE);
+        if (NameHelper.isNameValid(lnEdited)) {
+            textViewLastName.setText(lnEdited);
+            linearLayoutLNRead.setVisibility(View.VISIBLE);
+            linearLayoutLN.setVisibility(View.GONE);
+        } else {
+            textInputEditTextFirstName.setError(getResources().getString(R.string.error_name_input));
+        }
     }
 
     public void btnEditEmail(View view) {
+        linearLayoutEmail.setVisibility(View.VISIBLE);
+        linearLayoutEmailRead.setVisibility(View.GONE);
     }
 
     public void btnSaveEmail(View view) {
+        String emailEdited = textInputEditTextEmail.getText().toString();
+        if(EmailHelper.isEmailValid(emailEdited)) {
+            textViewEmail.setText(emailEdited);
+            linearLayoutEmailRead.setVisibility(View.VISIBLE);
+            linearLayoutEmail.setVisibility(View.GONE);
+        } else {
+            textInputEditTextEmail.setError(getResources().getString(R.string.error_email_input));
+        }
     }
 
     public void btnEditPass(View view) {
+        linearLayoutPass.setVisibility(View.VISIBLE);
+        linearLayoutPassRead.setVisibility(View.GONE);
     }
 
     public void btnSavePassword(View view) {
+        String passEdited = textInputEditTextPass.getText().toString();
+        textViewPass.setText(passEdited);
+        linearLayoutPassRead.setVisibility(View.VISIBLE);
+        linearLayoutPass.setVisibility(View.GONE);
     }
 
 
