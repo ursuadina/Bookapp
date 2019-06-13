@@ -31,6 +31,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.w3c.dom.Text;
 
@@ -73,6 +74,7 @@ public class IndexActivity extends AppCompatActivity
         //Methods.checkPermissions(IndexActivity.this, IndexActivity.this);
         Intent intent = getIntent();
 
+        //FirebaseMessaging.getInstance().subscribeToTopic();
         books = new ArrayList<>();
         firebaseAuth = FirebaseAuth.getInstance();
         booksReference = FirebaseDatabase.getInstance().getReference("Books")
