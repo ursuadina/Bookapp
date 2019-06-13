@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 
 import com.example.andreea.bookhunt.models.Book;
+import com.example.andreea.bookhunt.models.Genre;
 import com.example.andreea.bookhunt.recyclerviewutils.BookAdapter;
 import com.example.andreea.bookhunt.utils.Constants;
 import com.example.andreea.bookhunt.utils.SharedPreferencesHelper;

@@ -1,6 +1,8 @@
 package com.example.andreea.bookhunt;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -17,13 +19,19 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.andreea.bookhunt.models.User;
 import com.example.andreea.bookhunt.utils.Constants;
 import com.example.andreea.bookhunt.utils.EmailHelper;
 import com.example.andreea.bookhunt.utils.NameHelper;
+import com.example.andreea.bookhunt.utils.PasswordHelper;
 import com.example.andreea.bookhunt.utils.SharedPreferencesHelper;
+import com.google.android.gms.vision.text.Line;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 public class ProfileActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener{
@@ -32,6 +40,7 @@ public class ProfileActivity extends AppCompatActivity  implements NavigationVie
     private TextView textViewLastName;
     private TextView textViewEmail;
     private TextView textViewPass;
+    private TextView textViewConfPass;
 
     private LinearLayout linearLayoutFN;
     private LinearLayout linearLayoutFNRead;
@@ -41,14 +50,17 @@ public class ProfileActivity extends AppCompatActivity  implements NavigationVie
     private LinearLayout linearLayoutEmailRead;
     private LinearLayout linearLayoutPass;
     private LinearLayout linearLayoutPassRead;
+    private LinearLayout linearLayoutConfPass;
 
     private EditText textInputEditTextFirstName;
     private EditText textInputEditTextLastName;
     private EditText textInputEditTextEmail;
     private EditText textInputEditTextPass;
+    private EditText textInputEditTextConfPass;
 
     private FirebaseAuth firebaseAuth;
     private DatabaseReference databaseReferenceUsers;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +68,13 @@ public class ProfileActivity extends AppCompatActivity  implements NavigationVie
         setContentView(R.layout.activity_profile);
 
         Intent intent = getIntent();
+        firebaseAuth = FirebaseAuth.getInstance();
+        databaseReferenceUsers = FirebaseDatabase.getInstance().getReference("Users");
+
         initView();
 
         initNavDrawer();
 
-        firebaseAuth = FirebaseAuth.getInstance();
-        databaseReferenceUsers = FirebaseDatabase.getInstance().getReference("Users");
     }
 
     public void initNavDrawer() {
@@ -99,6 +112,9 @@ public class ProfileActivity extends AppCompatActivity  implements NavigationVie
         View view_profile = findViewById(R.id.content_profile);
         view_profile.setVisibility(View.VISIBLE);
 
+        FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
+        floatingActionButton.hide();
+
         NavigationView mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         LinearLayout mLinearLayoutHeader = (LinearLayout) mNavigationView.getHeaderView(0);
         TextView mTextViewUsername = (TextView) mLinearLayoutHeader.findViewById(R.id.tvUsername);
@@ -106,15 +122,38 @@ public class ProfileActivity extends AppCompatActivity  implements NavigationVie
         TextView mTextViewEmail = (TextView) mLinearLayoutHeader.findViewById(R.id.tvEmail);
         mTextViewEmail.setText(SharedPreferencesHelper.getStringValueForUserInfo(Constants.EMAIL, getApplicationContext()));
 
+
         textViewFirstName = (TextView) findViewById(R.id.textViewFirstNameEdit);
         textViewLastName = (TextView) findViewById(R.id.textViewLastNameEdit);
         textViewEmail = (TextView) findViewById(R.id.textViewEmailEdit);
+        textViewEmail.setText(SharedPreferencesHelper.getStringValueForUserInfo(Constants.EMAIL, getApplicationContext()));
         textViewPass = (TextView) findViewById(R.id.textViewPassEdit);
+        textViewPass.setText(SharedPreferencesHelper.getStringValueForUserInfo(Constants.PASS, getApplicationContext()));
+        textViewConfPass = (TextView) findViewById(R.id.tvConfPass);
 
+        databaseReferenceUsers.orderByKey().equalTo(firebaseAuth.getCurrentUser().getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.exists()) {
+                            for(DataSnapshot ds : dataSnapshot.getChildren()) {
+                                User user = ds.getValue(User.class);
+                                textViewFirstName.setText(user.getFirstName());
+                                textViewLastName.setText(user.getLastName());
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
         textInputEditTextFirstName = (EditText) findViewById(R.id.teFirstNameEditTextInput);
         textInputEditTextLastName = (EditText) findViewById(R.id.teLastNameEditTextInput);
         textInputEditTextEmail= (EditText) findViewById(R.id.teEmailEditTextInput);
         textInputEditTextPass = (EditText) findViewById(R.id.tePassEditTextInput);
+        textInputEditTextConfPass = (EditText) findViewById(R.id.teConfPassEditTextInput);
 
         linearLayoutFN = (LinearLayout) findViewById(R.id.lnFN);
         linearLayoutFNRead = (LinearLayout) findViewById(R.id.lnFNRead);
@@ -124,7 +163,7 @@ public class ProfileActivity extends AppCompatActivity  implements NavigationVie
         linearLayoutEmailRead = (LinearLayout) findViewById(R.id.lnEmailRead);
         linearLayoutPass = (LinearLayout) findViewById(R.id.lnPass);
         linearLayoutPassRead = (LinearLayout) findViewById(R.id.lnPassRead);
-
+        linearLayoutConfPass = (LinearLayout) findViewById(R.id.lnConfPass);
 
     }
 
@@ -227,7 +266,7 @@ public class ProfileActivity extends AppCompatActivity  implements NavigationVie
             linearLayoutLNRead.setVisibility(View.VISIBLE);
             linearLayoutLN.setVisibility(View.GONE);
         } else {
-            textInputEditTextFirstName.setError(getResources().getString(R.string.error_name_input));
+            textInputEditTextLastName.setError(getResources().getString(R.string.error_name_input));
         }
     }
 
@@ -250,14 +289,59 @@ public class ProfileActivity extends AppCompatActivity  implements NavigationVie
     public void btnEditPass(View view) {
         linearLayoutPass.setVisibility(View.VISIBLE);
         linearLayoutPassRead.setVisibility(View.GONE);
+        linearLayoutConfPass.setVisibility(View.VISIBLE);
+        textViewConfPass.setVisibility(View.VISIBLE);
     }
 
     public void btnSavePassword(View view) {
         String passEdited = textInputEditTextPass.getText().toString();
-        textViewPass.setText(passEdited);
-        linearLayoutPassRead.setVisibility(View.VISIBLE);
-        linearLayoutPass.setVisibility(View.GONE);
+        String confPassEdited = textInputEditTextConfPass.getText().toString();
+        if(PasswordHelper.isPasswordValid(passEdited)) {
+            if (PasswordHelper.isConfirmationPassValid(passEdited, confPassEdited)) {
+                textViewPass.setText(passEdited);
+                linearLayoutPassRead.setVisibility(View.VISIBLE);
+                linearLayoutPass.setVisibility(View.GONE);
+                linearLayoutConfPass.setVisibility(View.GONE);
+                textViewConfPass.setVisibility(View.GONE);
+            } else {
+                textInputEditTextConfPass.setError(getResources().getString(R.string.error_conf_password_input));
+            }
+        } else {
+            textInputEditTextPass.setError(getResources().getString(R.string.error_password_input));
+        }
     }
 
 
+    public void btnSaveInfo(View view) {
+        final String emailChanged = textViewEmail.getText().toString();
+        String passwordChanged = textViewPass.getText().toString();
+        firebaseAuth.getCurrentUser().updatePassword(passwordChanged);
+        firebaseAuth.getCurrentUser().updateEmail(emailChanged);
+        databaseReferenceUsers.orderByKey().equalTo(firebaseAuth.getCurrentUser().getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.exists()) {
+                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                User user = ds.getValue(User.class);
+                                if (! user.getEmail().equals(textViewEmail.getText().toString())) {
+                                    user.setEmail(textViewEmail.getText().toString());
+                                }
+                                if(! user.getFirstName().equals(textViewFirstName.getText().toString())) {
+                                    user.setFirstName(textViewFirstName.getText().toString());
+                                }
+                                if(!user.getLastName().equals(textViewLastName.getText().toString())) {
+                                    user.setLastName(textViewLastName.getText().toString());
+                                }
+                                databaseReferenceUsers.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(user);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
 }

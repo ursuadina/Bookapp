@@ -151,8 +151,8 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
             //mImageButtonAddFav.setTag(R.drawable.ic_favorite_black_24dp);
             book.setfav(true);
 
-            DatabaseReference databaseFavourite = FirebaseDatabase.getInstance().getReference("Favourite");
-            databaseFavourite.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(book.getBookId()).setValue(book);
+//            DatabaseReference databaseFavourite = FirebaseDatabase.getInstance().getReference("Favourite");
+//            databaseFavourite.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(book.getBookId()).setValue(book);
 
             DatabaseReference databaseBooks =  FirebaseDatabase.getInstance().getReference("Books");
             databaseBooks.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(book.getBookId()).setValue(book);
@@ -161,11 +161,8 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
             //mImageButtonAddFav.setTag(R.drawable.ic_favorite_border_black_24dp);
 
             book.setfav(false);
-            DatabaseReference databaseFavourite = FirebaseDatabase.getInstance()
-                    .getReference("Favourite")
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .child(book.getBookId());
-            databaseFavourite.removeValue();
+//
+
 
             DatabaseReference databaseBooks =  FirebaseDatabase.getInstance().getReference("Books");
             databaseBooks.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(book.getBookId()).setValue(book);

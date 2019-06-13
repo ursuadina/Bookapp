@@ -71,10 +71,10 @@
         android:id="@+id/lnFNRead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="8dp"
         android:orientation="horizontal"
+        app:layout_constraintHorizontal_bias="0.094"
         app:layout_constraintBottom_toTopOf="@+id/guideline24"
         app:layout_constraintEnd_toStartOf="@+id/guideline18"
         app:layout_constraintStart_toStartOf="@+id/guideline23"
@@ -101,15 +101,15 @@
         android:id="@+id/lnFN"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:orientation="horizontal"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/guideline24"
         app:layout_constraintEnd_toStartOf="@+id/guideline18"
+        app:layout_constraintHorizontal_bias="0.094"
         app:layout_constraintStart_toStartOf="@+id/guideline23"
-        app:layout_constraintTop_toBottomOf="@+id/appbar">
+        app:layout_constraintTop_toBottomOf="@+id/appbar"
+        app:layout_constraintVertical_bias="0.0">
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/tiFirstNameEdit"
@@ -120,7 +120,7 @@
                 android:id="@+id/teFirstNameEditTextInput"
                 android:layout_width="107dp"
                 android:layout_height="wrap_content"
-                android:hint="hint" />
+                android:hint="@string/first_name" />
         </android.support.design.widget.TextInputLayout>
 
         <ImageButton
@@ -152,10 +152,10 @@
         android:id="@+id/lnLNRead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:orientation="horizontal"
+        app:layout_constraintHorizontal_bias="0.094"
         app:layout_constraintBottom_toTopOf="@+id/guideline25"
         app:layout_constraintEnd_toStartOf="@+id/guideline18"
         app:layout_constraintStart_toStartOf="@+id/guideline23"
@@ -182,14 +182,15 @@
         android:id="@+id/lnLN"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:orientation="horizontal"
         android:visibility="gone"
+        app:layout_constraintHorizontal_bias="0.094"
         app:layout_constraintBottom_toTopOf="@+id/guideline25"
         app:layout_constraintEnd_toStartOf="@+id/guideline18"
         app:layout_constraintStart_toStartOf="@+id/guideline23"
-        app:layout_constraintTop_toTopOf="@+id/guideline24">
+        app:layout_constraintTop_toTopOf="@+id/guideline24"
+        app:layout_constraintVertical_bias="0.4">
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/tiLastNameEdit"
@@ -200,7 +201,7 @@
                 android:id="@+id/teLastNameEditTextInput"
                 android:layout_width="107dp"
                 android:layout_height="wrap_content"
-                android:hint="hint" />
+                android:hint="@string/last_name" />
         </android.support.design.widget.TextInputLayout>
 
         <ImageButton
@@ -217,7 +218,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="177dp" />
+        app:layout_constraintGuide_begin="155dp" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline24"
@@ -253,9 +254,9 @@
         android:id="@+id/lnEmailRead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
+        app:layout_constraintHorizontal_bias="0.094"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/guideline26"
         app:layout_constraintEnd_toStartOf="@+id/guideline18"
@@ -283,14 +284,16 @@
         android:id="@+id/lnEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:orientation="horizontal"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/guideline26"
+        app:layout_constraintBottom_toTopOf="@+id/guideline26"
         app:layout_constraintEnd_toStartOf="@+id/guideline18"
+        app:layout_constraintHorizontal_bias="0.700"
         app:layout_constraintStart_toStartOf="@+id/guideline23"
-        app:layout_constraintTop_toTopOf="@+id/guideline25">
+        app:layout_constraintTop_toBottomOf="@+id/guideline25"
+        app:layout_constraintVertical_bias="1.0">
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/tiEmailEdit"
@@ -301,7 +304,7 @@
                 android:id="@+id/teEmailEditTextInput"
                 android:layout_width="107dp"
                 android:layout_height="wrap_content"
-                android:hint="hint" />
+                android:hint="@string/email" />
         </android.support.design.widget.TextInputLayout>
 
         <ImageButton
@@ -339,10 +342,10 @@
         android:id="@+id/lnPassRead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="20dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toStartOf="@+id/guideline18"
+        app:layout_constraintHorizontal_bias="0.094"
         app:layout_constraintStart_toStartOf="@+id/guideline23"
         app:layout_constraintTop_toTopOf="@+id/guideline26">
 
@@ -350,7 +353,8 @@
             android:id="@+id/textViewPassEdit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:text="@string/password"
+            android:inputType="textPassword"
             android:textSize="@dimen/text_size" />
 
         <ImageButton
@@ -367,10 +371,10 @@
         android:id="@+id/lnPass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
         android:orientation="horizontal"
         android:visibility="gone"
+        app:layout_constraintHorizontal_bias="0.094"
         app:layout_constraintEnd_toStartOf="@+id/guideline18"
         app:layout_constraintStart_toStartOf="@+id/guideline23"
         app:layout_constraintTop_toTopOf="@+id/guideline26">
@@ -384,16 +388,10 @@
                 android:id="@+id/tePassEditTextInput"
                 android:layout_width="107dp"
                 android:layout_height="wrap_content"
-                android:hint="hint" />
+                android:hint="@string/password"
+                android:inputType="textPassword"/>
         </android.support.design.widget.TextInputLayout>
 
-        <ImageButton
-            android:id="@+id/imageButtonSavePass"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/ic_save"
-            android:onClick="btnSavePassword" />
     </LinearLayout>
 
 
@@ -406,16 +404,67 @@
 
     <TextView
         android:id="@+id/tvConfPass"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:text="@string/confirm_password"
         android:textSize="@dimen/text_size"
+        app:layout_constraintBottom_toTopOf="@+id/guideline27"
         app:layout_constraintEnd_toStartOf="@+id/guideline23"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline17"
         app:layout_constraintTop_toBottomOf="@+id/tvPass"
+        app:layout_constraintVertical_bias="0.0"
         android:visibility="gone"/>
+
+    <LinearLayout
+        android:id="@+id/lnConfPass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone"
+        android:orientation="horizontal"
+        app:layout_constraintHorizontal_bias="0.094"
+        app:layout_constraintBottom_toTopOf="@+id/guideline27"
+        app:layout_constraintEnd_toStartOf="@+id/guideline18"
+        app:layout_constraintStart_toStartOf="@+id/guideline23"
+        app:layout_constraintTop_toBottomOf="@+id/lnPass"
+        >
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tiConfPassEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/teConfPassEditTextInput"
+                android:layout_width="107dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/confirm_password"
+                android:inputType="textPassword"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <ImageButton
+            android:id="@+id/imageButtonSavePass"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/ic_save"
+            android:onClick="btnSavePassword" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="Save"
+        android:background="@drawable/rounded_button"
+        app:layout_constraintBottom_toTopOf="@+id/guideline22"
+        app:layout_constraintEnd_toStartOf="@+id/guideline18"
+        android:onClick="btnSaveInfo"/>
+
 </android.support.constraint.ConstraintLayout>

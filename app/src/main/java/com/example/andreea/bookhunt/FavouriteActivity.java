@@ -59,10 +59,11 @@ public class FavouriteActivity extends AppCompatActivity
         books = new ArrayList<>();
 
         firebaseAuth = FirebaseAuth.getInstance();
-        databaseFavourite = FirebaseDatabase.getInstance().getReference("Favourite")
-                 .child(firebaseAuth.getCurrentUser().getUid());
-
-        databaseFavourite.addValueEventListener(new ValueEventListener() {
+//        databaseFavourite = FirebaseDatabase.getInstance().getReference("Favourite")
+//                 .child(firebaseAuth.getCurrentUser().getUid());
+        databaseFavourite = FirebaseDatabase.getInstance().getReference("Books/" + firebaseAuth.getCurrentUser().getUid());
+        Query query = databaseFavourite.orderByChild("fav").equalTo(true);
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 books.clear();

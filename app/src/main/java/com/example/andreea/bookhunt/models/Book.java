@@ -1,5 +1,7 @@
 package com.example.andreea.bookhunt.models;
 
+import java.util.ArrayList;
+
 public class Book {
     private String bookId;
     private String bookTitle;
@@ -10,6 +12,7 @@ public class Book {
     private String originalBookId;
     private String review_widget;
     private boolean fav;
+    private ArrayList<String> genres;
 
     public String getBookTitle() {
         return bookTitle;
@@ -75,6 +78,14 @@ public class Book {
         this.fav = fav;
     }
 
+    public ArrayList<String> getGenres() {
+        return genres;
+    }
+
+    public void setGenres(ArrayList<String> genres) {
+        this.genres = genres;
+    }
+
     @Override
     public String toString() {
         return "Book{" +
@@ -94,6 +105,19 @@ public class Book {
         this.originalBookId = originalBookId;
         this.review_widget = review_widget;
         this.fav = fav;
+    }
+
+    public Book(String bookId, String bookTitle, String author, String photoUrl, float rating, String description, String originalBookId, String review_widget, boolean fav, ArrayList<String> genres) {
+        this.bookId = bookId;
+        this.bookTitle = bookTitle;
+        this.author = author;
+        this.photoUrl = photoUrl;
+        this.rating = rating;
+        this.description = description;
+        this.originalBookId = originalBookId;
+        this.review_widget = review_widget;
+        this.fav = fav;
+        this.genres = genres;
     }
 
     public Book() {

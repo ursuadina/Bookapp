@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.andreea.bookhunt.models.Book;
+import com.example.andreea.bookhunt.models.Genre;
 import com.example.andreea.bookhunt.models.OriginalBooks;
 import com.example.andreea.bookhunt.models.ResultIDB;
 import com.example.andreea.bookhunt.recyclerviewutils.ResultsIDBAdapter;
@@ -21,6 +22,7 @@ import com.example.andreea.bookhunt.retrofitUtils.GoodreadsAPI;
 import com.example.andreea.bookhunt.retrofitUtils.IDreamBooksAPI;
 import com.example.andreea.bookhunt.retrofitUtils.modelAuthor.AuthorResponse;
 import com.example.andreea.bookhunt.retrofitUtils.modelGoodReads.GoodreadsResponse;
+import com.example.andreea.bookhunt.retrofitUtils.modelGoodReads.book.popularShelves.shelf.Shelf;
 import com.example.andreea.bookhunt.retrofitUtils.modelIDreamBooks.IDreamBooksResponse;
 import com.example.andreea.bookhunt.retrofitUtils.modelIDreamBooks.bookIDB.criticReviews.criticReview.CriticReview;
 import com.example.andreea.bookhunt.utils.Constants;
@@ -66,6 +68,8 @@ public class OptionsActivity extends AppCompatActivity {
     private GoodreadsAPI goodreadsAPI;
     private String authorNew;
     private Book mBook;
+    private List<Shelf> shelves;
+    private ArrayList<String> genres;
 
     private FirebaseAuth firebaseAuth;
     private DatabaseReference databaseBooks;
@@ -80,6 +84,7 @@ public class OptionsActivity extends AppCompatActivity {
         mBookTitle = intent.getStringExtra(Constants.TITLE);
         mAuthor = intent.getStringExtra(Constants.AUTHOR);
         mPhotoUrl = intent.getStringExtra(Constants.PHOTO_URL);
+        genres = new ArrayList<>();
 
         initView();
         bundleExtras = new Bundle();
@@ -111,6 +116,10 @@ public class OptionsActivity extends AppCompatActivity {
                     average_rating = response.body().getBook().getAverage_rating();
 
                     bookId = databaseBooks.push().getKey();
+
+                    shelves = response.body().getBook().getPopularShelves().getShelf();
+
+                    genres.clear();
                     if (response.body().getBook().getDescription() != null ) {
                         description = response.body().getBook().getDescription().replaceAll("<br />", "\n");
                     } else {
@@ -130,18 +139,53 @@ public class OptionsActivity extends AppCompatActivity {
                                     originalBookId = ds.getValue(OriginalBooks.class).getBookId();
                                 }
                             }
-                            if (SharedPreferencesHelper.getStringValueForUserInfo(Constants.IS_CREATED, getApplicationContext()).equals("False")) {
-                                mBook = new Book(bookId, mBookTitle, mAuthor, mPhotoUrl, average_rating, description, originalBookId, review_widget, false);
-                                databaseBooks.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                        .child(bookId).setValue(mBook);
-                                SharedPreferencesHelper.setStringValueForUserInfo(Constants.IS_CREATED, "True", OptionsActivity.this);
-                            }
-                            bundleExtras.putString(Constants.REVIEW_WIDGET, review_widget);
-                            bundleExtras.putString(Constants.PHOTO_URL, mPhotoUrl);
-                            bundleExtras.putFloat(Constants.AVERAGE_RATING, average_rating);
-                            bundleExtras.putString(Constants.BOOK_ID, originalBookId);
-                            SharedPreferencesHelper.setStringValueForUserInfo(Constants.DONE_GOODREADS, "done", OptionsActivity.this);
-                            mButtonGoodReads.setEnabled(true);
+                            Query query2 = FirebaseDatabase.getInstance().getReference("Genres");
+                            query2.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if(dataSnapshot.exists()) {
+                                        for(DataSnapshot ds : dataSnapshot.getChildren()) {
+                                            Genre currentGenre = ds.getValue(Genre.class);
+                                            String genre = currentGenre.getGenre();
+                                            for(Shelf shelf : shelves) {
+                                                if ((shelf.getName().toLowerCase().contains(genre.toLowerCase()) || genre.toLowerCase().contains(shelf.getName().toLowerCase()))
+                                                    && !genres.contains(genre.toLowerCase())){
+                                                    genres.add(genre);
+                                                }
+                                            }
+                                        }
+                                        if (SharedPreferencesHelper.getStringValueForUserInfo(Constants.IS_CREATED, getApplicationContext()).equals("False")) {
+                                            mBook = new Book(bookId, mBookTitle, mAuthor, mPhotoUrl, average_rating, description, originalBookId, review_widget, false, genres);
+                                            databaseBooks.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                    .child(bookId).setValue(mBook);
+                                            SharedPreferencesHelper.setStringValueForUserInfo(Constants.IS_CREATED, "True", OptionsActivity.this);
+                                        }
+                                        bundleExtras.putString(Constants.REVIEW_WIDGET, review_widget);
+                                        bundleExtras.putString(Constants.PHOTO_URL, mPhotoUrl);
+                                        bundleExtras.putFloat(Constants.AVERAGE_RATING, average_rating);
+                                        bundleExtras.putString(Constants.BOOK_ID, originalBookId);
+                                        SharedPreferencesHelper.setStringValueForUserInfo(Constants.DONE_GOODREADS, "done", OptionsActivity.this);
+                                        mButtonGoodReads.setEnabled(true);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+//                            if (SharedPreferencesHelper.getStringValueForUserInfo(Constants.IS_CREATED, getApplicationContext()).equals("False")) {
+//                                mBook = new Book(bookId, mBookTitle, mAuthor, mPhotoUrl, average_rating, description, originalBookId, review_widget, false);
+//                                databaseBooks.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+//                                        .child(bookId).setValue(mBook);
+//                                SharedPreferencesHelper.setStringValueForUserInfo(Constants.IS_CREATED, "True", OptionsActivity.this);
+//                            }
+//                            bundleExtras.putString(Constants.REVIEW_WIDGET, review_widget);
+//                            bundleExtras.putString(Constants.PHOTO_URL, mPhotoUrl);
+//                            bundleExtras.putFloat(Constants.AVERAGE_RATING, average_rating);
+//                            bundleExtras.putString(Constants.BOOK_ID, originalBookId);
+//                            SharedPreferencesHelper.setStringValueForUserInfo(Constants.DONE_GOODREADS, "done", OptionsActivity.this);
+//                            mButtonGoodReads.setEnabled(true);
                         }
 
                         @Override

@@ -1,5 +1,7 @@
 package com.example.andreea.bookhunt.retrofitUtils.modelGoodReads.book;
 
+import com.example.andreea.bookhunt.retrofitUtils.modelGoodReads.book.popularShelves.PopularShelves;
+
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
@@ -22,6 +24,8 @@ public class BookGoodreads implements Serializable {
     @Element(required = false, name = "reviews_widget")
     private String reviews_widget;
 
+    @Element(required = false, name = "popular_shelves")
+    private PopularShelves popularShelves;
     public BookGoodreads() {
     }
 
@@ -31,6 +35,15 @@ public class BookGoodreads implements Serializable {
         this.description = description;
         this.average_rating = average_rating;
         this.reviews_widget = reviews_widget;
+    }
+
+    public BookGoodreads(String id, String title, String description, float average_rating, String reviews_widget, PopularShelves popularShelves) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.average_rating = average_rating;
+        this.reviews_widget = reviews_widget;
+        this.popularShelves = popularShelves;
     }
 
     public String getId() {
@@ -71,5 +84,13 @@ public class BookGoodreads implements Serializable {
 
     public void setReviews_widget(String reviews_widget) {
         this.reviews_widget = reviews_widget;
+    }
+
+    public PopularShelves getPopularShelves() {
+        return popularShelves;
+    }
+
+    public void setPopularShelves(PopularShelves popularShelves) {
+        this.popularShelves = popularShelves;
     }
 }
