@@ -211,8 +211,12 @@ public class ResultActivity extends AppCompatActivity  implements NavigationView
         int id = item.getItemId();
 
         if (id == R.id.nav_gallery) {
+            Intent intent = new Intent(ResultActivity.this, IndexActivity.class);
+            startActivity(intent);
 
         } else if (id == R.id.nav_profile) {
+            Intent intent = new Intent(ResultActivity.this, ProfileActivity.class);
+            startActivity(intent);
 
         } else if (id == R.id.nav_fav) {
             Intent intent = new Intent(ResultActivity.this, FavouriteActivity.class);
@@ -255,6 +259,10 @@ public class ResultActivity extends AppCompatActivity  implements NavigationView
 
         View view_bh = findViewById(R.id.bh_content);
         view_bh.setVisibility(View.GONE);
+
+        View view_profile = findViewById(R.id.content_profile);
+        view_profile.setVisibility(View.GONE);
+
 
         floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
         floatingActionButton.hide();

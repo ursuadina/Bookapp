@@ -149,8 +149,12 @@ public class ResultsIDreamBooksActivity extends AppCompatActivity  implements Na
         int id = item.getItemId();
 
         if (id == R.id.nav_gallery) {
+            Intent intent = new Intent(ResultsIDreamBooksActivity.this, ProfileActivity.class);
+            startActivity(intent);
 
         } else if (id == R.id.nav_profile) {
+            Intent intent = new Intent(ResultsIDreamBooksActivity.this, ProfileActivity.class);
+            startActivity(intent);
 
         } else if (id == R.id.nav_fav) {
             Intent intent = new Intent(ResultsIDreamBooksActivity.this, FavouriteActivity.class);
@@ -193,6 +197,10 @@ public class ResultsIDreamBooksActivity extends AppCompatActivity  implements Na
 
         View view_bh = findViewById(R.id.bh_content);
         view_bh.setVisibility(View.GONE);
+
+        View view_profile = findViewById(R.id.content_profile);
+        view_profile.setVisibility(View.GONE);
+
 
         floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
         floatingActionButton.hide();

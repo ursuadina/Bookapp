@@ -105,6 +105,13 @@ public class FavouriteActivity extends AppCompatActivity
         View  view_fav = findViewById(R.id.content_fav);
         view_fav.setVisibility(View.VISIBLE);
 
+        View view_bh = findViewById(R.id.bh_content);
+        view_bh.setVisibility(View.GONE);
+
+        View view_profile = findViewById(R.id.content_profile);
+        view_profile.setVisibility(View.GONE);
+
+
         recyclerViewFav = findViewById(R.id.rvFav);
         recyclerViewFav.setLayoutManager(new LinearLayoutManager(this));
 
@@ -145,6 +152,8 @@ public class FavouriteActivity extends AppCompatActivity
             startActivity(intent);
 
         } else if (id == R.id.nav_profile) {
+            Intent intent = new Intent(FavouriteActivity.this, ProfileActivity.class);
+            startActivity(intent);
 
         } else if (id == R.id.nav_fav) {
 

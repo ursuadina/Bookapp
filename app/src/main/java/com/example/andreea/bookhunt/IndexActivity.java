@@ -111,14 +111,18 @@ public class IndexActivity extends AppCompatActivity
         view_result = findViewById(R.id.content_result);
         view_result.setVisibility(View.GONE);
 
-        view_result = findViewById(R.id.content_result_idb);
-        view_result.setVisibility(View.GONE);
+        view_result_idb = findViewById(R.id.content_result_idb);
+        view_result_idb.setVisibility(View.GONE);
 
         view_fav = findViewById(R.id.content_fav);
         view_fav.setVisibility(View.GONE);
 
         View view_bh = findViewById(R.id.bh_content);
         view_bh.setVisibility(View.GONE);
+
+        View view_profile = findViewById(R.id.content_profile);
+        view_profile.setVisibility(View.GONE);
+
 
 
         mRecyclerViewBooks = findViewById(R.id.rvBooks);
@@ -189,6 +193,8 @@ public class IndexActivity extends AppCompatActivity
         if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_profile) {
+            Intent intent = new Intent(IndexActivity.this, ProfileActivity.class);
+            startActivity(intent);
 
         } else if (id == R.id.nav_fav) {
            Intent intent = new Intent(IndexActivity.this, FavouriteActivity.class);

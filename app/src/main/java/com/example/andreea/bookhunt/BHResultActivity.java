@@ -206,6 +206,8 @@ public class BHResultActivity extends AppCompatActivity implements NavigationVie
             startActivity(intent);
 
         } else if (id == R.id.nav_profile) {
+            Intent intent = new Intent(BHResultActivity.this, ProfileActivity.class);
+            startActivity(intent);
 
         } else if (id == R.id.nav_fav) {
             Intent intent = new Intent(BHResultActivity.this, FavouriteActivity.class);
@@ -248,6 +250,10 @@ public class BHResultActivity extends AppCompatActivity implements NavigationVie
 
         View view_bh = findViewById(R.id.bh_content);
         view_bh.setVisibility(View.VISIBLE);
+
+        View view_profile = findViewById(R.id.content_profile);
+        view_profile.setVisibility(View.GONE);
+
 
         floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
         floatingActionButton.hide();
