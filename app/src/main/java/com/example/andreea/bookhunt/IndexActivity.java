@@ -3,25 +3,23 @@ package com.example.andreea.bookhunt;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.example.andreea.bookhunt.models.Book;
-import com.example.andreea.bookhunt.models.Genre;
 import com.example.andreea.bookhunt.recyclerviewutils.BookAdapter;
 import com.example.andreea.bookhunt.utils.Constants;
 import com.example.andreea.bookhunt.utils.SharedPreferencesHelper;
@@ -32,8 +30,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.RemoteMessage;
 
-import org.w3c.dom.Text;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -74,7 +72,18 @@ public class IndexActivity extends AppCompatActivity
         //Methods.checkPermissions(IndexActivity.this, IndexActivity.this);
         Intent intent = getIntent();
 
-        //FirebaseMessaging.getInstance().subscribeToTopic();
+//        FirebaseMessaging.getInstance().subscribeToTopic("-LhAlUgxE0fJAKBCLl-u");
+//        // See documentation on defining a message payload.
+//        RemoteMessage.Builder message = new RemoteMessage.Builder("")
+//                .addData("score", "850")
+//                .addData("time", "2:45")
+//                .setTopic("-LhAlUgxE0fJAKBCLl-u")
+//                .build();
+//
+//// Send a message to the devices subscribed to the provided topic.
+//        String response = FirebaseMessaging.getInstance().send(message);
+//// Response is a message ID string.
+//        System.out.println("Successfully sent message: " + response);
         books = new ArrayList<>();
         firebaseAuth = FirebaseAuth.getInstance();
         booksReference = FirebaseDatabase.getInstance().getReference("Books")

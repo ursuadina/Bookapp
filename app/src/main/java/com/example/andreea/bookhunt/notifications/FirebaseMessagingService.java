@@ -17,6 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class FirebaseMessagingService extends com.google.firebase.messaging.FirebaseMessagingService {
+    private Intent intent;
     public FirebaseMessagingService() {
     }
 
@@ -27,13 +28,20 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
             try {
                 JSONObject data = new JSONObject(remoteMessage.getData());
                 String jsonMesssage = data.getString("extra_info"); // camp din json
+                Log.d("FirebaseMessaging", "onMessageReceived: " + jsonMesssage);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
         if(remoteMessage.getNotification() != null) {
-
+            String title = remoteMessage.getNotification().getTitle();
+            String message = remoteMessage.getNotification().getBody();
+            String click_action = remoteMessage.getNotification().getClickAction();
+            Log.d("FirebaseMessaging", "onMessageReceived: Title - " + title);
+            Log.d("FirebaseMessaging", "onMessageReceived: Message - " + message);
+            Log.d("FirebaseMessaging", "onMessageReceived: Click_action - " + click_action);
+            sendNotification(title, message, click_action);
         }
     }
 
@@ -42,12 +50,14 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
     }
 
-    private void sendNotification(String title, String messageBody) {
-        Intent intent = new Intent(this, IndexActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    private void sendNotification(String title, String messageBody, String click_action) {
+        if(click_action.equals("IndexActivity")) {
+            intent = new Intent(FirebaseMessagingService.this, IndexActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        }
+
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
                 PendingIntent.FLAG_ONE_SHOT);
-
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.ic_launcher)
