@@ -49,4 +49,5 @@
     <string name="result_option">We managed to get results from the following sites. Which one would you like to see?</string>
     <string name="new_york_times">New York Times</string>
     <string name="i_dream_books">I Dream Books</string>
+    <string name="title_activity_administrator">AdministratorActivity</string>
 </resources>

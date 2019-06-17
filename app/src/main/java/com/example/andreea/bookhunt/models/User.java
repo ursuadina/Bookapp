@@ -5,6 +5,7 @@ public class User {
     private String lastName;
     private String username;
     private String email;
+    private long lastLoggedIn;
 
     public String getFirstName() {
         return firstName;
@@ -36,6 +37,14 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public long getLastLoggedIn() {
+        return lastLoggedIn;
+    }
+
+    public void setLastLoggedIn(long lastLoggedIn) {
+        this.lastLoggedIn = lastLoggedIn;
     }
 
     @Override

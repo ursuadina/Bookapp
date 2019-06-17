@@ -2,17 +2,23 @@ package com.example.andreea.bookhunt;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -44,6 +50,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Date;
+
 public class LogInActivity extends AppCompatActivity{
 
     private EditText mEditTextUsername;
@@ -59,6 +67,7 @@ public class LogInActivity extends AppCompatActivity{
     private ConstraintLayout layout;
     private boolean isConnected;
     private boolean enterOnCreate;
+    private String id;
     private BroadcastReceiver state = new BroadcastReceiver() {
 
         @Override
@@ -85,6 +94,27 @@ public class LogInActivity extends AppCompatActivity{
                     googleSignInClient = GoogleSignIn.getClient(context, googleSignInOptions);
 
                     if (SharedPreferencesHelper.getStringValueForUserInfo(Constants.REMEMBER, LogInActivity.this).equals("True")) {
+//                        String currentUser = SharedPreferencesHelper.getStringValueForUserInfo(Constants.USERNAME, LogInActivity.this);
+//                        FirebaseDatabase.getInstance().getReference("Users").orderByChild("username")
+//                                .equalTo(currentUser).addListenerForSingleValueEvent(new ValueEventListener() {
+//                            @Override
+//                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                                if (dataSnapshot.exists()) {
+//                                    for(DataSnapshot ds:dataSnapshot.getChildren()) {
+//                                        id = ds.getKey();
+//                                        mUser = ds.getValue(User.class);
+//                                        Date date = new Date();
+//                                        mUser.setLastLoggedIn((-1) * date.getTime());
+//                                        FirebaseDatabase.getInstance().getReference("Users/" + id).setValue(mUser);
+//                                    }
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                            }
+//                        });
                         Intent intent1 = new Intent(LogInActivity.this, IndexActivity.class);
                         startActivity(intent1);
                         finish();
@@ -121,6 +151,7 @@ public class LogInActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         enterOnCreate = true;
         //Methods.checkPermissions(LogInActivity.this, LogInActivity.this);
         isConnected = false;
@@ -135,6 +166,7 @@ public class LogInActivity extends AppCompatActivity{
             }
         }
         if (isConnected) {
+
             firebaseAuth = FirebaseAuth.getInstance();
             GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                     .requestIdToken(getString(R.string.default_web_client_id))
@@ -144,9 +176,40 @@ public class LogInActivity extends AppCompatActivity{
             googleSignInClient = GoogleSignIn.getClient(getApplicationContext(), googleSignInOptions);
 
             if (SharedPreferencesHelper.getStringValueForUserInfo(Constants.REMEMBER, LogInActivity.this).equals("True")) {
-                Intent intent1 = new Intent(LogInActivity.this, IndexActivity.class);
-                startActivity(intent1);
-                finish();
+                Date date = new Date();
+                SharedPreferencesHelper.setStringValueForUserInfo("ModifyLogIn", "true",LogInActivity.this);
+                FirebaseDatabase.getInstance().getReference("Users/"+FirebaseAuth.getInstance().getCurrentUser().getUid() + "/lastLoggedIn").setValue((-1)*date.getTime());
+//                String currentUser = SharedPreferencesHelper.getStringValueForUserInfo(Constants.USERNAME, LogInActivity.this);
+//                FirebaseDatabase.getInstance().getReference("Users").orderByChild("username")
+//                        .equalTo(currentUser).addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                        if (SharedPreferencesHelper.getStringValueForUserInfo("ModifyLogIn", LogInActivity.this).equals("true")) {
+//                            if (dataSnapshot.exists()) {
+//                                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+//                                    id = ds.getKey();
+//                                    mUser = ds.getValue(User.class);
+//                                    Date date = new Date();
+//                                    mUser.setLastLoggedIn((-1) * date.getTime());
+//                                    FirebaseDatabase.getInstance().getReference("Users/" + id).setValue(mUser);
+//                                }
+//                            }
+//                        }
+//                    }
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                    }
+//                });
+                if (SharedPreferencesHelper.getStringValueForUserInfo(Constants.USERNAME, LogInActivity.this).equals("administrator")) {
+                    Intent intent = new Intent(LogInActivity.this, AdministratorActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Intent intent = new Intent(LogInActivity.this, IndexActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
             } else {
                 setContentView(R.layout.activity_log_in);
 
@@ -190,39 +253,55 @@ public class LogInActivity extends AppCompatActivity{
          } else {
             Query query = FirebaseDatabase.getInstance().getReference("Users").orderByChild("username")
                     .equalTo(username);
+            SharedPreferencesHelper.setStringValueForUserInfo("ModifyLogIn", "false",LogInActivity.this);
             query.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     // Is only one user with this username.
-                    if (!dataSnapshot.hasChildren()){
-                        mEditTextUsername.setError(getResources().getString(R.string.error_username_non_existent));
-                    } else {
-                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            mUser = ds.getValue(User.class);
-                            String email = mUser.getEmail();
-                            SharedPreferencesHelper.setStringValueForUserInfo(Constants.EMAIL, email, LogInActivity.this);
-                            firebaseAuth.signInWithEmailAndPassword(email, mEditTextPassword.getText().toString())
-                                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<AuthResult> task) {
-                                            if (task.isSuccessful()) {
-                                                if (mCheckBoxRemember.isChecked()) {
-                                                    SharedPreferencesHelper.setStringValueForUserInfo(Constants.REMEMBER, "True", LogInActivity.this);
-                                                    SharedPreferencesHelper.setStringValueForUserInfo(Constants.USERNAME, mEditTextUsername.getText().toString(), LogInActivity.this);
-                                                    SharedPreferencesHelper.setStringValueForUserInfo(Constants.PASS, mEditTextPassword.getText().toString(), LogInActivity.this);
+                    if (SharedPreferencesHelper.getStringValueForUserInfo("ModifyLogIn", LogInActivity.this).equals("false")) {
+                        if (!dataSnapshot.hasChildren()) {
+                            mEditTextUsername.setError(getResources().getString(R.string.error_username_non_existent));
+                        } else {
+                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                mUser = ds.getValue(User.class);
+                                String email = mUser.getEmail();
+                                // id = ds.getKey();
+                                // Date date = new Date();
+                                //mUser.setLastLoggedIn((-1) * date.getTime());
+                                SharedPreferencesHelper.setStringValueForUserInfo(Constants.EMAIL, email, LogInActivity.this);
+                                firebaseAuth.signInWithEmailAndPassword(email, mEditTextPassword.getText().toString())
+                                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                                if (task.isSuccessful()) {
+                                                    if (mCheckBoxRemember.isChecked()) {
+                                                        SharedPreferencesHelper.setStringValueForUserInfo(Constants.REMEMBER, "True", LogInActivity.this);
+                                                        SharedPreferencesHelper.setStringValueForUserInfo(Constants.USERNAME, mEditTextUsername.getText().toString(), LogInActivity.this);
+                                                        SharedPreferencesHelper.setStringValueForUserInfo(Constants.PASS, mEditTextPassword.getText().toString(), LogInActivity.this);
+                                                    } else {
+                                                        SharedPreferencesHelper.setStringValueForUserInfo(Constants.REMEMBER, "False", LogInActivity.this);
+                                                        SharedPreferencesHelper.setStringValueForUserInfo(Constants.USERNAME, mEditTextUsername.getText().toString(), LogInActivity.this);
+                                                        SharedPreferencesHelper.setStringValueForUserInfo(Constants.PASS, mEditTextPassword.getText().toString(), LogInActivity.this);
+                                                    }
+                                                    FirebaseDatabase.getInstance().getReference("Users/" + id).setValue(mUser);
+                                                    Date date = new Date();
+                                                    SharedPreferencesHelper.setStringValueForUserInfo("ModifyLogIn", "true", LogInActivity.this);
+                                                    FirebaseDatabase.getInstance().getReference("Users/" + FirebaseAuth.getInstance().getCurrentUser().getUid() + "/lastLoggedIn").setValue((-1) * date.getTime());
+                                                    if (mEditTextUsername.getText().toString().equals("administrator")) {
+                                                        Intent intent = new Intent(LogInActivity.this, AdministratorActivity.class);
+                                                        startActivity(intent);
+                                                        finish();
+                                                    } else {
+                                                        Intent intent = new Intent(LogInActivity.this, IndexActivity.class);
+                                                        startActivity(intent);
+                                                        finish();
+                                                    }
                                                 } else {
-                                                    SharedPreferencesHelper.setStringValueForUserInfo(Constants.REMEMBER, "False", LogInActivity.this);
-                                                    SharedPreferencesHelper.setStringValueForUserInfo(Constants.USERNAME, mEditTextUsername.getText().toString(), LogInActivity.this);
-                                                    SharedPreferencesHelper.setStringValueForUserInfo(Constants.PASS, mEditTextPassword.getText().toString(), LogInActivity.this);
+                                                    mEditTextPassword.setError(getResources().getString(R.string.error_password_incorrect));
                                                 }
-                                                Intent intent = new Intent(LogInActivity.this, IndexActivity.class);
-                                                startActivity(intent);
-                                                finish();
-                                            } else {
-                                                mEditTextPassword.setError(getResources().getString(R.string.error_password_incorrect));
                                             }
-                                        }
-                                    });
+                                        });
+                            }
                         }
                     }
                 }
@@ -303,4 +382,6 @@ public class LogInActivity extends AppCompatActivity{
             }
         });
     }
+
+
 }

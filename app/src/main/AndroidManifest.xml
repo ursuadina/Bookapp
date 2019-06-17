@@ -24,7 +24,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".NotificationActivity"></activity>
+        <activity android:name=".LastConnectedUsersActivity"></activity>
+        <activity
+            android:name=".AdministratorActivity"
+            android:label="@string/title_activity_administrator"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".NotificationActivity" />
         <activity android:name=".ProfileActivity" />
         <activity android:name=".BHResultActivity" />
         <activity android:name=".FavouriteActivity" />
@@ -74,7 +79,8 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-        <service android:name=".notifications.FirebaseMessagingService"
+        <service
+            android:name=".notifications.FirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

@@ -1,9 +1,18 @@
 package com.example.andreea.bookhunt;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -35,6 +44,7 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class IndexActivity extends AppCompatActivity
@@ -71,17 +81,18 @@ public class IndexActivity extends AppCompatActivity
         initView();
         //Methods.checkPermissions(IndexActivity.this, IndexActivity.this);
         Intent intent = getIntent();
-
-//        FirebaseMessaging.getInstance().subscribeToTopic("-LhAlUgxE0fJAKBCLl-u");
-//        // See documentation on defining a message payload.
-//        RemoteMessage.Builder message = new RemoteMessage.Builder("")
-//                .addData("score", "850")
-//                .addData("time", "2:45")
-//                .setTopic("-LhAlUgxE0fJAKBCLl-u")
-//                .build();
-//
-//// Send a message to the devices subscribed to the provided topic.
-//        String response = FirebaseMessaging.getInstance().send(message);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mHandler, new IntentFilter("com.example.andreea.bookhunt_FCM-Message"));
+        FirebaseMessaging.getInstance().subscribeToTopic("-LhAlUgxE0fJAKBCLl-u");
+        //FirebaseMessaging.getInstance().se
+        // See documentation on defining a message payload.
+        RemoteMessage message = new RemoteMessage.Builder("-LhAlUgxE0fJAKBCLl-u")
+                .addData("title", "850")
+                .addData("text", "2:45")
+                .addData("click_action", "IndexActivity")
+                .build();
+////
+////// Send a message to the devices subscribed to the provided topic.
+       FirebaseMessaging.getInstance().send(message);
 //// Response is a message ID string.
 //        System.out.println("Successfully sent message: " + response);
         books = new ArrayList<>();
@@ -236,5 +247,36 @@ public class IndexActivity extends AppCompatActivity
     public void btnSearchBook(View view) {
         Intent intent = new Intent(IndexActivity.this, SearchActivity.class);
         startActivity(intent);
+    }
+
+    private BroadcastReceiver mHandler = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String title = intent.getStringExtra("title");
+            String text = intent.getStringExtra("text");
+            String click_action = intent.getStringExtra("click_action");
+//            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent,
+//                    PendingIntent.FLAG_ONE_SHOT);
+//            Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+//            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
+//                    .setSmallIcon(R.mipmap.ic_launcher)
+//                    .setContentTitle(title)
+//                    .setContentText(text)
+//                    .setAutoCancel(true)
+//                    .setSound(defaultSoundUri)
+//                    .setContentIntent(pendingIntent);
+//
+//            NotificationManager notificationManager =
+//                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//
+//            notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+            Toast.makeText(context, title, Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mHandler);
     }
 }

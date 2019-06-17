@@ -26,6 +26,7 @@ public class Constants {
     public static final String MESSAGE = "message";
     public static final String BASE_URL_GOODREADS = "https://www.goodreads.com/";
     public static final String BASE_URL_IDREAMBOOKS = "https://idreambooks.com/api/books/";
+    public static final String ACTIVITY = "activity";
 
 
     public static final int RC_SIGN_IN_GOOGLE = 9001;

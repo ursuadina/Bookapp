@@ -34,6 +34,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -159,6 +160,7 @@ public class OptionsActivity extends AppCompatActivity {
                                             databaseBooks.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                                     .child(bookId).setValue(mBook);
                                             SharedPreferencesHelper.setStringValueForUserInfo(Constants.IS_CREATED, "True", OptionsActivity.this);
+                                            FirebaseMessaging.getInstance().subscribeToTopic(originalBookId);
                                         }
                                         bundleExtras.putString(Constants.REVIEW_WIDGET, review_widget);
                                         bundleExtras.putString(Constants.PHOTO_URL, mPhotoUrl);
