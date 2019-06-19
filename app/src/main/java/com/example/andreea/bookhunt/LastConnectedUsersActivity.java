@@ -59,6 +59,7 @@ public class LastConnectedUsersActivity extends AppCompatActivity
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
+                    users.clear();
                     for(DataSnapshot ds: dataSnapshot.getChildren()) {
                         user = ds.getValue(User.class);
                         long lastLoggedIn = user.getLastLoggedIn() * (-1);
@@ -87,6 +88,12 @@ public class LastConnectedUsersActivity extends AppCompatActivity
 
         View view_last_connected_users = findViewById(R.id.content_last_connected_users);
         view_last_connected_users.setVisibility(View.VISIBLE);
+
+        View view_genres = findViewById(R.id.content_genres);
+        view_genres.setVisibility(View.GONE);
+
+        View view_last_searched_books = findViewById(R.id.content_last_searched_books);
+        view_last_searched_books.setVisibility(View.GONE);
 
         mRecyclerViewUsers = findViewById(R.id.rvUsers);
         mRecyclerViewUsers.setLayoutManager(new LinearLayoutManager(this));
@@ -133,12 +140,12 @@ public class LastConnectedUsersActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_send) {
 
-        } else if (id == R.id.nav_log_out) {
+        } else if (id == R.id.admin_nav_log_out) {
             btnLogOutClick();
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.admin_drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

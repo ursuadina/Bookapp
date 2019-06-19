@@ -81,18 +81,18 @@ public class IndexActivity extends AppCompatActivity
         initView();
         //Methods.checkPermissions(IndexActivity.this, IndexActivity.this);
         Intent intent = getIntent();
-        LocalBroadcastManager.getInstance(this).registerReceiver(mHandler, new IntentFilter("com.example.andreea.bookhunt_FCM-Message"));
-        FirebaseMessaging.getInstance().subscribeToTopic("-LhAlUgxE0fJAKBCLl-u");
-        //FirebaseMessaging.getInstance().se
-        // See documentation on defining a message payload.
-        RemoteMessage message = new RemoteMessage.Builder("-LhAlUgxE0fJAKBCLl-u")
-                .addData("title", "850")
-                .addData("text", "2:45")
-                .addData("click_action", "IndexActivity")
-                .build();
-////
-////// Send a message to the devices subscribed to the provided topic.
-       FirebaseMessaging.getInstance().send(message);
+//        LocalBroadcastManager.getInstance(this).registerReceiver(mHandler, new IntentFilter("com.example.andreea.bookhunt_FCM-Message"));
+//        FirebaseMessaging.getInstance().subscribeToTopic("-LhAlUgxE0fJAKBCLl-u");
+//        //FirebaseMessaging.getInstance().se
+//        // See documentation on defining a message payload.
+//        RemoteMessage message = new RemoteMessage.Builder("-LhAlUgxE0fJAKBCLl-u")
+//                .addData("title", "850")
+//                .addData("text", "2:45")
+//                .addData("click_action", "IndexActivity")
+//                .build();
+//////
+//////// Send a message to the devices subscribed to the provided topic.
+//       FirebaseMessaging.getInstance().send(message);
 //// Response is a message ID string.
 //        System.out.println("Successfully sent message: " + response);
         books = new ArrayList<>();

@@ -85,7 +85,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
         bookViewHolder.mRatingBarGoodReads.setRating(books.get(i).getRating());
         bookViewHolder.mRatingBarGoodReads.setStepSize((float) 0.5);
 
-        if (book.isfav()) {
+        if (book.isFav()) {
             bookViewHolder.mImageButtonAddFav.setImageResource(R.drawable.ic_favorite_black_24dp);
         } else {
             bookViewHolder.mImageButtonAddFav.setImageResource(R.drawable.ic_favorite_border_black_24dp);
@@ -146,10 +146,10 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
     }
 
     private void addToFav(ImageButton mImageButtonAddFav, Book book) {
-        if(!book.isfav()) {//(Integer) mImageButtonAddFav.getTag() == R.drawable.ic_favorite_border_black_24dp) {
+        if(!book.isFav()) {//(Integer) mImageButtonAddFav.getTag() == R.drawable.ic_favorite_border_black_24dp) {
             mImageButtonAddFav.setImageResource(R.drawable.ic_favorite_black_24dp);
             //mImageButtonAddFav.setTag(R.drawable.ic_favorite_black_24dp);
-            book.setfav(true);
+            book.setFav(true);
 
 //            DatabaseReference databaseFavourite = FirebaseDatabase.getInstance().getReference("Favourite");
 //            databaseFavourite.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(book.getBookId()).setValue(book);
@@ -160,7 +160,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
             mImageButtonAddFav.setImageResource(R.drawable.ic_favorite_border_black_24dp);
             //mImageButtonAddFav.setTag(R.drawable.ic_favorite_border_black_24dp);
 
-            book.setfav(false);
+            book.setFav(false);
 //
 
 

@@ -50,6 +50,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class LogInActivity extends AppCompatActivity{
@@ -94,6 +95,11 @@ public class LogInActivity extends AppCompatActivity{
                     googleSignInClient = GoogleSignIn.getClient(context, googleSignInOptions);
 
                     if (SharedPreferencesHelper.getStringValueForUserInfo(Constants.REMEMBER, LogInActivity.this).equals("True")) {
+                        Date date = new Date();
+                        SharedPreferencesHelper.setStringValueForUserInfo("ModifyLogIn", "true",LogInActivity.this);
+                        FirebaseDatabase.getInstance().getReference("Users/"+FirebaseAuth.getInstance().getCurrentUser().getUid() + "/lastLoggedIn").setValue((-1)*date.getTime());
+                        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                        FirebaseDatabase.getInstance().getReference("Users/"+FirebaseAuth.getInstance().getCurrentUser().getUid() + "/lastDate").setValue(formatter.format(date));
 //                        String currentUser = SharedPreferencesHelper.getStringValueForUserInfo(Constants.USERNAME, LogInActivity.this);
 //                        FirebaseDatabase.getInstance().getReference("Users").orderByChild("username")
 //                                .equalTo(currentUser).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -115,9 +121,15 @@ public class LogInActivity extends AppCompatActivity{
 //
 //                            }
 //                        });
-                        Intent intent1 = new Intent(LogInActivity.this, IndexActivity.class);
-                        startActivity(intent1);
-                        finish();
+                        if (SharedPreferencesHelper.getStringValueForUserInfo(Constants.USERNAME, LogInActivity.this).equals("administrator")) {
+                            Intent intentAdmin = new Intent(LogInActivity.this, AdministratorActivity.class);
+                            startActivity(intentAdmin);
+                            finish();
+                        } else {
+                            Intent intentUser = new Intent(LogInActivity.this, IndexActivity.class);
+                            startActivity(intentUser);
+                            finish();
+                        }
                     } else {
                         setContentView(R.layout.activity_log_in);
 
@@ -179,6 +191,8 @@ public class LogInActivity extends AppCompatActivity{
                 Date date = new Date();
                 SharedPreferencesHelper.setStringValueForUserInfo("ModifyLogIn", "true",LogInActivity.this);
                 FirebaseDatabase.getInstance().getReference("Users/"+FirebaseAuth.getInstance().getCurrentUser().getUid() + "/lastLoggedIn").setValue((-1)*date.getTime());
+                SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                FirebaseDatabase.getInstance().getReference("Users/"+FirebaseAuth.getInstance().getCurrentUser().getUid() + "/lastDate").setValue(formatter.format(date));
 //                String currentUser = SharedPreferencesHelper.getStringValueForUserInfo(Constants.USERNAME, LogInActivity.this);
 //                FirebaseDatabase.getInstance().getReference("Users").orderByChild("username")
 //                        .equalTo(currentUser).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -283,10 +297,12 @@ public class LogInActivity extends AppCompatActivity{
                                                         SharedPreferencesHelper.setStringValueForUserInfo(Constants.USERNAME, mEditTextUsername.getText().toString(), LogInActivity.this);
                                                         SharedPreferencesHelper.setStringValueForUserInfo(Constants.PASS, mEditTextPassword.getText().toString(), LogInActivity.this);
                                                     }
-                                                    FirebaseDatabase.getInstance().getReference("Users/" + id).setValue(mUser);
+                                                    FirebaseDatabase.getInstance().getReference("Users/" + FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(mUser);
                                                     Date date = new Date();
                                                     SharedPreferencesHelper.setStringValueForUserInfo("ModifyLogIn", "true", LogInActivity.this);
                                                     FirebaseDatabase.getInstance().getReference("Users/" + FirebaseAuth.getInstance().getCurrentUser().getUid() + "/lastLoggedIn").setValue((-1) * date.getTime());
+                                                    SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                                                    FirebaseDatabase.getInstance().getReference("Users/"+FirebaseAuth.getInstance().getCurrentUser().getUid() + "/lastDate").setValue(formatter.format(date));
                                                     if (mEditTextUsername.getText().toString().equals("administrator")) {
                                                         Intent intent = new Intent(LogInActivity.this, AdministratorActivity.class);
                                                         startActivity(intent);

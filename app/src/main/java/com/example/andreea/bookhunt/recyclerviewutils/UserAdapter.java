@@ -17,8 +17,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder>{
     private ArrayList<User> users;
 
     private String username;
-    private String email;
-    private long lastloggedIn;
+    private String firstName;
+    private String lastName;
+    private String lastDate;
     private User user;
 
     public UserAdapter(Context context, ArrayList<User> users) {
@@ -36,12 +37,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder>{
     public void onBindViewHolder(@NonNull UserViewHolder userViewHolder, int i) {
         user = users.get(i);
         username = user.getUsername();
-        email = user.getEmail();
-        lastloggedIn = user.getLastLoggedIn();
+        firstName = user.getFirstName();
+        lastName = user.getLastName();
+        lastDate = user.getLastDate();
 
-        userViewHolder.tvlastLoggedIn.setText(Long.toString(lastloggedIn));
+        userViewHolder.tvlastLoggedIn.setText(lastDate);
         userViewHolder.tvUsername.setText(username);
-        userViewHolder.tvEmailAdmin.setText(email);
+        userViewHolder.tvFNAdmin.setText(firstName);
+        userViewHolder.tvLNAdmin.setText(lastName);
     }
 
     @Override

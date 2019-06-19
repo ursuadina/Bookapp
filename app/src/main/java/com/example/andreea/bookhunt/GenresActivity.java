@@ -1,18 +1,16 @@
 package com.example.andreea.bookhunt;
 
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -20,16 +18,13 @@ import com.example.andreea.bookhunt.utils.Constants;
 import com.example.andreea.bookhunt.utils.SharedPreferencesHelper;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class AdministratorActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class GenresActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private FirebaseAuth firebaseAuth;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_administrator);
-
+        setContentView(R.layout.activity_genres);
         initNavDrawer();
         initView();
 
@@ -39,13 +34,13 @@ public class AdministratorActivity extends AppCompatActivity
 
     private void initView() {
         View view_administrator = findViewById(R.id.content_administrator);
-        view_administrator.setVisibility(View.VISIBLE);
+        view_administrator.setVisibility(View.GONE);
 
         View view_last_connected_users = findViewById(R.id.content_last_connected_users);
         view_last_connected_users.setVisibility(View.GONE);
 
         View view_genres = findViewById(R.id.content_genres);
-        view_genres.setVisibility(View.GONE);
+        view_genres.setVisibility(View.VISIBLE);
 
         View view_last_searched_books = findViewById(R.id.content_last_searched_books);
         view_last_searched_books.setVisibility(View.GONE);
@@ -136,25 +131,15 @@ public class AdministratorActivity extends AppCompatActivity
 
     public void btnLogOutClick() {
         firebaseAuth.signOut();
-        SharedPreferencesHelper.deleteAllValuesFromSharedPreferences(AdministratorActivity.this);
-        Intent intent = new Intent(AdministratorActivity.this, LogInActivity.class);
+        SharedPreferencesHelper.deleteAllValuesFromSharedPreferences(GenresActivity.this);
+        Intent intent = new Intent(GenresActivity.this, LogInActivity.class);
         startActivity(intent);
         finish();
 
     }
 
-    public void btnLastConnectedUsers(View view) {
-        Intent intent = new Intent(AdministratorActivity.this, LastConnectedUsersActivity.class);
-        startActivity(intent);
-    }
-
-    public void btnGenresOnClick(View view) {
-        Intent intent = new Intent(AdministratorActivity.this, GenresActivity.class);
-        startActivity(intent);
-    }
-
-    public void btnLastSearchedBooks(View view) {
-        Intent intent = new Intent(AdministratorActivity.this, LastSearchedBooksActivity.class);
+    public void btnAddGenre(View view) {
+        Intent intent = new Intent(GenresActivity.this, AddGenreActivity.class);
         startActivity(intent);
     }
 }

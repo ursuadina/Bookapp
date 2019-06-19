@@ -28,5 +28,12 @@
         android:id="@+id/content_last_connected_users"
         layout="@layout/content_last_connected_users"/>
 
+    <include
+        android:id="@+id/content_genres"
+        layout="@layout/content_genres"/>
+
+    <include
+        android:id="@+id/content_last_searched_books"
+        layout="@layout/content_last_searched_books"/>
 
 </android.support.design.widget.CoordinatorLayout>

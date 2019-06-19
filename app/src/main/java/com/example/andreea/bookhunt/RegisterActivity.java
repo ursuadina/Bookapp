@@ -30,6 +30,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText mEditTextFirstName;
@@ -249,6 +252,10 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         } else {
             String username = mEditTextUsername.getText().toString();
+            Date date = new Date();
+            mUser.setLastLoggedIn(date.getTime() * (-1));
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+           mUser.setLastDate(formatter.format(date));
             Query query1 = FirebaseDatabase.getInstance().getReference("Users").orderByChild("username")
                     .equalTo(username);
             query1.addListenerForSingleValueEvent(new ValueEventListener() {

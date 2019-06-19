@@ -8,7 +8,8 @@ import android.widget.TextView;
 import com.example.andreea.bookhunt.R;
 
 public class UserViewHolder extends RecyclerView.ViewHolder {
-    public TextView tvEmailAdmin;
+    public TextView tvLNAdmin;
+    public TextView tvFNAdmin;
     public TextView tvUsername;
     public TextView tvlastLoggedIn;
 
@@ -19,7 +20,8 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void initView(View itemView) {
-        tvEmailAdmin = (TextView) itemView.findViewById(R.id.textViewEmailAdmin);
+        tvLNAdmin = (TextView) itemView.findViewById(R.id.textViewLNAdmin);
+        tvFNAdmin = (TextView) itemView.findViewById(R.id.textViewFNAdmin);
         tvUsername = (TextView) itemView.findViewById(R.id.textViewUsernameAdmin);
         tvlastLoggedIn = (TextView) itemView.findViewById(R.id.textViewLastLoggedIn);
 

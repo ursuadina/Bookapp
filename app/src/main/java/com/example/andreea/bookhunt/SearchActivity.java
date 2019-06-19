@@ -255,6 +255,7 @@ public class SearchActivity extends AppCompatActivity {
         String userId = firebaseUser.getUid();
 
         String imageName = mBookTitle + mAuthor + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".jpg";
+        SharedPreferencesHelper.setStringValueForUserInfo("LastSearch", "False", SearchActivity.this);
         imageRef = storageReference.child("images/users/"+ userId + "/" + imageName );
         imageRef.putFile(selectedImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override

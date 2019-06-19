@@ -12,6 +12,9 @@ public class Book {
     private String originalBookId;
     private String review_widget;
     private boolean fav;
+    private long lastSearch;
+    private String lastSearchDate;
+    private String username;
     private ArrayList<String> genres;
 
     public String getBookTitle() {
@@ -70,13 +73,6 @@ public class Book {
         this.review_widget = review_widget;
     }
 
-    public boolean isfav() {
-        return fav;
-    }
-
-    public void setfav(boolean fav) {
-        this.fav = fav;
-    }
 
     public ArrayList<String> getGenres() {
         return genres;
@@ -84,6 +80,38 @@ public class Book {
 
     public void setGenres(ArrayList<String> genres) {
         this.genres = genres;
+    }
+
+    public boolean isFav() {
+        return fav;
+    }
+
+    public void setFav(boolean fav) {
+        this.fav = fav;
+    }
+
+    public long getLastSearch() {
+        return lastSearch;
+    }
+
+    public void setLastSearch(long lastSearch) {
+        this.lastSearch = lastSearch;
+    }
+
+    public String getLastSearchDate() {
+        return lastSearchDate;
+    }
+
+    public void setLastSearchDate(String lastSearchDate) {
+        this.lastSearchDate = lastSearchDate;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     @Override
@@ -95,19 +123,8 @@ public class Book {
                 '}';
     }
 
-    public Book(String bookId, String bookTitle, String author, String photoUrl, float rating, String description, String originalBookId, String review_widget, boolean fav) {
-        this.bookId = bookId;
-        this.bookTitle = bookTitle;
-        this.author = author;
-        this.photoUrl = photoUrl;
-        this.rating = rating;
-        this.description = description;
-        this.originalBookId = originalBookId;
-        this.review_widget = review_widget;
-        this.fav = fav;
-    }
 
-    public Book(String bookId, String bookTitle, String author, String photoUrl, float rating, String description, String originalBookId, String review_widget, boolean fav, ArrayList<String> genres) {
+    public Book(String bookId, String bookTitle, String author, String photoUrl, float rating, String description, String originalBookId, String review_widget, boolean fav, long lastSearch, String lastSearchDate, ArrayList<String> genres) {
         this.bookId = bookId;
         this.bookTitle = bookTitle;
         this.author = author;
@@ -117,6 +134,8 @@ public class Book {
         this.originalBookId = originalBookId;
         this.review_widget = review_widget;
         this.fav = fav;
+        this.lastSearch = lastSearch;
+        this.lastSearchDate = lastSearchDate;
         this.genres = genres;
     }
 
