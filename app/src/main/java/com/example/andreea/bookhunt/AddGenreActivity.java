@@ -5,6 +5,7 @@ import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.EditText;
@@ -38,6 +39,8 @@ public class AddGenreActivity extends AppCompatActivity {
     }
 
     private void initView() {
+        android.support.v7.widget.Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarGenre);
+        setSupportActionBar(toolbar);
         textInputLayoutGenre = (TextInputLayout) findViewById(R.id.textInputLayoutGenre);
         editTextGenre = (EditText) findViewById(R.id.etGenre);
     }

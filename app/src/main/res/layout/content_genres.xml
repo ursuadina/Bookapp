@@ -14,10 +14,32 @@
         android:layout_width="wrap_content"
         android:layout_height="@dimen/button_height_55"
         android:layout_marginStart="60dp"
-        android:layout_marginBottom="312dp"
+        android:layout_marginBottom="56dp"
+        android:background="@drawable/rounded_button"
+        android:onClick="btnAddGenre"
         android:text="Add Genre"
+        app:layout_constraintBottom_toTopOf="@+id/button7"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/button_height_55"
+        android:layout_marginStart="148dp"
+        android:layout_marginBottom="48dp"
+        android:background="@drawable/rounded_button"
+        app:layout_constraintBottom_toTopOf="@+id/button7"
+        app:layout_constraintStart_toEndOf="@+id/button4"
+        android:onClick="btnViewGenres"/>
+
+    <Button
+        android:id="@+id/button7"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/button_height_55"
+        android:layout_marginStart="188dp"
+        android:layout_marginBottom="208dp"
+        android:text="View graph"
         android:background="@drawable/rounded_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:onClick="btnAddGenre"/>
+        android:onClick="btnViewGraph"/>
 </android.support.constraint.ConstraintLayout>
