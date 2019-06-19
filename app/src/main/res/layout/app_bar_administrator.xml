@@ -36,4 +36,8 @@
         android:id="@+id/content_last_searched_books"
         layout="@layout/content_last_searched_books"/>
 
+    <include
+        android:id="@+id/content_loggings_last_week"
+        layout="@layout/content_loggings_last_week"/>
+
 </android.support.design.widget.CoordinatorLayout>

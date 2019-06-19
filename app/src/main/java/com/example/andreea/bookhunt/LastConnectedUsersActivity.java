@@ -65,7 +65,7 @@ public class LastConnectedUsersActivity extends AppCompatActivity
                         long lastLoggedIn = user.getLastLoggedIn() * (-1);
                         Date date = new Date();
                         long now = date.getTime();
-                        if(!user.getUsername().equals("administrator") && lastLoggedIn > now - 86400000 && lastLoggedIn < now) {
+                        if(!user.getUsername().equals("administrator") && lastLoggedIn >=  now - 86400000 && lastLoggedIn <= now) {
                             users.add(user);
                         }
                     }
@@ -95,8 +95,21 @@ public class LastConnectedUsersActivity extends AppCompatActivity
         View view_last_searched_books = findViewById(R.id.content_last_searched_books);
         view_last_searched_books.setVisibility(View.GONE);
 
+        View view_loggings_last_week = findViewById(R.id.content_loggings_last_week);
+        view_loggings_last_week.setVisibility(View.GONE);
+
         mRecyclerViewUsers = findViewById(R.id.rvUsers);
         mRecyclerViewUsers.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.admin_drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override

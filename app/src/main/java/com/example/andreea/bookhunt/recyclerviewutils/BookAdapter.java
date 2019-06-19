@@ -52,12 +52,12 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
     private Context context;
     private ArrayList<Book> books;
 
-    private String title;
-    private String photoUrl;
-    private String description;
-    private Book book;
-    private String originalBookId;
-    private String author;
+//    private String title;
+//    private String photoUrl;
+//    private String description;
+////    private Book book;
+//    private String originalBookId;
+//    private String author;
 
     public BookAdapter(Context context, ArrayList<Book> books) {
         this.context = context;
@@ -72,12 +72,12 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull final BookViewHolder bookViewHolder, int i) {
-        book = books.get(i);
-        title = book.getBookTitle();
-        photoUrl = book.getPhotoUrl();
-        description = book.getDescription();
-        originalBookId = book.getOriginalBookId();
-        author = book.getAuthor();
+        final Book book = books.get(i);
+        final String title = book.getBookTitle();
+        final String photoUrl = book.getPhotoUrl();
+        final String description = book.getDescription();
+        final String originalBookId = book.getOriginalBookId();
+        final String author = book.getAuthor();
 
         bookViewHolder.mTextViewBookAuthor.setText(books.get(i).getAuthor());
         bookViewHolder.mTextViewBookTitle.setText(books.get(i).getBookTitle());

@@ -114,6 +114,9 @@ public class LastSearchedBooksActivity extends AppCompatActivity implements Navi
         View view_last_searched_books = findViewById(R.id.content_last_searched_books);
         view_last_searched_books.setVisibility(View.VISIBLE);
 
+        View view_loggings_last_week = findViewById(R.id.content_loggings_last_week);
+        view_loggings_last_week.setVisibility(View.GONE);
+
         mRecyclerViewLastBooks = findViewById(R.id.rvLastBooks);
         mRecyclerViewLastBooks.setLayoutManager(new LinearLayoutManager(this));
     }
@@ -143,7 +146,7 @@ public class LastSearchedBooksActivity extends AppCompatActivity implements Navi
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.admin_drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {

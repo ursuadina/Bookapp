@@ -44,6 +44,9 @@ public class GenresActivity extends AppCompatActivity implements NavigationView.
 
         View view_last_searched_books = findViewById(R.id.content_last_searched_books);
         view_last_searched_books.setVisibility(View.GONE);
+
+        View view_loggings_last_week = findViewById(R.id.content_loggings_last_week);
+        view_loggings_last_week.setVisibility(View.GONE);
     }
 
     private void initNavDrawer() {
@@ -71,14 +74,13 @@ public class GenresActivity extends AppCompatActivity implements NavigationView.
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.admin_drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
