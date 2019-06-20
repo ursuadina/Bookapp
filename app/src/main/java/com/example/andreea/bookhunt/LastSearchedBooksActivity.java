@@ -47,7 +47,6 @@ public class LastSearchedBooksActivity extends AppCompatActivity implements Navi
 
     private RecyclerView mRecyclerViewLastBooks;
     private LastSearchedBooksAdapter lastSearchedBooksAdapter;
-    private LastSearchBook lastSearchBook;
     private ArrayList<LastSearchBook> lastSearchBooks;
     private Book book;
 

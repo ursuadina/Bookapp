@@ -253,7 +253,7 @@ public class LogInActivity extends AppCompatActivity{
                 data = formatter1.format(date);
                 Calendar c = Calendar.getInstance();
                 c.setTime(date);
-                c.add(Calendar.DATE, -6);
+                c.add(Calendar.DATE, -7);
                 Date start = c.getTime();
                 startData = formatter1.format(start);
                 SharedPreferencesHelper.setStringValueForUserInfo("ModifyLogIn", "False", LogInActivity.this);
@@ -271,12 +271,11 @@ public class LogInActivity extends AppCompatActivity{
                                         break;
                                     }
                                 }
-                                    if (!found) {
-                                        LogInUser logInUser = new LogInUser();
-                                        logInUser.setUsername(username);
-                                        SharedPreferencesHelper.setStringValueForUserInfo("ModifyLogIn", "True", LogInActivity.this);
-                                        FirebaseDatabase.getInstance().getReference("LogIns/" + data).push().setValue(logInUser);
-                                    }
+                                if (!found) {
+                                    LogInUser logInUser = new LogInUser();
+                                    logInUser.setUsername(username);
+                                    SharedPreferencesHelper.setStringValueForUserInfo("ModifyLogIn", "True", LogInActivity.this);
+                                    FirebaseDatabase.getInstance().getReference("LogIns/" + data).push().setValue(logInUser);
                                 }
                             } else {
                                 LogInUser logInUser = new LogInUser();
@@ -284,6 +283,7 @@ public class LogInActivity extends AppCompatActivity{
                                 SharedPreferencesHelper.setStringValueForUserInfo("ModifyLogIn", "True", LogInActivity.this);
                                 FirebaseDatabase.getInstance().getReference("LogIns/" + data).push().setValue(logInUser);
                             }
+
                             if (SharedPreferencesHelper.getStringValueForUserInfo(Constants.USERNAME, LogInActivity.this).equals("administrator")) {
                                 Intent intent = new Intent(LogInActivity.this, AdministratorActivity.class);
                                 startActivity(intent);
@@ -310,7 +310,7 @@ public class LogInActivity extends AppCompatActivity{
                             });
                         }
 
-
+                    }
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
 

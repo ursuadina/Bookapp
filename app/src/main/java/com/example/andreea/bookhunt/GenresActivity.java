@@ -146,6 +146,8 @@ public class GenresActivity extends AppCompatActivity implements NavigationView.
     }
 
     public void btnViewGenres(View view) {
+        Intent intent = new Intent(GenresActivity.this, ViewGenresActivity.class);
+        startActivity(intent);
     }
 
     public void btnViewGraph(View view) {

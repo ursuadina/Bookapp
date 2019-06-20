@@ -27,6 +27,7 @@
         android:layout_marginStart="148dp"
         android:layout_marginBottom="48dp"
         android:background="@drawable/rounded_button"
+        android:text="View Genres"
         app:layout_constraintBottom_toTopOf="@+id/button7"
         app:layout_constraintStart_toEndOf="@+id/button4"
         android:onClick="btnViewGenres"/>

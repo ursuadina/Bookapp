@@ -44,68 +44,9 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        if(remoteMessage.getData().size() > 0) {
-            Log.e("FirebaseMessag", "Message data payload: " + remoteMessage.getData());
-            try {
-                JSONObject data = new JSONObject(remoteMessage.getData());
-                String jsonMesssage = data.getString("extra_info"); // camp din json
-                Log.e("FirebaseMessaging", "onMessageReceived: ");
-                Log.d("msg", "onMessageReceived: " + remoteMessage.getData().get("message"));
-                Intent intent = new Intent(this, IndexActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
-                String channelId = "Default";
-                NotificationCompat.Builder builder = new  NotificationCompat.Builder(this, channelId)
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentTitle(remoteMessage.getNotification().getTitle())
-                        .setContentText(remoteMessage.getNotification().getBody()).setAutoCancel(true).setContentIntent(pendingIntent);;
-                NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                    NotificationChannel channel = new NotificationChannel(channelId, "Default channel", NotificationManager.IMPORTANCE_DEFAULT);
-//                    manager.createNotificationChannel(channel);
-//                }
-                manager.notify(0, builder.build());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if(remoteMessage.getNotification() != null) {
-            String title = remoteMessage.getNotification().getTitle();
-            String message = remoteMessage.getNotification().getBody();
-            String click_action = remoteMessage.getNotification().getClickAction();
-            Intent intent = new Intent(this, IndexActivity.class);
-            intent.putExtra("title",title);
-            intent.putExtra("message",message);
-            LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
-            localBroadcastManager.sendBroadcast(intent);
-//            Notification notification = new NotificationCompat.Builder(this)
-//                    .setContentTitle(remoteMessage.getData().get("title"))
-//                    .setContentText(remoteMessage.getData().get("text"))
-//                    .setSmallIcon(R.mipmap.ic_launcher)
-//                    .build();
-//            NotificationManagerCompat manager = NotificationManagerCompat.from(getApplicationContext());
-//            manager.notify(123, notification);
-//            Intent intent = new Intent(this, IndexActivity.class);
-//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
-//            String channelId = "Default";
-//            NotificationCompat.Builder builder = new  NotificationCompat.Builder(this, channelId)
-//                    .setSmallIcon(R.mipmap.ic_launcher)
-//                    .setContentTitle(remoteMessage.getNotification().getTitle())
-//                    .setContentText(remoteMessage.getNotification().getBody()).setAutoCancel(true).setContentIntent(pendingIntent);;
-//            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-////                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-////                    NotificationChannel channel = new NotificationChannel(channelId, "Default channel", NotificationManager.IMPORTANCE_DEFAULT);
-////                    manager.createNotificationChannel(channel);
-////                }
-//            manager.notify(0, builder.build());
-            Log.e("FirebaseMessaging", "onMessageReceived: Title - " + title);
-            Log.e("FirebaseMessaging", "onMessageReceived: Message - " + message);
-            Log.e("FirebaseMessaging", "onMessageReceived: Click_action - " + click_action);
-            Toast.makeText(getApplicationContext(), "New notification: " + title + "\nMessage:  " + message, Toast.LENGTH_SHORT).show();
-            //sendNotification(title, message, click_action);
-        }
+        //if(remoteMessage.getNotification() != null) {
+            sendNotification(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
+        //}
     }
 
     @Override
@@ -113,12 +54,13 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
     }
 
-    private void sendNotification(String title, String messageBody, String click_action) {
+    private void sendNotification(String title, String messageBody) {
 //        if(click_action.equals("IndexActivity")) {
 //            intent = new Intent(FirebaseMessagingService.this, IndexActivity.class);
 //            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 //        }
         intent = new Intent(this, IndexActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
                 PendingIntent.FLAG_ONE_SHOT);
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
