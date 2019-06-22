@@ -1,5 +1,6 @@
 package com.example.andreea.bookhunt;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -94,7 +95,15 @@ public class GenresGraphActivity extends AppCompatActivity {
 
     private void initView() {
         android.support.v7.widget.Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarGenreGraph);
-        setSupportActionBar(toolbar);
+        setSupportActionBar(toolbar); toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(GenresGraphActivity.this, GenresActivity.class);
+                startActivity(intent);
+            }
+        });
+
         spinnerGenre1 = (Spinner) findViewById(R.id.spinner1);
         spinnerGenre2 = (Spinner) findViewById(R.id.spinner2);
         spinnerGenre3 = (Spinner) findViewById(R.id.spinner3);
@@ -126,6 +135,7 @@ public class GenresGraphActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
+                    //genres.clear();
                     for(DataSnapshot user:dataSnapshot.getChildren()) {
                         for(DataSnapshot book:user.getChildren()) {
                             Book currentBook = book.getValue(Book.class);
@@ -141,19 +151,22 @@ public class GenresGraphActivity extends AppCompatActivity {
                         }
                     }
 //                    ArrayList<BarEntry> barEntries = new ArrayList<>();
-                     BarGraphSeries<DataPoint> series = new BarGraphSeries<>();
+                    BarGraphSeries<DataPoint> series = new BarGraphSeries<>();
                     String[] genreTitle = new String[genres.size()];
                      for(int i = 0; i < genres.size(); i++) {
                          genreTitle[i] = genres.get(i).getGenre();
-                        series.appendData(new DataPoint(i, genres.get(i).getNumber()), true, genres.size());
-                        series.setTitle(genres.get(i).getGenre());
+                         series.appendData(new DataPoint(i, genres.get(i).getNumber()), true, genres.size());
+                         series.setTitle(genres.get(i).getGenre());
                          series.setDrawValuesOnTop(true);
                      }
                      series.setDrawValuesOnTop(true);
+
                      barChart.addSeries(series);
+                    series.setSpacing(50);
                      StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(barChart);
-                    staticLabelsFormatter.setHorizontalLabels(genreTitle);
-                    barChart.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
+                     staticLabelsFormatter.setHorizontalLabels(genreTitle);
+                     barChart.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
+                     barChart.setVisibility(View.VISIBLE);
 //                    BarDataSet barDataSet = new BarDataSet(barEntries,"Genres");
 //                    BarData barData = new BarData(barDataSet);
 

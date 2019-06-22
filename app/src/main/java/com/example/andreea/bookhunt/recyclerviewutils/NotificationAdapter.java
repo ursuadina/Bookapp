@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 
 import com.example.andreea.bookhunt.R;
 import com.example.andreea.bookhunt.models.Notification;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -40,5 +42,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationViewHo
     @Override
     public int getItemCount() {
         return notifications.size();
+    }
+
+    public void deleteItem(int i){
+        Notification notification = notifications.get(i);
+        FirebaseDatabase.getInstance().getReference("Notifications/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()+"/"+notification.getId()).removeValue();
     }
 }

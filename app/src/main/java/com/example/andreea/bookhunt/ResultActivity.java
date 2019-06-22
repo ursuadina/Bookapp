@@ -189,13 +189,24 @@ public class ResultActivity extends AppCompatActivity  implements NavigationView
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.index, menu);
-        RelativeLayout badgeLayout = (RelativeLayout) menu.findItem(R.id.action_settings).getActionView();
-        TextView mCounter = (TextView) badgeLayout.findViewById(R.id.counter);
-        if(SharedPreferencesHelper.getStringValueForUserInfo("Notification", ResultActivity.this).equals("0")) {
-            mCounter.setVisibility(View.GONE);
-        } else {
-            mCounter.setText(SharedPreferencesHelper.getStringValueForUserInfo("Notification", ResultActivity.this));
-        }
+        final RelativeLayout badgeLayout = (RelativeLayout) menu.findItem(R.id.action_settings).getActionView();
+        final TextView mCounter = (TextView) badgeLayout.findViewById(R.id.counter);
+        FirebaseDatabase.getInstance().getReference("Notifications").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if(SharedPreferencesHelper.getStringValueForUserInfo("Notification", ResultActivity.this).equals("0")) {
+                    mCounter.setVisibility(View.GONE);
+                } else {
+                    mCounter.setText(SharedPreferencesHelper.getStringValueForUserInfo("Notification", ResultActivity.this));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         ImageButton imageButton = (ImageButton) badgeLayout.findViewById(R.id.ibNotif);
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override

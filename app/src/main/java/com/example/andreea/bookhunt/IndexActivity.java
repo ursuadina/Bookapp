@@ -212,19 +212,19 @@ public class IndexActivity extends AppCompatActivity
                 } else {
                     mCounter.setText(SharedPreferencesHelper.getStringValueForUserInfo("Notification", IndexActivity.this));
                 }
-                ImageButton imageButton = (ImageButton) badgeLayout.findViewById(R.id.ibNotif);
-                imageButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(IndexActivity.this, NotificationActivity.class);
-                        startActivity(intent);
-                    }
-                });
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
+            }
+        });
+        ImageButton imageButton = (ImageButton) badgeLayout.findViewById(R.id.ibNotif);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(IndexActivity.this, NotificationActivity.class);
+                startActivity(intent);
             }
         });
 //        RelativeLayout badgeLayout = (RelativeLayout) menu.findItem(R.id.action_settings).getActionView();

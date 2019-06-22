@@ -8,6 +8,19 @@
     android:theme="@style/AppTheme.NoActionBar"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="127dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Number of users that logged into application during last week."
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@+id/graph"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
     <com.jjoe64.graphview.GraphView
         android:id="@+id/graph"
         android:layout_width="match_parent"

@@ -1,6 +1,7 @@
 package com.example.andreea.bookhunt;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -31,8 +32,13 @@ import com.example.andreea.bookhunt.retrofitUtils.modelIDreamBooks.bookIDB.criti
 import com.example.andreea.bookhunt.utils.Constants;
 import com.example.andreea.bookhunt.utils.SharedPreferencesHelper;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +82,8 @@ public class ResultsIDreamBooksActivity extends AppCompatActivity  implements Na
         setContentView(R.layout.activity_results_idream_books);
 
         Intent intent = getIntent();
-
+        mBookTitle = intent.getStringExtra(Constants.TITLE);
+        mAuthor = intent.getStringExtra(Constants.AUTHOR);
         initView();
 
         initNavDrawer();
@@ -84,6 +91,7 @@ public class ResultsIDreamBooksActivity extends AppCompatActivity  implements Na
         resultIDBArrayList = new ArrayList<>();
         resultIDBArrayList = intent.getParcelableArrayListExtra(Constants.RESULT_ARRAY_IDB);
         mPhotoUrl = intent.getStringExtra(Constants.PHOTO_URL);
+
 //        Picasso.get().load(mPhotoUrl).into((ImageView)findViewById(R.id.imageViewResult));
         firebaseAuth = FirebaseAuth.getInstance();
         databaseBooks = FirebaseDatabase.getInstance().getReference("Books");
@@ -127,13 +135,24 @@ public class ResultsIDreamBooksActivity extends AppCompatActivity  implements Na
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.index, menu);
-        RelativeLayout badgeLayout = (RelativeLayout) menu.findItem(R.id.action_settings).getActionView();
-        TextView mCounter = (TextView) badgeLayout.findViewById(R.id.counter);
-        if(SharedPreferencesHelper.getStringValueForUserInfo("Notification", ResultsIDreamBooksActivity.this).equals("0")) {
-            mCounter.setVisibility(View.GONE);
-        } else {
-            mCounter.setText(SharedPreferencesHelper.getStringValueForUserInfo("Notification", ResultsIDreamBooksActivity.this));
-        }
+        final RelativeLayout badgeLayout = (RelativeLayout) menu.findItem(R.id.action_settings).getActionView();
+        final TextView mCounter = (TextView) badgeLayout.findViewById(R.id.counter);
+        FirebaseDatabase.getInstance().getReference("Notifications").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if(SharedPreferencesHelper.getStringValueForUserInfo("Notification", ResultsIDreamBooksActivity.this).equals("0")) {
+                    mCounter.setVisibility(View.GONE);
+                } else {
+                    mCounter.setText(SharedPreferencesHelper.getStringValueForUserInfo("Notification", ResultsIDreamBooksActivity.this));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         ImageButton imageButton = (ImageButton) badgeLayout.findViewById(R.id.ibNotif);
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -230,11 +249,15 @@ public class ResultsIDreamBooksActivity extends AppCompatActivity  implements Na
         mRecyclerViewResults = (RecyclerView) findViewById(R.id.rvResultsIDB);
         mRecyclerViewResults.setLayoutManager(new LinearLayoutManager(this));
 
+        TextView textView = (TextView) findViewById(R.id.textView2);
+        textView.setText(mBookTitle + " by " + mAuthor);
+
     }
 
     public void initNavDrawer() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setTitle("I Dream Books");
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(

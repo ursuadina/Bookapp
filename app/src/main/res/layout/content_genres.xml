@@ -8,39 +8,70 @@
     android:theme="@style/AppTheme.NoActionBar"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-
-    <Button
-        android:id="@+id/button4"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/button_height_55"
-        android:layout_marginStart="60dp"
-        android:layout_marginBottom="56dp"
-        android:background="@drawable/rounded_button"
-        android:onClick="btnAddGenre"
-        android:text="Add Genre"
-        app:layout_constraintBottom_toTopOf="@+id/button7"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/button_height_55"
-        android:layout_marginStart="148dp"
-        android:layout_marginBottom="48dp"
-        android:background="@drawable/rounded_button"
-        android:text="View Genres"
-        app:layout_constraintBottom_toTopOf="@+id/button7"
-        app:layout_constraintStart_toEndOf="@+id/button4"
-        android:onClick="btnViewGenres"/>
-
-    <Button
-        android:id="@+id/button7"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/button_height_55"
-        android:layout_marginStart="188dp"
-        android:layout_marginBottom="208dp"
-        android:text="View graph"
-        android:background="@drawable/rounded_button"
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline35"
+        app:layout_constraintStart_toStartOf="@+id/guideline34"
+        app:layout_constraintTop_toBottomOf="@+id/textView13">
+
+        <Button
+            android:id="@+id/button4"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height_55"
+            android:layout_weight="1"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/rounded_button"
+            android:onClick="btnAddGenre"
+            android:text="Add Genre" />
+
+        <Button
+            android:id="@+id/button9"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height_55"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_button"
+            android:onClick="btnViewGenres"
+            android:layout_marginEnd="10dp"
+            android:text="View Genres" />
+
+        <Button
+            android:id="@+id/button7"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height_55"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_button"
+            android:onClick="btnViewGraph"
+            android:text="View graph" />
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="128dp"
+        android:layout_marginEnd="8dp"
+        android:text="Books on domains/genres"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:onClick="btnViewGraph"/>
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline34"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/margin_guideline_17" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline35"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/margin_guideline_17" />
 </android.support.constraint.ConstraintLayout>

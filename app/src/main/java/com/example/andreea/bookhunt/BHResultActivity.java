@@ -89,17 +89,15 @@ public class BHResultActivity extends AppCompatActivity implements NavigationVie
         setContentView(R.layout.activity_bhresult);
         Intent intent = getIntent();
 
+        mBookTitle = intent.getStringExtra(Constants.TITLE);
+        mPhotoUrl = intent.getStringExtra(Constants.PHOTO_URL);
+        origianlBookId = intent.getStringExtra(Constants.BOOK_ID);
+        mAuthor = intent.getStringExtra(Constants.AUTHOR);
+        //titleAuthor = mBookTitle + "_" + mAuthor;
+
         initView();
 
         initNavDrawer();
-
-        //mBookTitle = intent.getStringExtra(Constants.TITLE);
-        mPhotoUrl = intent.getStringExtra(Constants.PHOTO_URL);
-        origianlBookId = intent.getStringExtra(Constants.BOOK_ID);
-        //mAuthor = intent.getStringExtra(Constants.AUTHOR);
-        //titleAuthor = mBookTitle + "_" + mAuthor;
-
-
 
         firebaseAuth = FirebaseAuth.getInstance();
         databaseReviews = FirebaseDatabase.getInstance().getReference("Reviews");
@@ -179,13 +177,24 @@ public class BHResultActivity extends AppCompatActivity implements NavigationVie
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.index, menu);
-        RelativeLayout badgeLayout = (RelativeLayout) menu.findItem(R.id.action_settings).getActionView();
-        TextView mCounter = (TextView) badgeLayout.findViewById(R.id.counter);
-        if(SharedPreferencesHelper.getStringValueForUserInfo("Notification", BHResultActivity.this).equals("0")) {
-            mCounter.setVisibility(View.GONE);
-        } else {
-            mCounter.setText(SharedPreferencesHelper.getStringValueForUserInfo("Notification", BHResultActivity.this));
-        }
+        final RelativeLayout badgeLayout = (RelativeLayout) menu.findItem(R.id.action_settings).getActionView();
+        final TextView mCounter = (TextView) badgeLayout.findViewById(R.id.counter);
+        FirebaseDatabase.getInstance().getReference("Notifications").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if(SharedPreferencesHelper.getStringValueForUserInfo("Notification", BHResultActivity.this).equals("0")) {
+                    mCounter.setVisibility(View.GONE);
+                } else {
+                    mCounter.setText(SharedPreferencesHelper.getStringValueForUserInfo("Notification", BHResultActivity.this));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         ImageButton imageButton = (ImageButton) badgeLayout.findViewById(R.id.ibNotif);
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -283,6 +292,9 @@ public class BHResultActivity extends AppCompatActivity implements NavigationVie
         recyclerViewReviews.setLayoutManager(new LinearLayoutManager(this));
 
         textViewNoReviews = (TextView) findViewById(R.id.no_reviews);
+
+        TextView textView = (TextView) findViewById(R.id.textView3);
+        textView.setText(mBookTitle + " by " + mAuthor);
 
     }
 

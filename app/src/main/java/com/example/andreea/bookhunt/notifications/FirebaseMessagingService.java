@@ -55,17 +55,21 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
             FirebaseDatabase.getInstance().getReference("Notifications/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()).push().setValue(notification);
             sendNotification(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
         }*/
-        Map<String, String> data = remoteMessage.getData();
-        String userId = data.get("userId");
-        String title = data.get("title");
-        String body = data.get("body");
-        String username = data.get("username");
-        if(!userId.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-            Date date = new Date();
-            Notification notification = new Notification(username, body, date.toString());
-            FirebaseDatabase.getInstance().getReference("Notifications/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()).push().setValue(notification);
-            sendNotification(title, body);
-        }
+       if(!FirebaseAuth.getInstance().getCurrentUser().getUid().equals("85aVG9cr4gUVyhwDVftBvmW7UFE2")) {
+           Map<String, String> data = remoteMessage.getData();
+           String userId = data.get("userId");
+           String title = data.get("title");
+           String body = data.get("body");
+           String username = data.get("username");
+           String bookId = data.get("bookId");
+           if (!userId.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+               Date date = new Date();
+               String id = FirebaseDatabase.getInstance().getReference("Notifications/" + FirebaseAuth.getInstance().getCurrentUser().getUid()).push().getKey();
+               Notification notification = new Notification(username, body, date.toString(), id, bookId);
+               FirebaseDatabase.getInstance().getReference("Notifications/" + FirebaseAuth.getInstance().getCurrentUser().getUid() + "/" + id).setValue(notification);
+               sendNotification(title, body);
+           }
+       }
         //}
     }
 

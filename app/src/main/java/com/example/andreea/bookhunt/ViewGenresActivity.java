@@ -65,8 +65,8 @@ public class ViewGenresActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        android.support.v7.widget.Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarViewGenre);
-        setSupportActionBar(toolbar);
+//        android.support.v7.widget.Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarViewGenre);
+//        setSupportActionBar(toolbar);
 
         mRecyclerViewGenre = findViewById(R.id.rvGenres);
         mRecyclerViewGenre.setLayoutManager(new LinearLayoutManager(this));

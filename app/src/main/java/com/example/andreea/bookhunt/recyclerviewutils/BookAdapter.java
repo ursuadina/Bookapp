@@ -170,7 +170,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
         }
     }
 
-    private void viewIDBReview(String bookTitle, String author) {
+    private void viewIDBReview(final String bookTitle, final String author) {
 //        Intent intent = new Intent(context, ResultsIDreamBooksActivity.class);
 //        intent.putExtra(Constants.TITLE, bookTitle);
 //        intent.putExtra(Constants.AUTHOR, author);
@@ -182,6 +182,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
                 .build();
         IDreamBooksAPI iDreamBooksAPI = retrofitIDB.create(IDreamBooksAPI.class);
         String titleAuthor1 = bookTitle + " " + author;
+
         Call<IDreamBooksResponse> callIDB = iDreamBooksAPI.getIDreamBooksResponse(titleAuthor1, Constants.DEVELOPER_KEY_IDREAMBOOKS);
         callIDB.enqueue(new Callback<IDreamBooksResponse>() {
             @Override
@@ -198,6 +199,8 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
                 Intent intent = new Intent(context, ResultsIDreamBooksActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putParcelableArrayList(Constants.RESULT_ARRAY_IDB, resultIDBArrayList);
+                bundle.putString(Constants.TITLE, bookTitle);
+                bundle.putString(Constants.AUTHOR, author);
                 intent.putExtras(bundle);
                 context.startActivity(intent);
             }

@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -65,6 +66,18 @@ public class NotificationActivity extends AppCompatActivity  implements Navigati
                     }
                     notificationAdapter = new NotificationAdapter(NotificationActivity.this, notifications);
                     recyclerViewNotification.setAdapter(notificationAdapter);
+
+                    new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+                        @Override
+                        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder viewHolder1) {
+                            return false;
+                        }
+
+                        @Override
+                        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+                            notificationAdapter.deleteItem(viewHolder.getAdapterPosition());
+                        }
+                    }).attachToRecyclerView(recyclerViewNotification);
                 } else {
                     TextView textView = findViewById(R.id.textViewNoNotif);
                     textView.setVisibility(View.VISIBLE);
@@ -81,7 +94,7 @@ public class NotificationActivity extends AppCompatActivity  implements Navigati
 
     public void initNavDrawer() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.app_name);
+        toolbar.setTitle("Notifications");
         setSupportActionBar(toolbar);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -145,13 +158,24 @@ public class NotificationActivity extends AppCompatActivity  implements Navigati
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.index, menu);
-        RelativeLayout badgeLayout = (RelativeLayout) menu.findItem(R.id.action_settings).getActionView();
-        TextView mCounter = (TextView) badgeLayout.findViewById(R.id.counter);
-        if(SharedPreferencesHelper.getStringValueForUserInfo("Notification", NotificationActivity.this).equals("0")) {
-            mCounter.setVisibility(View.GONE);
-        } else {
-            mCounter.setText(SharedPreferencesHelper.getStringValueForUserInfo("Notification", NotificationActivity.this));
-        }
+        final RelativeLayout badgeLayout = (RelativeLayout) menu.findItem(R.id.action_settings).getActionView();
+        final TextView mCounter = (TextView) badgeLayout.findViewById(R.id.counter);
+        FirebaseDatabase.getInstance().getReference("Notifications").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if(SharedPreferencesHelper.getStringValueForUserInfo("Notification", NotificationActivity.this).equals("0")) {
+                    mCounter.setVisibility(View.GONE);
+                } else {
+                    mCounter.setText(SharedPreferencesHelper.getStringValueForUserInfo("Notification", NotificationActivity.this));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         ImageButton imageButton = (ImageButton) badgeLayout.findViewById(R.id.ibNotif);
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override

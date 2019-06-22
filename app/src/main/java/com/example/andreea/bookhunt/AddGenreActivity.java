@@ -33,14 +33,14 @@ public class AddGenreActivity extends AppCompatActivity {
         int width = dm.widthPixels;
         int height = dm.heightPixels;
 
-        getWindow().setLayout((int) (width * 0.8), (int) (height * 0.6));
+        getWindow().setLayout((int) (width * 0.8), (int) (height * 0.4));
 
         initView();
     }
 
     private void initView() {
-        android.support.v7.widget.Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarGenre);
-        setSupportActionBar(toolbar);
+//        android.support.v7.widget.Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarGenre);
+//        setSupportActionBar(toolbar);
         textInputLayoutGenre = (TextInputLayout) findViewById(R.id.textInputLayoutGenre);
         editTextGenre = (EditText) findViewById(R.id.etGenre);
     }

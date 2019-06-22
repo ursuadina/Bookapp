@@ -50,6 +50,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -93,6 +94,7 @@ public class LogInActivity extends AppCompatActivity{
                     GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                             .requestIdToken(getString(R.string.default_web_client_id))
                             .requestEmail()
+                            .requestProfile()
                             .build();
 
                     googleSignInClient = GoogleSignIn.getClient(context, googleSignInOptions);
@@ -118,23 +120,33 @@ public class LogInActivity extends AppCompatActivity{
                                     if (dataSnapshot.exists()) {
                                         String username = SharedPreferencesHelper.getStringValueForUserInfo(Constants.USERNAME, LogInActivity.this);
                                         boolean found = false;
-                                        for(DataSnapshot ds:dataSnapshot.getChildren()) {
-                                            if(ds.getValue(LogInUser.class).getUsername().equals(username)) {
+                                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                            if (ds.getValue(LogInUser.class).getUsername().equals(username)) {
                                                 found = true;
                                                 break;
                                             }
-                                            if(!found) {
-                                                LogInUser logInUser = new LogInUser();
-                                                logInUser.setUsername(username);
-                                                SharedPreferencesHelper.setStringValueForUserInfo("ModifyLogIn", "True", LogInActivity.this);
-                                                FirebaseDatabase.getInstance().getReference("LogIns/" + data).push().setValue(logInUser);
-                                            }
+                                        }
+                                        if (!found) {
+                                            LogInUser logInUser = new LogInUser();
+                                            logInUser.setUsername(username);
+                                            SharedPreferencesHelper.setStringValueForUserInfo("ModifyLogIn", "True", LogInActivity.this);
+                                            FirebaseDatabase.getInstance().getReference("LogIns/" + data).push().setValue(logInUser);
                                         }
                                     } else {
                                         LogInUser logInUser = new LogInUser();
                                         logInUser.setUsername(SharedPreferencesHelper.getStringValueForUserInfo(Constants.USERNAME, LogInActivity.this));
                                         SharedPreferencesHelper.setStringValueForUserInfo("ModifyLogIn", "True", LogInActivity.this);
                                         FirebaseDatabase.getInstance().getReference("LogIns/" + data).push().setValue(logInUser);
+                                    }
+
+                                    if (SharedPreferencesHelper.getStringValueForUserInfo(Constants.USERNAME, LogInActivity.this).equals("administrator")) {
+                                        Intent intent = new Intent(LogInActivity.this, AdministratorActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    } else {
+                                        Intent intent = new Intent(LogInActivity.this, IndexActivity.class);
+                                        startActivity(intent);
+                                        finish();
                                     }
                                     FirebaseDatabase.getInstance().getReference("LogIns").addValueEventListener(new ValueEventListener() {
                                         @Override
@@ -234,12 +246,14 @@ public class LogInActivity extends AppCompatActivity{
 
             }
         }
+
         if (isConnected) {
 
             firebaseAuth = FirebaseAuth.getInstance();
             GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                     .requestIdToken(getString(R.string.default_web_client_id))
                     .requestEmail()
+                    .requestProfile()
                     .build();
 
             googleSignInClient = GoogleSignIn.getClient(getApplicationContext(), googleSignInOptions);
@@ -285,6 +299,7 @@ public class LogInActivity extends AppCompatActivity{
                             }
 
                             if (SharedPreferencesHelper.getStringValueForUserInfo(Constants.USERNAME, LogInActivity.this).equals("administrator")) {
+                                FirebaseMessaging.getInstance().unsubscribeFromTopic("-LhAlUgxE0fJAKBCLl-u");
                                 Intent intent = new Intent(LogInActivity.this, AdministratorActivity.class);
                                 startActivity(intent);
                                 finish();
@@ -565,18 +580,124 @@ public class LogInActivity extends AppCompatActivity{
                 if (task.isSuccessful()) {
                     AccountManager manager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
                     Account[] list = manager.getAccounts();
-                    for(Account account: list)
+                    for(final Account account: list)
                     {
                         if(account.type.equalsIgnoreCase("com.google"))
                         {
                             SharedPreferencesHelper.setStringValueForUserInfo(Constants.EMAIL, account.name, getApplicationContext());
+                            SharedPreferencesHelper.setStringValueForUserInfo(Constants.USERNAME, account.name, getApplicationContext());
                             SharedPreferencesHelper.setStringValueForUserInfo(Constants.REMEMBER, "True", getApplicationContext());
+                            Query query = FirebaseDatabase.getInstance().getReference("Users").orderByChild("username")
+                                    .equalTo(account.name);
+                            SharedPreferencesHelper.setStringValueForUserInfo("ModifyLogIn", "false",LogInActivity.this);
+                            query.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    // Is only one user with this username.
+                                    if (SharedPreferencesHelper.getStringValueForUserInfo("ModifyLogIn", LogInActivity.this).equals("false")) {
+                                        if (!dataSnapshot.hasChildren()) {
+                                            User user = new User();
+                                            user.setEmail(account.name);
+                                            user.setUsername(account.name);
+//                                            Date date = new Date();
+//                                            user.setLastLoggedIn((-1) * date.getTime());
+//                                            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+//                                            user.setLastDate(formatter.format(date));
+                                            FirebaseDatabase.getInstance().getReference("Users/"+FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(user);
+                                        } else {
+                                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                                mUser = ds.getValue(User.class);
+                                                FirebaseDatabase.getInstance().getReference("Users/" + FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(mUser);
+                                            }
+                                        }
+                                          Date date = new Date();
+                                          SharedPreferencesHelper.setStringValueForUserInfo("ModifyLogIn", "true", LogInActivity.this);
+                                          FirebaseDatabase.getInstance().getReference("Users/" + FirebaseAuth.getInstance().getCurrentUser().getUid() + "/lastLoggedIn").setValue((-1) * date.getTime());
+                                          SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                                          SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MM-yyyy");
+                                          data = formatter1.format(date);
+                                          Calendar c = Calendar.getInstance();
+                                          c.setTime(date);
+                                          c.add(Calendar.DATE,  -8);
+                                          Date start = c.getTime();
+                                          startData = formatter1.format(start);
+                                          SharedPreferencesHelper.setStringValueForUserInfo("ModifyLogIn", "False",LogInActivity.this);
+                                          FirebaseDatabase.getInstance().getReference("Users/"+FirebaseAuth.getInstance().getCurrentUser().getUid() + "/lastDate").setValue(formatter.format(date));
+                                          FirebaseDatabase.getInstance().getReference("LogIns").child(data).addValueEventListener(new ValueEventListener() {
+                                                 @Override
+                                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                    if (SharedPreferencesHelper.getStringValueForUserInfo("ModifyLogIn", LogInActivity.this).equals("False")) {
+                                                        if (dataSnapshot.exists()) {
+                                                            String username = SharedPreferencesHelper.getStringValueForUserInfo(Constants.USERNAME, LogInActivity.this);
+                                                            boolean found = false;
+                                                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                                                if (ds.getValue(LogInUser.class).getUsername().equals(username)) {
+                                                                    found = true;
+                                                                    break;
+                                                                }
+                                                            }
+                                                            if (!found) {
+                                                                LogInUser logInUser = new LogInUser();
+                                                                logInUser.setUsername(username);
+                                                                SharedPreferencesHelper.setStringValueForUserInfo("ModifyLogIn", "True", LogInActivity.this);
+                                                                FirebaseDatabase.getInstance().getReference("LogIns/" + data).push().setValue(logInUser);
+                                                            }
+                                                        } else {
+                                                            LogInUser logInUser = new LogInUser();
+                                                            logInUser.setUsername(SharedPreferencesHelper.getStringValueForUserInfo(Constants.USERNAME, LogInActivity.this));
+                                                            SharedPreferencesHelper.setStringValueForUserInfo("ModifyLogIn", "True", LogInActivity.this);
+                                                            FirebaseDatabase.getInstance().getReference("LogIns/" + data).push().setValue(logInUser);
+                                                        }
+
+                                                        Intent intent = new Intent(LogInActivity.this, IndexActivity.class);
+                                                        startActivity(intent);
+                                                        finish();
+                                                        FirebaseDatabase.getInstance().getReference("LogIns").addValueEventListener(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                                if(dataSnapshot.getChildrenCount() == 8) {
+                                                                    SharedPreferencesHelper.setStringValueForUserInfo("ModifyLogIn", "True", LogInActivity.this);
+                                                                    FirebaseDatabase.getInstance().getReference("LogIns").child(startData).removeValue();
+                                                                }
+                                                            }
+
+                                                            @Override
+                                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                            }
+                                                        });
+                                                    }
+                                                }
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
+//                                                    if (mEditTextUsername.getText().toString().equals("administrator")) {
+//                                                        Intent intent = new Intent(LogInActivity.this, AdministratorActivity.class);
+//                                                        startActivity(intent);
+//                                                        finish();
+//                                                    } else {
+//                                                        Intent intent = new Intent(LogInActivity.this, IndexActivity.class);
+//                                                        startActivity(intent);
+//                                                        finish();
+//                                                    }
+
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+
                             break;
                         }
                     }
-                    Intent intent = new Intent(LogInActivity.this, IndexActivity.class);
-                    startActivity(intent);
-                    finish();
+//                    Intent intent = new Intent(LogInActivity.this, IndexActivity.class);
+//                    startActivity(intent);
+//                    finish();
                 }
                 else{
                     Toast.makeText(getApplicationContext(),"Auth Error",Toast.LENGTH_SHORT).show();

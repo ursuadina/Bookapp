@@ -132,6 +132,14 @@ public class SearchActivity extends AppCompatActivity {
     public void initView() {
         android.support.v7.widget.Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar1);
         setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SearchActivity.this, IndexActivity.class);
+                startActivity(intent);
+            }
+        });
 
         textViewTitle = (TextView) findViewById(R.id.textView3);
         imageViewBook = (ImageView)  findViewById(R.id.imageViewBookPhoto);
