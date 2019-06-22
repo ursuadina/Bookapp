@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.andreea.bookhunt.models.User;
@@ -112,6 +113,9 @@ public class ProfileActivity extends AppCompatActivity  implements NavigationVie
         View view_profile = findViewById(R.id.content_profile);
         view_profile.setVisibility(View.VISIBLE);
 
+        View view_notification = findViewById(R.id.content_notification);
+        view_notification.setVisibility(View.GONE);
+
         FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
         floatingActionButton.hide();
 
@@ -181,6 +185,21 @@ public class ProfileActivity extends AppCompatActivity  implements NavigationVie
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.index, menu);
+        RelativeLayout badgeLayout = (RelativeLayout) menu.findItem(R.id.action_settings).getActionView();
+        TextView mCounter = (TextView) badgeLayout.findViewById(R.id.counter);
+        if(SharedPreferencesHelper.getStringValueForUserInfo("Notification", ProfileActivity.this).equals("0")) {
+            mCounter.setVisibility(View.GONE);
+        } else {
+            mCounter.setText(SharedPreferencesHelper.getStringValueForUserInfo("Notification", ProfileActivity.this));
+        }
+        ImageButton imageButton = (ImageButton) badgeLayout.findViewById(R.id.ibNotif);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ProfileActivity.this, NotificationActivity.class);
+                startActivity(intent);
+            }
+        });
         return true;
     }
 
@@ -193,6 +212,8 @@ public class ProfileActivity extends AppCompatActivity  implements NavigationVie
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(ProfileActivity.this, NotificationActivity.class);
+            startActivity(intent);
             return true;
         }
 

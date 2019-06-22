@@ -15,7 +15,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -103,7 +105,7 @@ public class FavouriteActivity extends AppCompatActivity
         View view_result_idb = findViewById(R.id.content_result_idb);
         view_result_idb.setVisibility(View.GONE);
 
-        View  view_fav = findViewById(R.id.content_fav);
+        View view_fav = findViewById(R.id.content_fav);
         view_fav.setVisibility(View.VISIBLE);
 
         View view_bh = findViewById(R.id.bh_content);
@@ -112,6 +114,8 @@ public class FavouriteActivity extends AppCompatActivity
         View view_profile = findViewById(R.id.content_profile);
         view_profile.setVisibility(View.GONE);
 
+        View view_notification = findViewById(R.id.content_notification);
+        view_notification.setVisibility(View.GONE);
 
         recyclerViewFav = findViewById(R.id.rvFav);
         recyclerViewFav.setLayoutManager(new LinearLayoutManager(this));
@@ -124,6 +128,21 @@ public class FavouriteActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.index, menu);
+        RelativeLayout badgeLayout = (RelativeLayout) menu.findItem(R.id.action_settings).getActionView();
+        TextView mCounter = (TextView) badgeLayout.findViewById(R.id.counter);
+        if(SharedPreferencesHelper.getStringValueForUserInfo("Notification", FavouriteActivity.this).equals("0")) {
+            mCounter.setVisibility(View.GONE);
+        } else {
+            mCounter.setText(SharedPreferencesHelper.getStringValueForUserInfo("Notification", FavouriteActivity.this));
+        }
+        ImageButton imageButton = (ImageButton) badgeLayout.findViewById(R.id.ibNotif);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(FavouriteActivity.this, NotificationActivity.class);
+                startActivity(intent);
+            }
+        });
         return true;
     }
 
@@ -136,6 +155,8 @@ public class FavouriteActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(FavouriteActivity.this, NotificationActivity.class);
+            startActivity(intent);
             return true;
         }
 

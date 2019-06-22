@@ -31,6 +31,8 @@ import com.google.firebase.database.ValueEventListener;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -69,7 +71,7 @@ public class ReviewActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         reviewArrayList = new ArrayList<>();
 
-        databaseReviews.orderByChild("createdAtMiliseconds").addValueEventListener(new ValueEventListener() {
+        databaseReviews.orderByChild("bookId").equalTo(originalBookId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.hasChildren()) {
@@ -78,6 +80,12 @@ public class ReviewActivity extends AppCompatActivity {
                         Review review = ds.getValue(Review.class);
                         reviewArrayList.add(review);
                     }
+                    Collections.sort(reviewArrayList, new Comparator<Review>() {
+                        @Override
+                        public int compare(Review o1, Review o2) {
+                            return Long.valueOf(o1.getCreatedAtMiliseconds()).compareTo(o2.getCreatedAtMiliseconds());
+                        }
+                    });
                     reviewAdapter = new AddReviewAdapter(ReviewActivity.this, reviewArrayList);
                     recyclerViewReviews.setAdapter(reviewAdapter);
                 }
@@ -99,7 +107,7 @@ public class ReviewActivity extends AppCompatActivity {
         buttonAddReviewBH.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                btnAddReviewBHOnClick(originalBookId);
+                btnAddReviewBHOnClick(originalBookId, bookTitle);
             }
         });
         editTextReview = findViewById(R.id.editTextReview);
@@ -120,7 +128,7 @@ public class ReviewActivity extends AppCompatActivity {
 //        return reviews;
 //    }
 
-    public void btnAddReviewBHOnClick(String originalBookId) {
+    public void btnAddReviewBHOnClick(String originalBookId, String bookTitle) {
         String reviewAdded = editTextReview.getText().toString();
         float rating = ratingBar.getRating();
         Date date = new Date();
@@ -128,7 +136,7 @@ public class ReviewActivity extends AppCompatActivity {
         String currentUserId = firebaseAuth.getCurrentUser().getUid();
         String reviewId = databaseReviews.push().getKey();
         String username = SharedPreferencesHelper.getStringValueForUserInfo(Constants.USERNAME, ReviewActivity.this);
-        Review review = new Review(reviewAdded, currentUserId, rating, date.toString(), originalBookId, reviewId, timeMili, username);
+        Review review = new Review(reviewAdded, currentUserId, rating, date.toString(), originalBookId, reviewId, timeMili, username, bookTitle);
         databaseReviews.push().setValue(review);
         //reviewArrayList.add(new Review(reviewAdded, "andreea123",rating));
     }

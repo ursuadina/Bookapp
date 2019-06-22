@@ -9,12 +9,13 @@ public class Review {
     private String reviewId;
     private long createdAtMiliseconds;
     private String userName;
+    private String bookTitle;
 
     public Review() {
     }
 
 
-    public Review(String review, String userId, float rating, String createdAt, String bookId, String reviewId, long createdAtMiliseconds, String userName) {
+    public Review(String review, String userId, float rating, String createdAt, String bookId, String reviewId, long createdAtMiliseconds, String userName, String bookTitle) {
         this.review = review;
         this.userId = userId;
         this.rating = rating;
@@ -23,6 +24,7 @@ public class Review {
         this.reviewId = reviewId;
         this.createdAtMiliseconds = createdAtMiliseconds;
         this.userName = userName;
+        this.bookTitle = bookTitle;
     }
 
     public String getReview() {
@@ -87,5 +89,13 @@ public class Review {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getBookTitle() {
+        return bookTitle;
+    }
+
+    public void setBookTitle(String bookTitle) {
+        this.bookTitle = bookTitle;
     }
 }

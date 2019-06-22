@@ -440,23 +440,33 @@ public class LogInActivity extends AppCompatActivity{
                                                                 if (dataSnapshot.exists()) {
                                                                     String username = SharedPreferencesHelper.getStringValueForUserInfo(Constants.USERNAME, LogInActivity.this);
                                                                     boolean found = false;
-                                                                    for(DataSnapshot ds:dataSnapshot.getChildren()) {
-                                                                        if(ds.getValue(LogInUser.class).getUsername().equals(username)) {
+                                                                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                                                        if (ds.getValue(LogInUser.class).getUsername().equals(username)) {
                                                                             found = true;
                                                                             break;
                                                                         }
-                                                                        if(!found) {
-                                                                            LogInUser logInUser = new LogInUser();
-                                                                            logInUser.setUsername(username);
-                                                                            SharedPreferencesHelper.setStringValueForUserInfo("ModifyLogIn", "True", LogInActivity.this);
-                                                                            FirebaseDatabase.getInstance().getReference("LogIns/" + data).push().setValue(logInUser);
-                                                                        }
+                                                                    }
+                                                                    if (!found) {
+                                                                        LogInUser logInUser = new LogInUser();
+                                                                        logInUser.setUsername(username);
+                                                                        SharedPreferencesHelper.setStringValueForUserInfo("ModifyLogIn", "True", LogInActivity.this);
+                                                                        FirebaseDatabase.getInstance().getReference("LogIns/" + data).push().setValue(logInUser);
                                                                     }
                                                                 } else {
                                                                     LogInUser logInUser = new LogInUser();
                                                                     logInUser.setUsername(SharedPreferencesHelper.getStringValueForUserInfo(Constants.USERNAME, LogInActivity.this));
                                                                     SharedPreferencesHelper.setStringValueForUserInfo("ModifyLogIn", "True", LogInActivity.this);
                                                                     FirebaseDatabase.getInstance().getReference("LogIns/" + data).push().setValue(logInUser);
+                                                                }
+
+                                                                if (SharedPreferencesHelper.getStringValueForUserInfo(Constants.USERNAME, LogInActivity.this).equals("administrator")) {
+                                                                    Intent intent = new Intent(LogInActivity.this, AdministratorActivity.class);
+                                                                    startActivity(intent);
+                                                                    finish();
+                                                                } else {
+                                                                    Intent intent = new Intent(LogInActivity.this, IndexActivity.class);
+                                                                    startActivity(intent);
+                                                                    finish();
                                                                 }
                                                                 FirebaseDatabase.getInstance().getReference("LogIns").addValueEventListener(new ValueEventListener() {
                                                                     @Override
@@ -479,15 +489,15 @@ public class LogInActivity extends AppCompatActivity{
 
                                                         }
                                                     });
-                                                    if (mEditTextUsername.getText().toString().equals("administrator")) {
-                                                        Intent intent = new Intent(LogInActivity.this, AdministratorActivity.class);
-                                                        startActivity(intent);
-                                                        finish();
-                                                    } else {
-                                                        Intent intent = new Intent(LogInActivity.this, IndexActivity.class);
-                                                        startActivity(intent);
-                                                        finish();
-                                                    }
+//                                                    if (mEditTextUsername.getText().toString().equals("administrator")) {
+//                                                        Intent intent = new Intent(LogInActivity.this, AdministratorActivity.class);
+//                                                        startActivity(intent);
+//                                                        finish();
+//                                                    } else {
+//                                                        Intent intent = new Intent(LogInActivity.this, IndexActivity.class);
+//                                                        startActivity(intent);
+//                                                        finish();
+//                                                    }
                                                 } else {
                                                     mEditTextPassword.setError(getResources().getString(R.string.error_password_incorrect));
                                                 }

@@ -44,6 +44,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:18.0.0'
 
     implementation 'com.jjoe64:graphview:4.2.2'
+    implementation 'com.nex3z:notification-badge:0.1.0'
 
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.5.0'

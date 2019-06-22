@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.LayerDrawable;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,12 +26,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.andreea.bookhunt.models.Book;
+import com.example.andreea.bookhunt.models.Notification;
 import com.example.andreea.bookhunt.recyclerviewutils.BookAdapter;
 import com.example.andreea.bookhunt.utils.Constants;
+import com.example.andreea.bookhunt.utils.CountDrawable;
 import com.example.andreea.bookhunt.utils.SharedPreferencesHelper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -70,31 +74,36 @@ public class IndexActivity extends AppCompatActivity
 
     private String text;
 
+    private int mCount;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_index);
 
+        FirebaseDatabase.getInstance().getReference("Notifications/" + FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    mCount = (int) dataSnapshot.getChildrenCount();
+                } else {
+                    mCount = 0;
+                }
+                SharedPreferencesHelper.setStringValueForUserInfo("Notification", String.valueOf(mCount), IndexActivity.this);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         initNavDrawer();
 
         initView();
         //Methods.checkPermissions(IndexActivity.this, IndexActivity.this);
         Intent intent = getIntent();
-//        LocalBroadcastManager.getInstance(this).registerReceiver(mHandler, new IntentFilter("com.example.andreea.bookhunt_FCM-Message"));
-//        FirebaseMessaging.getInstance().subscribeToTopic("-LhAlUgxE0fJAKBCLl-u");
-//        //FirebaseMessaging.getInstance().se
-//        // See documentation on defining a message payload.
-//        RemoteMessage message = new RemoteMessage.Builder("-LhAlUgxE0fJAKBCLl-u")
-//                .addData("title", "850")
-//                .addData("text", "2:45")
-//                .addData("click_action", "IndexActivity")
-//                .build();
-//////
-//////// Send a message to the devices subscribed to the provided topic.
-//       FirebaseMessaging.getInstance().send(message);
-//// Response is a message ID string.
-//        System.out.println("Successfully sent message: " + response);
+
         books = new ArrayList<>();
         firebaseAuth = FirebaseAuth.getInstance();
         booksReference = FirebaseDatabase.getInstance().getReference("Books")
@@ -146,7 +155,8 @@ public class IndexActivity extends AppCompatActivity
         View view_profile = findViewById(R.id.content_profile);
         view_profile.setVisibility(View.GONE);
 
-
+        View view_notification = findViewById(R.id.content_notification);
+        view_notification.setVisibility(View.GONE);
 
         mRecyclerViewBooks = findViewById(R.id.rvBooks);
         mRecyclerViewBooks.setLayoutManager(new LinearLayoutManager(this));
@@ -173,6 +183,8 @@ public class IndexActivity extends AppCompatActivity
         mTextViewUsername.setText(SharedPreferencesHelper.getStringValueForUserInfo(Constants.USERNAME, getApplicationContext()));
         mTextViewEmail = (TextView) mLinearLayoutHeader.findViewById(R.id.tvEmail);
         mTextViewEmail.setText(SharedPreferencesHelper.getStringValueForUserInfo(Constants.EMAIL, getApplicationContext()));
+
+
     }
 
     @Override
@@ -186,9 +198,50 @@ public class IndexActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(final Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.index, menu);
+        final RelativeLayout badgeLayout = (RelativeLayout) menu.findItem(R.id.action_settings).getActionView();
+        final TextView mCounter = (TextView) badgeLayout.findViewById(R.id.counter);
+        FirebaseDatabase.getInstance().getReference("Notifications").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if(SharedPreferencesHelper.getStringValueForUserInfo("Notification", IndexActivity.this).equals("0")) {
+                    mCounter.setVisibility(View.GONE);
+                } else {
+                    mCounter.setText(SharedPreferencesHelper.getStringValueForUserInfo("Notification", IndexActivity.this));
+                }
+                ImageButton imageButton = (ImageButton) badgeLayout.findViewById(R.id.ibNotif);
+                imageButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(IndexActivity.this, NotificationActivity.class);
+                        startActivity(intent);
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+//        RelativeLayout badgeLayout = (RelativeLayout) menu.findItem(R.id.action_settings).getActionView();
+//        TextView mCounter = (TextView) badgeLayout.findViewById(R.id.counter);
+//        if(SharedPreferencesHelper.getStringValueForUserInfo("Notification", IndexActivity.this).equals("0")) {
+//            mCounter.setVisibility(View.GONE);
+//        } else {
+//            mCounter.setText(SharedPreferencesHelper.getStringValueForUserInfo("Notification", IndexActivity.this));
+//        }
+//        ImageButton imageButton = (ImageButton) badgeLayout.findViewById(R.id.ibNotif);
+//        imageButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(IndexActivity.this, NotificationActivity.class);
+//                startActivity(intent);
+//            }
+//        });
         return true;
     }
 
@@ -201,6 +254,8 @@ public class IndexActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(IndexActivity.this, NotificationActivity.class);
+            startActivity(intent);
             return true;
         }
 
@@ -249,34 +304,34 @@ public class IndexActivity extends AppCompatActivity
         startActivity(intent);
     }
 
-    private BroadcastReceiver mHandler = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String title = intent.getStringExtra("title");
-            String text = intent.getStringExtra("text");
-            String click_action = intent.getStringExtra("click_action");
-//            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent,
-//                    PendingIntent.FLAG_ONE_SHOT);
-//            Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-//            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
-//                    .setSmallIcon(R.mipmap.ic_launcher)
-//                    .setContentTitle(title)
-//                    .setContentText(text)
-//                    .setAutoCancel(true)
-//                    .setSound(defaultSoundUri)
-//                    .setContentIntent(pendingIntent);
+//    private BroadcastReceiver mHandler = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            String title = intent.getStringExtra("title");
+//            String text = intent.getStringExtra("text");
+//            String click_action = intent.getStringExtra("click_action");
+////            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent,
+////                    PendingIntent.FLAG_ONE_SHOT);
+////            Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+////            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
+////                    .setSmallIcon(R.mipmap.ic_launcher)
+////                    .setContentTitle(title)
+////                    .setContentText(text)
+////                    .setAutoCancel(true)
+////                    .setSound(defaultSoundUri)
+////                    .setContentIntent(pendingIntent);
+////
+////            NotificationManager notificationManager =
+////                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+////
+////            notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+//            Toast.makeText(context, title, Toast.LENGTH_SHORT).show();
+//        }
+//    };
 //
-//            NotificationManager notificationManager =
-//                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-//
-//            notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
-            Toast.makeText(context, title, Toast.LENGTH_SHORT).show();
-        }
-    };
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mHandler);
-    }
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        LocalBroadcastManager.getInstance(this).unregisterReceiver(mHandler);
+//    }
 }

@@ -17,13 +17,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.andreea.bookhunt.models.Book;
+import com.example.andreea.bookhunt.models.Notification;
 import com.example.andreea.bookhunt.models.OriginalBooks;
 import com.example.andreea.bookhunt.retrofitUtils.GoodreadsAPI;
 import com.example.andreea.bookhunt.retrofitUtils.modelGoodReads.GoodreadsResponse;
@@ -186,6 +189,21 @@ public class ResultActivity extends AppCompatActivity  implements NavigationView
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.index, menu);
+        RelativeLayout badgeLayout = (RelativeLayout) menu.findItem(R.id.action_settings).getActionView();
+        TextView mCounter = (TextView) badgeLayout.findViewById(R.id.counter);
+        if(SharedPreferencesHelper.getStringValueForUserInfo("Notification", ResultActivity.this).equals("0")) {
+            mCounter.setVisibility(View.GONE);
+        } else {
+            mCounter.setText(SharedPreferencesHelper.getStringValueForUserInfo("Notification", ResultActivity.this));
+        }
+        ImageButton imageButton = (ImageButton) badgeLayout.findViewById(R.id.ibNotif);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ResultActivity.this, NotificationActivity.class);
+                startActivity(intent);
+            }
+        });
         return true;
     }
 
@@ -198,6 +216,8 @@ public class ResultActivity extends AppCompatActivity  implements NavigationView
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(ResultActivity.this, NotificationActivity.class);
+            startActivity(intent);
             return true;
         }
 
@@ -263,6 +283,8 @@ public class ResultActivity extends AppCompatActivity  implements NavigationView
         View view_profile = findViewById(R.id.content_profile);
         view_profile.setVisibility(View.GONE);
 
+        View view_notification = findViewById(R.id.content_notification);
+        view_notification.setVisibility(View.GONE);
 
         floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
         floatingActionButton.hide();

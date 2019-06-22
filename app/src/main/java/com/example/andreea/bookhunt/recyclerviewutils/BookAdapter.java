@@ -34,6 +34,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
@@ -93,7 +94,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
         bookViewHolder.mImageButtonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteBook(book.getBookId(), book.getPhotoUrl());
+                deleteBook(book.getBookId(), book.getPhotoUrl(), book.getOriginalBookId());
             }
         });
         bookViewHolder.mImageButtonExpand.setOnClickListener(new View.OnClickListener() {
@@ -250,7 +251,8 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
         context.startActivity(intent);
     }
 
-    public void deleteBook(String id, String photoUrl) {
+    public void deleteBook(String id, String photoUrl, String originalBookId) {
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(originalBookId);
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().
                 getReference("Books")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
