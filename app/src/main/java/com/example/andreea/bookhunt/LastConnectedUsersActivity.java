@@ -2,7 +2,6 @@ package com.example.andreea.bookhunt;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -19,7 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.andreea.bookhunt.models.User;
-import com.example.andreea.bookhunt.recyclerviewutils.BookAdapter;
 import com.example.andreea.bookhunt.recyclerviewutils.UserAdapter;
 import com.example.andreea.bookhunt.utils.Constants;
 import com.example.andreea.bookhunt.utils.SharedPreferencesHelper;
@@ -28,8 +26,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -69,8 +65,21 @@ public class LastConnectedUsersActivity extends AppCompatActivity
                             users.add(user);
                         }
                     }
-                    userAdapter = new UserAdapter(LastConnectedUsersActivity.this, users);
-                    mRecyclerViewUsers.setAdapter(userAdapter);
+                    if(users.size() == 0) {
+                        TextView textView = (TextView) findViewById(R.id.no_users);
+                        textView.setVisibility(View.VISIBLE);
+                        mRecyclerViewUsers.setVisibility(View.GONE);
+                    } else {
+                        TextView textView = (TextView) findViewById(R.id.no_users);
+                        textView.setVisibility(View.GONE);
+                        mRecyclerViewUsers.setVisibility(View.VISIBLE);
+                        userAdapter = new UserAdapter(LastConnectedUsersActivity.this, users);
+                        mRecyclerViewUsers.setAdapter(userAdapter);
+                    }
+                } else {
+                    TextView textView = (TextView) findViewById(R.id.no_users);
+                    textView.setVisibility(View.VISIBLE);
+                    mRecyclerViewUsers.setVisibility(View.GONE);
                 }
             }
 
@@ -127,7 +136,9 @@ public class LastConnectedUsersActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.admin_action_settings) {
+            Intent intent = new Intent(LastConnectedUsersActivity.this, AdministratorActivity.class);
+            startActivity(intent);
             return true;
         }
 
@@ -141,17 +152,21 @@ public class LastConnectedUsersActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_books_searched) {
+            Intent intent = new Intent(LastConnectedUsersActivity.this, LastSearchedBooksActivity.class);
+            startActivity(intent);
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_last_users) {
+            Intent intent = new Intent(LastConnectedUsersActivity.this, LastConnectedUsersActivity.class);
+            startActivity(intent);
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_books_domains) {
+            Intent intent = new Intent(LastConnectedUsersActivity.this, GenresActivity.class);
+            startActivity(intent);
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_loggings) {
+            Intent intent = new Intent(LastConnectedUsersActivity.this, LoggingsLastWeekActivity.class);
+            startActivity(intent);
 
         } else if (id == R.id.admin_nav_log_out) {
             btnLogOutClick();

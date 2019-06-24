@@ -19,9 +19,7 @@ import android.widget.TextView;
 
 import com.example.andreea.bookhunt.models.Book;
 import com.example.andreea.bookhunt.models.LastSearchBook;
-import com.example.andreea.bookhunt.models.User;
 import com.example.andreea.bookhunt.recyclerviewutils.LastSearchedBooksAdapter;
-import com.example.andreea.bookhunt.recyclerviewutils.UserAdapter;
 import com.example.andreea.bookhunt.utils.Constants;
 import com.example.andreea.bookhunt.utils.SharedPreferencesHelper;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,11 +28,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 
 public class LastSearchedBooksActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -88,8 +87,21 @@ public class LastSearchedBooksActivity extends AppCompatActivity implements Navi
                             return Long.valueOf(o2.getLastSearchLong()).compareTo(o1.getLastSearchLong());
                         }
                     });
-                    lastSearchedBooksAdapter = new LastSearchedBooksAdapter(LastSearchedBooksActivity.this, lastSearchBooks);
-                    mRecyclerViewLastBooks.setAdapter(lastSearchedBooksAdapter);
+                    if(lastSearchBooks.size() == 0) {
+                        TextView textView = (TextView) findViewById(R.id.no_books_searched);
+                        textView.setVisibility(View.VISIBLE);
+                        mRecyclerViewLastBooks.setVisibility(View.GONE);
+                    } else {
+                        TextView textView = (TextView) findViewById(R.id.no_books_searched);
+                        textView.setVisibility(View.GONE);
+                        mRecyclerViewLastBooks.setVisibility(View.VISIBLE);
+                        lastSearchedBooksAdapter = new LastSearchedBooksAdapter(LastSearchedBooksActivity.this, lastSearchBooks);
+                        mRecyclerViewLastBooks.setAdapter(lastSearchedBooksAdapter);
+                    }
+                } else {
+                    TextView textView = (TextView) findViewById(R.id.no_books_searched);
+                    textView.setVisibility(View.VISIBLE);
+                    mRecyclerViewLastBooks.setVisibility(View.GONE);
                 }
             }
 
@@ -168,7 +180,9 @@ public class LastSearchedBooksActivity extends AppCompatActivity implements Navi
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.admin_action_settings) {
+            Intent intent = new Intent(LastSearchedBooksActivity.this, AdministratorActivity.class);
+            startActivity(intent);
             return true;
         }
 
@@ -181,18 +195,21 @@ public class LastSearchedBooksActivity extends AppCompatActivity implements Navi
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_books_searched) {
+            Intent intent = new Intent(LastSearchedBooksActivity.this, LastSearchedBooksActivity.class);
+            startActivity(intent);
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_last_users) {
+            Intent intent = new Intent(LastSearchedBooksActivity.this, LastConnectedUsersActivity.class);
+            startActivity(intent);
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_books_domains) {
+            Intent intent = new Intent(LastSearchedBooksActivity.this, GenresActivity.class);
+            startActivity(intent);
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.nav_loggings) {
+            Intent intent = new Intent(LastSearchedBooksActivity.this, LoggingsLastWeekActivity.class);
+            startActivity(intent);
         } else if (id == R.id.admin_nav_log_out) {
             btnLogOutClick();
 

@@ -16,7 +16,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.andreea.bookhunt.models.Point;
-import com.example.andreea.bookhunt.models.User;
 import com.example.andreea.bookhunt.utils.Constants;
 import com.example.andreea.bookhunt.utils.SharedPreferencesHelper;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,10 +27,7 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -185,7 +181,9 @@ public class LoggingsLastWeekActivity extends AppCompatActivity implements Navig
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.admin_action_settings) {
+            Intent intent = new Intent(LoggingsLastWeekActivity.this, AdministratorActivity.class);
+            startActivity(intent);
             return true;
         }
 
@@ -198,17 +196,21 @@ public class LoggingsLastWeekActivity extends AppCompatActivity implements Navig
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_books_searched) {
+            Intent intent = new Intent(LoggingsLastWeekActivity.this, LastSearchedBooksActivity.class);
+            startActivity(intent);
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_last_users) {
+            Intent intent = new Intent(LoggingsLastWeekActivity.this, LastConnectedUsersActivity.class);
+            startActivity(intent);
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_books_domains) {
+            Intent intent = new Intent(LoggingsLastWeekActivity.this, GenresActivity.class);
+            startActivity(intent);
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_loggings) {
+            Intent intent = new Intent(LoggingsLastWeekActivity.this, LoggingsLastWeekActivity.class);
+            startActivity(intent);
 
         } else if (id == R.id.admin_nav_log_out) {
             btnLogOutClick();

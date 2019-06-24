@@ -96,7 +96,9 @@ public class GenresActivity extends AppCompatActivity implements NavigationView.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.admin_action_settings) {
+            Intent intent = new Intent(GenresActivity.this, AdministratorActivity.class);
+            startActivity(intent);
             return true;
         }
 
@@ -109,18 +111,21 @@ public class GenresActivity extends AppCompatActivity implements NavigationView.
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_books_searched) {
+            Intent intent = new Intent(GenresActivity.this, LastSearchedBooksActivity.class);
+            startActivity(intent);
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_last_users) {
+            Intent intent = new Intent(GenresActivity.this, LastConnectedUsersActivity.class);
+            startActivity(intent);
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_books_domains) {
+            Intent intent = new Intent(GenresActivity.this, GenresActivity.class);
+            startActivity(intent);
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.nav_loggings) {
+            Intent intent = new Intent(GenresActivity.this, LoggingsLastWeekActivity.class);
+            startActivity(intent);
         } else if (id == R.id.admin_nav_log_out) {
             btnLogOutClick();
 

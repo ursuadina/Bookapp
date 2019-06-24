@@ -193,10 +193,6 @@ public class FavouriteActivity extends AppCompatActivity
         } else if (id == R.id.nav_log_out) {
             btnLogOutClick();
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

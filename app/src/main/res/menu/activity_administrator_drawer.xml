@@ -5,33 +5,25 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
+            android:id="@+id/nav_books_searched"
+            android:icon="@drawable/icons8_reading_24"
+            android:title="Last searched books" />
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
+            android:id="@+id/nav_last_users"
+            android:icon="@drawable/ic_connected_users"
+            android:title="Last connected users" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
+            android:id="@+id/nav_books_domains"
+            android:icon="@drawable/ic_bar_chart"
+            android:title="Books searched by domais" />
         <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:id="@+id/nav_loggings"
+            android:icon="@drawable/ic_chart"
+            android:title="Loggings on last week" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="Log out">
         <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
             <item
                 android:id="@+id/admin_nav_log_out"
                 android:icon="@drawable/ic_menu_log_out"
