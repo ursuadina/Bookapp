@@ -9,6 +9,8 @@ import java.io.Serializable;
 
 @Root(name="hash", strict = false)
 public class IDreamBooksResponse implements Serializable {
+    @Element(required = false, name="total-results")
+    private Integer totalResults;
     @Element(name = "book")
     private BookIDB bookIDB;
 
@@ -25,5 +27,13 @@ public class IDreamBooksResponse implements Serializable {
     }
 
     public IDreamBooksResponse() {
+    }
+
+    public Integer getTotalResults() {
+        return totalResults;
+    }
+
+    public void setTotalResults(Integer totalResults) {
+        this.totalResults = totalResults;
     }
 }

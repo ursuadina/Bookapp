@@ -192,6 +192,8 @@ public class OptionsActivity extends AppCompatActivity {
                                                     bundleExtras.putString(Constants.PHOTO_URL, mPhotoUrl);
                                                     bundleExtras.putFloat(Constants.AVERAGE_RATING, average_rating);
                                                     bundleExtras.putString(Constants.BOOK_ID, originalBookId);
+                                                    bundleExtras.putString(Constants.TITLE, mBookTitle);
+                                                    bundleExtras.putString(Constants.AUTHOR, mAuthor);
                                                     SharedPreferencesHelper.setStringValueForUserInfo(Constants.DONE_GOODREADS, "done", OptionsActivity.this);
                                                     mButtonGoodReads.setEnabled(true);
                                                 }
@@ -298,19 +300,25 @@ public class OptionsActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<IDreamBooksResponse> call, Response<IDreamBooksResponse> response) {
                 if (response.isSuccessful()) {
-                    resultIDBArrayList = new ArrayList<>();
-                    List<CriticReview> criticReviews = response.body().getBookIDB().getCriticReviews().getCriticReview();
-                    for (int i = 0; i < criticReviews.size(); i++) {
-                        mSnippet = criticReviews.get(i).getSnippet();
-                        mSource = criticReviews.get(i).getSource();
-                        mReview = criticReviews.get(i).getStarRating();
-                        mResultIDB = new ResultIDB(mSnippet, mSource, mReview);
-                        resultIDBArrayList.add(mResultIDB);
+                    if (response.body().getTotalResults() == 0) {
+                        mButtonNYT.setEnabled(false);
+                        mButtonNYT.setBackground(getDrawable(R.drawable.rounded_button_disabled));
+                        progressDialog.dismiss();
+                    } else {
+                        resultIDBArrayList = new ArrayList<>();
+                        List<CriticReview> criticReviews = response.body().getBookIDB().getCriticReviews().getCriticReview();
+                        for (int i = 0; i < criticReviews.size(); i++) {
+                            mSnippet = criticReviews.get(i).getSnippet();
+                            mSource = criticReviews.get(i).getSource();
+                            mReview = criticReviews.get(i).getStarRating();
+                            mResultIDB = new ResultIDB(mSnippet, mSource, mReview);
+                            resultIDBArrayList.add(mResultIDB);
+                        }
+                        bundleExtras.putParcelableArrayList(Constants.RESULT_ARRAY_IDB, resultIDBArrayList);
+                        SharedPreferencesHelper.setStringValueForUserInfo(Constants.DISABLE_IDB, "false", OptionsActivity.this);
+                        mButtonNYT.setEnabled(true);
+                        progressDialog.dismiss();
                     }
-                    bundleExtras.putParcelableArrayList(Constants.RESULT_ARRAY_IDB, resultIDBArrayList);
-                    SharedPreferencesHelper.setStringValueForUserInfo(Constants.DISABLE_IDB, "false", OptionsActivity.this);
-                    mButtonNYT.setEnabled(true);
-                    progressDialog.dismiss();
                 } else {
                     mButtonNYT.setEnabled(false);
                     mButtonNYT.setBackground(getDrawable(R.drawable.rounded_button_disabled));

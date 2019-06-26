@@ -13,11 +13,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.andreea.bookhunt.models.LogInUser;
 import com.example.andreea.bookhunt.models.User;
 import com.example.andreea.bookhunt.utils.Constants;
 import com.example.andreea.bookhunt.utils.EmailHelper;
 import com.example.andreea.bookhunt.utils.NameHelper;
 import com.example.andreea.bookhunt.utils.PasswordHelper;
+import com.example.andreea.bookhunt.utils.SharedPreferencesHelper;
 import com.example.andreea.bookhunt.utils.UsernameHelper;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -31,6 +33,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -47,7 +50,8 @@ public class RegisterActivity extends AppCompatActivity {
     private User mUser;
 
     private FirebaseAuth firebaseAuth;
-
+    private String data;
+    private String startData;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -182,7 +186,6 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-        mTextView = (TextView) findViewById(R.id.textView);
     }
 
     private boolean isEmailValid() {
@@ -253,9 +256,16 @@ public class RegisterActivity extends AppCompatActivity {
         } else {
             String username = mEditTextUsername.getText().toString();
             Date date = new Date();
+            SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MM-yyyy");
+            data = formatter1.format(date);
+            Calendar c = Calendar.getInstance();
+            c.setTime(date);
+            c.add(Calendar.DATE, -7);
+            Date start = c.getTime();
+            startData = formatter1.format(start);
             mUser.setLastLoggedIn(date.getTime() * (-1));
             SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-           mUser.setLastDate(formatter.format(date));
+            mUser.setLastDate(formatter.format(date));
             Query query1 = FirebaseDatabase.getInstance().getReference("Users").orderByChild("username")
                     .equalTo(username);
             query1.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -274,14 +284,12 @@ public class RegisterActivity extends AppCompatActivity {
         final String email = mUser.getEmail();
         final String password = mEditTextPassword.getText().toString();
 
-        mTextView.setVisibility(View.VISIBLE);
-        mTextView.setText(mUser.toString());
-
         mProgressDialog.setMessage("Registering...");
         mProgressDialog.show();
 
 //        The user is created and I save his informations(first name, last name, etc.) also in the
 //        database.
+
         firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -297,10 +305,46 @@ public class RegisterActivity extends AppCompatActivity {
                                         @Override
                                         public void onComplete(@NonNull Task<AuthResult> task) {
                                             if(task.isSuccessful()) {
-                                                Intent intent = new Intent(RegisterActivity.this, IndexActivity.class);
-                                                startActivity(intent);
-                                                mProgressDialog.dismiss();
-                                            } else {
+                                                SharedPreferencesHelper.setStringValueForUserInfo("ModifyLogIn", "False",RegisterActivity.this);
+                                                FirebaseDatabase.getInstance().getReference("LogIns").child(data).addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                        if (SharedPreferencesHelper.getStringValueForUserInfo("ModifyLogIn", RegisterActivity.this).equals("False")) {
+                                                            if (dataSnapshot.exists()) {
+                                                                String username = mEditTextUsername.getText().toString();
+                                                                LogInUser logInUser = new LogInUser();
+                                                                logInUser.setUsername(username);
+                                                                SharedPreferencesHelper.setStringValueForUserInfo("ModifyLogIn", "True", RegisterActivity.this);
+                                                                FirebaseDatabase.getInstance().getReference("LogIns/" + data).push().setValue(logInUser);
+
+                                                                Intent intent = new Intent(RegisterActivity.this, IndexActivity.class);
+                                                                startActivity(intent);
+                                                                mProgressDialog.dismiss();
+                                                                finish();
+                                                                FirebaseDatabase.getInstance().getReference("LogIns").addValueEventListener(new ValueEventListener() {
+                                                                    @Override
+                                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                                        if (dataSnapshot.getChildrenCount() == 8) {
+                                                                            SharedPreferencesHelper.setStringValueForUserInfo("ModifyLogIn", "True", RegisterActivity.this);
+                                                                            FirebaseDatabase.getInstance().getReference("LogIns").child(startData).removeValue();
+                                                                        }
+                                                                    }
+
+                                                                    @Override
+                                                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                                    }
+                                                                });
+                                                            }
+                                                        }
+                                                    }
+                                                        @Override
+                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                        }
+                                                    });
+                                                }
+                                                else {
                                                 String errorMessage = task.getException().toString();
                                                 Toast.makeText(RegisterActivity.this, "Error " + errorMessage, Toast.LENGTH_SHORT).show();
                                                 mProgressDialog.dismiss();

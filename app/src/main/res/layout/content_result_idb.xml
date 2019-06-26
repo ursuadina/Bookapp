@@ -25,9 +25,7 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvResultsIDB"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        android:layout_height="612dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-    </android.support.v7.widget.RecyclerView>
+        app:layout_constraintTop_toBottomOf="@+id/textView2"/>
 </android.support.constraint.ConstraintLayout>
